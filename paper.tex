@@ -1,0 +1,161 @@
+%
+% File acl2012.tex
+%
+% Contact: Maggie Li (cswjli@comp.polyu.edu.hk), Michael White (mwhite@ling.osu.edu)
+%%
+%% Based on the style files for ACL2008 by Joakim Nivre and Noah Smith
+%% and that of ACL2010 by Jing-Shin Chang and Philipp Koehn
+
+
+\documentclass[11pt,letterpaper]{article}
+\usepackage[letterpaper]{geometry}
+\usepackage{acl2012}
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage{amsmath}
+\usepackage{multirow}
+\usepackage{url}
+\makeatletter
+\newcommand{\@BIBLABEL}{\@emptybiblabel}
+\newcommand{\@emptybiblabel}[1]{}
+\makeatother
+\usepackage[hidelinks]{hyperref}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\setlength\titlebox{6.5cm}    % Expanding the titlebox
+
+\title{Parsing Tweets into Universal Dependencies}
+
+\author{First Author \\
+  Affiliation / Address line 1 \\
+  Affiliation / Address line 2 \\
+  Affiliation / Address line 3 \\
+  {\tt email@domain} \\\And
+  Second Author \\
+  Affiliation / Address line 1 \\
+  Affiliation / Address line 2 \\
+  Affiliation / Address line 3 \\
+  {\tt email@domain} \\}
+
+\date{}
+
+\begin{document}
+\maketitle
+\begin{abstract}
+
+\end{abstract}
+
+
+
+
+\section{Introduction}
+Analyzing the syntax of tweets is challenging for traditional NLP tools because most of the tweet texts are informal and noisy.
+
+In this paper, we propose to parse the tweets in the convention of universal dependencies and built up the whole pipeline to parse the tweets from the raw text form.
+
+Contribution of this paper includes:
+\begin{itemize}
+\item We create a new version of tweet Treebank Tweebank 2.0
+\item We propose a neural network method to parse tweets into universal dependencies
+\item We study the adaptation of universal dependencies for analyzing tweets
+\end{itemize}
+
+
+
+
+\section{Related Work}
+Eisenstein \shortcite{eisenstein:2013:NAACL-HLT} reviewed NLP approaches for analyzing text on social media, especially for tweets and showed that there are two major directions for NLP community to handle the tweets, including normalization and domain adaptation. He also pointed out that normalization can be problematic because precisely defining the normalization task is difficult. 
+
+Kong et al. \shortcite{kong-EtAl:2014:EMNLP2014} argues that the Penn Treebank approach to annotation is poorly suited to more informal genres of text, as some of the annotation challenges for tweets,including token selection, multiword expressions, multiple roots, and structure within noun phrases diverge significantly from conventional approaches. 
+They believe that rapid, small scale annotation efforts performed by imperfectly-trained annotators should provide enough evidence to train an effective parser, given the rapidly changing nature of tweets~\cite{eisenstein:2013:NAACL-HLT}, the attested difficulties of domain adaptation for parsing~\cite{dred07}, and the expense of creating Penn Treebank-style annotations~\cite{penn93}. 
+Therefore, they build a new corpus of tweets (Tweebank), with conventions informed by the domain, using new syntactic annotations that can tackle all the forementioned problems annotated in a day by two dozen annotators, most of whom had only cursory training in the annotation scheme. Then, they modify the decoder of the TurboParser, a graph-based dependency parser, which is open-source and has been found to perform well on a range of parsing problems in different languages~\cite{turbo13} to adapt to the Tweebank dataset, and incorporate new features such as Brown Clusters and Penn Treebank features and changes to specificationin the output space into TurboParser.
+
+
+\section{Data Annotation}
+% Linguistic phenomena
+	% word level
+		% RT
+		% Hashtag
+		% Mention, urls
+		% Emoticons
+		% Partially Elided tokens
+	% twitter level
+		% RT, Answer
+		% Parataxis	
+% POS
+	% Acronym priority	
+% Depenency
+	% Concentrate on NON-UD phenomena
+% Statistics
+	% Scale
+	% Inter-annotator agreement
+	% Proportion
+		% how many hashtags, mentions, ....
+		% how many acornyms
+\subsection{}
+
+
+
+\section{Pipeline}
+\subsection{Tokenization}
+We use the UDPipe\footnote{https://github.com/ufal/udpipe} to tokenize the tweets and then detokenize the wrongly tokenized usernames and hashtags.
+
+\subsection{POS Tagging}
+Different from standard sentences, special constructions in tweets exist in both the whole tweet-level and token-level.
+
+\subsubsection{Token-level Unconventional Part-of-Speech}
+In addition to standard language, tweets have the following specific constructions:
+\begin{itemize}
+\item Discourse marker, URL, hashtag, emoticon
+	\begin{itemize}
+		\item RT, http://bit.ly/xyz, \#acl, :-), @user
+	\end{itemize}
+\item Acronym
+	\begin{itemize}
+		\item wtf (what the fuck), smh (shake my hand), mfw (my face when), ima (i am going to), rn (right now), af (as fuck)
+	\end{itemize}
+\item Contraction
+	\begin{itemize}
+		\item Contraction with apostrophe: There’s, he’s, book’ll, buy’em
+		\item Contraction without apostrophe: gonna, tryna, gimme, Iv, im, aint, whatis
+	\end{itemize}
+\item Partially Elided Tokens
+\end{itemize}
+
+Gimpel et al. \shortcite{Gimpel:2011:PTT:2002736.2002747} proposed a set of part-of-speech tags that handles most of these cases. 
+We are inspired by their work but argue that, first different abbreviation can have different syntactic functions. 
+Like “mfw” is usually followed by an adverbial clause and “ima” is usually followed by a clausal complement. 
+It is not reasonable to treat them in the same part-of-speech. 
+In this paper, when annotating the POS tagging for abbreviations, we first try to recover their original forms, then use the POS of the core-word as the POS for the abbreviation.
+Second, four special POS tags (S, L, M, Y) were designed to handle contraction words in Gimpel et al. \shortcite{Gimpel:2011:PTT:2002736.2002747}. Major concern of designing such tags is to minimize the effort of tokenization. 
+However, contractions of common nouns and pronouns are casted into the same category which increase the difficulty of distinguishing their syntactic function (say, there's and book'll are treated with the same syntactic function). What's more, only a small proportion of words can be categorized into these tags (2.7 \% in total), which cast a doubt of the usefulness of these certain tags. In this paper, we believe such contraction can be properly handled by tokenization module, so we suggest to tokenize the contraction word and annotate POS tag accordingly.
+Besides the contraction that be conventionally tokenized, tweets also witness a set of unconventional contraction like iv (I've), whatis (what is). In this paper, we follow the same idea of annotation abbreviation to handle the unconventional contractions and use the POS of core word of the original form as their POS.
+Third, special POS was designed to handle emoticon in Gimpel et al. \shortcite{Gimpel:2011:PTT:2002736.2002747}. However, in most cases, emoticon plays the same role as most of the symbolic tokens. In this paper, we follow the UD guideline to annotate the emoticon as symbol (SYM).
+At last, it’s arguable that some of the hashtags, URLs can work as a nominal in tweets. Whether treating them as the same part-of-speech or different ones according to their context is an open question. A preliminary survey on the standard UD English data shows that URL, email address are all tagged as the foreign language (X), so we also tag them as X and leave the disambiguation of their syntactic function to the annotation of parse tree.
+
+\subsubsection{Tweets-level Special Construction}
+There are several tweet-level constructions which are unconventional to standard text, including:
+
+\begin{itemize}
+\item Retweet: RT @user : $\langle$ sentence $\rangle$
+\item Leading or ending topic marked as hashtag: \#topic \#topic \#topic $\langle$ sentence $\rangle$ \#topic \#topic \#topic
+\item Leading or ending complementary URL:  $\langle$ complementary URL $\rangle$ $\langle$ sentence $\rangle$ $\langle$ complementary URL $\rangle$
+%\item Tokens like the RT mark, @user and URL that usually don’t carry any syntactic functions and can be eliminated from the sentence. Kong et al. \shortcite{kong-EtAl:2014:EMNLP2014} proposed an additional token selection process to eliminate these non-syntactic tokens
+\end{itemize}
+
+
+\subsection{Sentence Segmentation}
+
+\section{Model}
+
+\section{Experiments}
+
+\section{Conclusion}
+
+
+
+\bibliography{tacl}
+\bibliographystyle{acl2012}
+\end{document}
+
+
+
