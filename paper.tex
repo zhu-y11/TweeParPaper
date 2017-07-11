@@ -23,6 +23,11 @@
 \DeclareMathOperator*{\argmax}{arg\,max}
 \setlength\titlebox{6.5cm}    % Expanding the titlebox
 
+%%%%%%%
+\usepackage{graphicx}
+\newcommand{\heart}{\ensuremath\heartsuit}
+
+
 \title{Parsing Tweets into Universal Dependencies}
 
 \author{First Author \\
@@ -65,19 +70,23 @@ Contribution of this paper includes:
 \section{Related Work}
 Eisenstein \shortcite{eisenstein:2013:NAACL-HLT} reviewed NLP approaches for analyzing text on social media, especially for tweets and showed that there are two major directions for NLP community to handle the tweets, including normalization and domain adaptation. He also pointed out that normalization can be problematic because precisely defining the normalization task is difficult. 
 
-Kong et al. \shortcite{kong-EtAl:2014:EMNLP2014} argues that the Penn Treebank approach to annotation is poorly suited to more informal genres of text, as some of the annotation challenges for tweets,including token selection, multiword expressions, multiple roots, and structure within noun phrases diverge significantly from conventional approaches. 
+Kong et al. \shortcite{kong-EtAl:2014:EMNLP2014} argues that the Penn Treebank approach to annotation is poorly suited to more informal genres of text, as some of the annotation challenges for tweets,
+including token selection, multiword expressions, multiple roots, and structure within noun phrases diverge significantly from conventional approaches. 
 They believe that rapid, small scale annotation efforts performed by imperfectly-trained annotators should provide enough evidence to train an effective parser, given the rapidly changing nature of tweets~\cite{eisenstein:2013:NAACL-HLT}, the attested difficulties of domain adaptation for parsing~\cite{dred07}, and the expense of creating Penn Treebank-style annotations~\cite{penn93}. 
-Therefore, they build a new corpus of tweets (Tweebank), with conventions informed by the domain, using new syntactic annotations that can tackle all the forementioned problems annotated in a day by two dozen annotators, most of whom had only cursory training in the annotation scheme. Then, they modify the decoder of the TurboParser, a graph-based dependency parser, which is open-source and has been found to perform well on a range of parsing problems in different languages~\cite{turbo13} to adapt to the Tweebank dataset, and incorporate new features such as Brown Clusters and Penn Treebank features and changes to specificationin the output space into TurboParser.
+Therefore, they build a new corpus of tweets (Tweebank), with conventions informed by the domain, using new syntactic annotations that can tackle all the forementioned problems annotated in a day by two dozen annotators, most of whom had only cursory training in the annotation scheme. Then, they modify the decoder of the TurboParser, a graph-based dependency parser, which is open-source and has been found to perform well on a range of parsing problems in different languages~\cite{turbo13} to adapt to the Tweebank dataset, and incorporate new features such as Brown Clusters and Penn Treebank features and changes to specification
+in the output space into TurboParser.
 
 
-\section{Data Annotation}
+
+
+\section{Data}
 % Linguistic phenomena
 	% word level
 		% RT
 		% Hashtag
 		% Mention, urls
-		% Emoticons
-		% Partially Elided tokens
+		% Symbols and Emoticons
+		% Truncated tokens
 	% twitter level
 		% RT, Answer
 		% Parataxis	
@@ -91,37 +100,62 @@ Therefore, they build a new corpus of tweets (Tweebank), with conventions inform
 	% Proportion
 		% how many hashtags, mentions, ....
 		% how many acornyms
-\subsection{}
+
+\subsection{Linguistic Phenomena of Twitter}
+As the representative of the web language, different from the standard languages such as newswire, twitter has its own linguistic phenomena, that could be categorized into word level and structure level phenomena, and we will discuss them separately.
 
 
+\subsubsection{Token Level}
 
-\section{Pipeline}
-\subsection{Tokenization}
-We use the UDPipe\footnote{https://github.com/ufal/udpipe} to tokenize the tweets and then detokenize the wrongly tokenized usernames and hashtags.
-
-\subsection{POS Tagging}
-Different from standard sentences, special constructions in tweets exist in both the whole tweet-level and token-level.
-
-\subsubsection{Token-level Unconventional Part-of-Speech}
-In addition to standard language, tweets have the following specific constructions:
+There are special tokens that will appear only or much more frequently in tweets, including
+	
 \begin{itemize}
-\item Discourse marker, URL, hashtag, emoticon
-	\begin{itemize}
-		\item RT, http://bit.ly/xyz, \#acl, :-), @user
-	\end{itemize}
-\item Acronym
-	\begin{itemize}
-		\item wtf (what the fuck), smh (shake my hand), mfw (my face when), ima (i am going to), rn (right now), af (as fuck)
-	\end{itemize}
-\item Contraction
-	\begin{itemize}
-		\item Contraction with apostrophe: There’s, he’s, book’ll, buy’em
-		\item Contraction without apostrophe: gonna, tryna, gimme, Iv, im, aint, whatis
-	\end{itemize}
-\item Partially Elided Tokens
+\item Retweet discourse marker: RT
+\item URL: http://bit.ly/xyz
+\item Hashtag: \#ACL
+\item At-mentioned username: @user
+\item Emoticon, emoji and symbol: :), - - - - $\langle$$\langle$$\langle$, :-), …
+\item Acronym: wtf (what the fuck), smh (shake my hand), mfw (my face when), ima (i am going to), rn (right now), af (as fuck)
+\item Contraction: he's, buy'em, gonna, trma, gimme, im
+\item Truncated token: because each tweet can have only 140 characters, excessive characters will be cut off, and usually there could be token in the last of the tweet that is partially elided
 \end{itemize}
 
-Gimpel et al. \shortcite{Gimpel:2011:PTT:2002736.2002747} proposed a set of part-of-speech tags that handles most of these cases. 
+Consider the following example
+
+\begin{center}
+RT @Yijia : \#ACL2017 im heading to Canada for ACL can u gimme some money :) http://url1 I would love to do it with th …
+\end{center}
+
+From the example, we argue that most of the the retweet discourse markers, URLs, hashtags, usernames and the emoticons/emojis/symbols usually do not have clear syntactic functions in the tweet, and therefore we should not include them in the analysis, and treat them all equally as non-syntactic tokens. Especially, for truncated tokens, although it might be possible to recover the original tokens from the context in some cases, and we can infer that the truncated token ``th" could be probably the token ``the" it is extremely hard to further predict the rest of the elided sentence. For the simplicity of the annotation, we will consider all the truncated tokens as non-syntactic tokens.  
+
+For acronyms and contractions, it is obviously better if we could recover their original forms before analyzing the whole tweet, and we believe that all of these tokens will always be syntactically part of the tweet.
+
+However, consider another example
+
+\begin{center}
+@Yi u gonna $\heart$ it . \#NAACL will be \#Awesome . Check my new paper with @nlpnoah on http://url2 RT it !!
+\end{center}
+
+Similar in the analysis of Kong et al. \shortcite{kong-EtAl:2014:EMNLP2014}, in some cases, retweet marker (RT), URLS (http://url2), hashtags (\#NAACL, \#Awesome), usernames (@Yi, @nlpnoah) and emoticons ($\heart$) can also have syntactic functions, and we need to take them into the account in the syntactic analysis.
+
+We define acronyms and contractions as full syntactic tokens, truncated tokens as zero syntactic tokens, and all of the other tokens as partial syntactic tokens.
+
+\subsubsection{Structure Level}
+Besides the token level phenomena of twitter, there are also structural patterns appearing in the twitter.
+
+\begin{itemize}
+\item Retweet structure: RT @user :  $\langle$ tweet content $\rangle$ is a typical structural pattern when a user is retweeting from other users
+\item Parataxis: Very often, one tweet is comprised of many sentences or phrases without any delimiting punctuations, such as $\langle$ sentence1 $\rangle$ $\langle$ phrase1 $\rangle$ $\langle$ sentence2 $\rangle$ ...
+\end{itemize}
+
+We treat ``RT @user" as the structural patterns in tweet and keep their annotations consistent across tweets. For parataxis case
+
+%vocative X pos tags??
+
+
+
+\subsection{POS Tagging}
+Gimpel et al. \shortcite{Gimpel:2011:PTT:2002736.2002747} proposed a set of part-of-speech tags that handle most of token level phenomena of tweet. 
 We are inspired by their work but argue that, first different abbreviation can have different syntactic functions. 
 Like “mfw” is usually followed by an adverbial clause and “ima” is usually followed by a clausal complement. 
 It is not reasonable to treat them in the same part-of-speech. 
@@ -131,6 +165,20 @@ However, contractions of common nouns and pronouns are casted into the same cate
 Besides the contraction that be conventionally tokenized, tweets also witness a set of unconventional contraction like iv (I've), whatis (what is). In this paper, we follow the same idea of annotation abbreviation to handle the unconventional contractions and use the POS of core word of the original form as their POS.
 Third, special POS was designed to handle emoticon in Gimpel et al. \shortcite{Gimpel:2011:PTT:2002736.2002747}. However, in most cases, emoticon plays the same role as most of the symbolic tokens. In this paper, we follow the UD guideline to annotate the emoticon as symbol (SYM).
 At last, it’s arguable that some of the hashtags, URLs can work as a nominal in tweets. Whether treating them as the same part-of-speech or different ones according to their context is an open question. A preliminary survey on the standard UD English data shows that URL, email address are all tagged as the foreign language (X), so we also tag them as X and leave the disambiguation of their syntactic function to the annotation of parse tree.
+
+We use the Universal POS tags~\cite{PETROV12.274} to tag the tweet tokens.
+
+
+\subsection{Dependency Annotation}
+
+
+\section{Pipeline}
+\subsection{Tokenization}
+We use the UDPipe\footnote{https://github.com/ufal/udpipe} to tokenize the tweets and then detokenize the wrongly tokenized usernames and hashtags.
+
+\subsection{POS Tagging}
+
+
 
 \subsubsection{Tweets-level Special Construction}
 There are several tweet-level constructions which are unconventional to standard text, including:
