@@ -99,7 +99,7 @@ As the representative of the web language, different from the standard languages
 There are special tokens that will appear only or much more frequently in tweets. According to the syntactic functions these tokens have in the tweets, we classify them into three types: syntactic tokens, non-syntactic tokens and optionally syntactic tokens. 
 Syntactic tokens are tokens that will always have syntactic functions in tweets, but they might not be in their normal orthographic form and we need to do some preprocessing to recover their standard form. Then we can treat them just as normal tokens in the standard text.
 Non-syntactic tokens are tokens that will not have syntactic function or semantic meaning in tweets, and they are not considered in the syntax analysis and need to be treated independently.
-Optionally syntactic tokens are tokens that can have either syntactic or non-syntactic functions based on the context. Usually they are tokens like URLs ad hashtags that do not participate in the syntax of the tweets, and we treat them as non-syntactic functions by default. However, similar in the analysis of Kong et al. \shortcite{kong-EtAl:2014:EMNLP2014}, in some cases they are perceived as the arguments or predicates of tweets and therefore have syntactic functions. In this case we treat them as syntactic tokens.
+Optionally syntactic tokens are tokens that can have either syntactic or non-syntactic functions based on the context. Usually they are tokens like URLs ad hashtags that do not participate in the syntax of the tweets, and we treat them as non-syntactic functions by default. However, similar in the analysis of \newcite{kong-EtAl:2014:EMNLP2014}, in some cases they are perceived as the arguments or predicates of tweets and therefore have syntactic functions. In this case we treat them as syntactic tokens.
 
 Here is a complete list of the special tokens in tweets classified in three types.
 
@@ -183,9 +183,14 @@ We should note that multiple tokens are actually included in one non-explicit co
 If there is a hierarchy in the contraction, we use the tag of the head word as the contraction tag. ``Right'' is the dependent of ``now '' in the dependency of {\tt rn}, so we tag {\tt rn} as ADV. Although there is no head word in {\tt im}, we think that the subject is usually more informative than the tense in many downstream tasks such as semantic role labelling, so we use the tag of ``I'', e.g. PROPN as the tag of {\tt im}.  
 In Fig. ~\ref{ex2}, {\tt RT} and {\tt $\heart$} would be tagged as VERB, {\tt http://url} as X, {\tt \#Awesome} as ADJ, {\tt \#NAACL}, {\tt @zypandora} and {\tt @nlpnoah} as PROPN. One exception is that we tag URLs always as X regardless whether they are syntactic tokens. The reason is that we observed, in UD\_English, that the URLs are all tagged as X and we want to conform with the UD dataset, although we think it is not reasonable and should be changed to tags such as PROPN when they are treated as syntactic tokens.
 
-Comparison with Gimpel
-% Tokenization discrepancy
-
+\newcite{Gimpel:2011:PTT:2002736.2002747} proposed a twitter POS tagset that handles most of the token level phenomena. However, we found that their methods did not conform with UD conventions and our strategies have some advantages over their tagset. We discuss the main difference as follows.
+The first difference lies in the tokenizations.
+Gimpel et al. opted not to split contractions or possessives and introduced four new tags (S, Z, L, M) for combined forms: \{nominal, proper noun\} $\times$ \{verb, possessive\}. 
+Major concern of designing such tags is to minimize the effort of tokenization, but it is not comprehensive and far from including all of the possible combinations of POS tags within the contractions. 
+What's more, only a small proportion of tokens can be categorized into these tags (2.7 \% in total), which casts a doubt of the usefulness of these tags.
+Instead UD conventions suggest that we put such complexity into the tokenization module and split contractions and possessives, then tag them accordingly. Therefore, we do not need extra POS tags for the combined forms.
+The second difference is that although the phrasal abbreviations are not split in both methods, they use tag G for all the other abbreviations that cannot be tokenized, while we use the tag of the head word or the highest hierarchical word in terms of dependencies as the tag of the whole phrasal abbreviations. We think it is not reasonable to treat the phrasal abbreviations in the same part of speech because obviously abbreviations can have different syntactic functions and we want to preserver the most useful information for both parser and the downstream tasks. For example, {\tt wtf} could be tagged as PRON or INTJ according to the context, and {\tt rn} is usually tagged as ADV. Tagging them merely as G will definitely lose much information.
+Third, special tags were designed to handle twitter or online special tokens such as URLs, hashtags and emoticon in \newcite{Gimpel:2011:PTT:2002736.2002747}. However, in most cases, as long as theses tokens are non syntactic, they play the same role in tweets hence should be tagged the same. In this paper, except for the emoticon, tagged as SYM, we tag all the other non-syntactic tokens as X.
 
 
 \subsection{Dependency Annotation}
@@ -202,7 +207,7 @@ In token level phenomena, we adopt the following rules for non-syntactic tokens,
 
 The reason we annotate URLs differently is the same as in POS tagging, that UD\_English labelled them as {\it list} when they are non-syntactic tokens and we want to keep the dataset conformed with it.
 
-Syntactic tokens are just normal tokens.
+For syntactic tokens, they are considered the same as normal tokens in the standard text and we annotate them by just following the UD guidelines.
 
 we further adopt the following rules for structure level phenomena:
 
@@ -212,10 +217,18 @@ we further adopt the following rules for structure level phenomena:
 \item Paratactic parts without punctuations: we follow the UD convention, and set the first part as the main part of the sentence, and set its predicate as the main predicate of the sentence. Every predicate of the following parts should attach to the main predicate. If the main part and some following part are both phrases, the label is {\it list}, otherwise the label is {\it parataxis}. Note that we still have an exception for URLs, conforming with UD, which is URLs are always labelled as {\it list}, regardless of the type of the other part.
 \end{itemize}
 
+% unlabelled, Informal
+% exclude non-syntactic tokens, punctuations
+% Annotation conventions
+\newcite{kong-EtAl:2014:EMNLP2014} built a syntactic treebank of tweets called Tweebank using Gimpel et al.'s POS tagset. 
+Apart from the difference in POS tagging, we found the following difference in both methods.
+First, Tweebank is an unlabelled dependency treebank, while we are annotating labelled dependencies. There is clearly a doubt about the usefulness of the Tweebank. We annotate the labelled dependencies by following the UD annotation guideline.
+Second, most of Tweebank was built in a day by two dozen annotators, most of whom had only cursory training in the annotation scheme~\cite{kong-EtAl:2014:EMNLP2014}. We think, after investigation, that despite the speed, the quality of data is still to be improved. We follow strictly the UD annotation guideline and only make twitter specific conventions when there is no suitable convention to adopt in UD guideline or no relevant data found in UD\_English.
+Third, \newcite{kong-EtAl:2014:EMNLP2014} developed a first-order sequence model to filter out the non-syntactic tokens and punctuations, and exclude them before parsing.
+It is very different from most of the annotation conventions, especially for UD conventions. We believe that every token should be included in the dependency tree, whether they have syntactic functions or are to be evaluated in the end, as in most of the conventions, so we annotate all tokens.
+Last, \newcite{kong-EtAl:2014:EMNLP2014} adopt the ``Yamada-Matsumoto" conventions~\cite{Yamada03statisticaldependency}, where auxiliary verbs are parents of main verbs, and prepositions are parents of their arguments, in contrast to UD conventions, where content words are primary tokens, and dependency relations hold primarily between them, rather than being indirect relations mediated by function words.
 
 
-
-Comparison with Kong
 
 
 \section{Pipeline}
@@ -226,18 +239,14 @@ Comparison with Kong
 
 
 \section{Related Work}
-Eisenstein \shortcite{eisenstein:2013:NAACL-HLT} reviewed NLP approaches for analyzing text on social media, especially for tweets and showed that there are two major directions for NLP community to handle the tweets, including normalization and domain adaptation. He also pointed out that normalization can be problematic because precisely defining the normalization task is difficult. 
+\newcite{eisenstein:2013:NAACL-HLT} reviewed NLP approaches for analyzing text on social media, especially for tweets and showed that there are two major directions for NLP community to handle the tweets, including normalization and domain adaptation. He also pointed out that normalization can be problematic because precisely defining the normalization task is difficult. 
 
-Kong et al. \shortcite{kong-EtAl:2014:EMNLP2014} argues that the Penn Treebank approach to annotation is poorly suited to more informal genres of text, as some of the annotation challenges for tweets,
+\newcite{kong-EtAl:2014:EMNLP2014} argues that the Penn Treebank approach to annotation is poorly suited to more informal genres of text, as some of the annotation challenges for tweets,
 including token selection, multiword expressions, multiple roots, and structure within noun phrases diverge significantly from conventional approaches. 
 They believe that rapid, small scale annotation efforts performed by imperfectly-trained annotators should provide enough evidence to train an effective parser, given the rapidly changing nature of tweets~\cite{eisenstein:2013:NAACL-HLT}, the attested difficulties of domain adaptation for parsing~\cite{dred07}, and the expense of creating Penn Treebank-style annotations~\cite{penn93}. 
 Therefore, they build a new corpus of tweets (Tweebank), with conventions informed by the domain, using new syntactic annotations that can tackle all the forementioned problems annotated in a day by two dozen annotators, most of whom had only cursory training in the annotation scheme. Then, they modify the decoder of the TurboParser, a graph-based dependency parser, which is open-source and has been found to perform well on a range of parsing problems in different languages~\cite{turbo13} to adapt to the Tweebank dataset, and incorporate new features such as Brown Clusters and Penn Treebank features and changes to specification
 in the output space into TurboParser.
 
-
-Gimpel et al. \shortcite{Gimpel:2011:PTT:2002736.2002747} proposed a set of twitter POS tags that handle most of token level phenomena of tweets. 
-We believe that the Universal POS tags have some advantages over their tags on syntax analysis.
-The first different abbreviation can have different syntactic functions. 
 Like “mfw” is usually followed by an adverbial clause and “ima” is usually followed by a clausal complement. 
 It is not reasonable to treat them in the same part-of-speech. 
 In this paper, when annotating the POS tagging for abbreviations, we first try to recover their original forms, then use the POS of the core-word as the POS for the abbreviation.
@@ -246,7 +255,6 @@ However, contractions of common nouns and pronouns are casted into the same cate
 Besides the contraction that be conventionally tokenized, tweets also witness a set of unconventional contraction like iv (I've), whatis (what is). In this paper, we follow the same idea of annotation abbreviation to handle the unconventional contractions and use the POS of core word of the original form as their POS.
 Third, special POS was designed to handle emoticon in Gimpel et al. \shortcite{Gimpel:2011:PTT:2002736.2002747}. However, in most cases, emoticon plays the same role as most of the symbolic tokens. In this paper, we follow the UD guideline to annotate the emoticon as symbol (SYM).
 At last, it’s arguable that some of the hashtags, URLs can work as a nominal in tweets. Whether treating them as the same part-of-speech or different ones according to their context is an open question. A preliminary survey on the standard UD English data shows that URL, email address are all tagged as the foreign language (X), so we also tag them as X and leave the disambiguation of their syntactic function to the annotation of parse tree.
-
 
 \section{Conclusion}
 
