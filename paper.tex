@@ -138,7 +138,6 @@ Besides the token level phenomena of twitter, there are also structural patterns
 We treat retweet structure and at-mentioned structure as structural patterns and keep their annotations consistent across tweets. For parataxis case, we treat each single sentence or phrase normally, and connect them together following the UD conventions. 
 
 \begin{figure}[h]
-\label{ex1}
 \small
 {\tt
 RT @yijialiu : \#ACL2017 heading to Canada for ACL u gim me money rn :) http://url I would love to do it with th $\ldots$ %…
@@ -229,6 +228,44 @@ It is very different from most of the annotation conventions, especially for UD 
 Last, \newcite{kong-EtAl:2014:EMNLP2014} adopt the ``Yamada-Matsumoto" conventions~\cite{Yamada03statisticaldependency}, where auxiliary verbs are parents of main verbs, and prepositions are parents of their arguments, in contrast to UD conventions, where content words are put into the primacy, and dependency relations hold primarily between them, rather than being indirect relations mediated by function words. Auxiliary verbs and prepositions are all function words, and are attached to the most related content words in UD.
 
 
+
+\subsection{Tweebank V2}
+We present Tweebank V2, a version 2 of Tweebank~\cite{kong-EtAl:2014:EMNLP2014}.
+
+%data aquisition/statistics
+The tweet source of Tweebank V2 consists of three parts. 
+The first is the original Tweebank created by~\cite{kong-EtAl:2014:EMNLP2014}, denoted as Tweebank V1.  There are 639 unique tweets in the training data of Tweebank V1, and 201 unique tweets in the data set. All of the unique tweets in Tweebank V1 are included in Tweebank V2.
+The second are 210 tweets from POS-tagged Twitter corpus of~\newcite{Owo13}, denoted as Tweebank V1 Dev. It was initially created as a development set of Tweebank V1 for hyperparameter tuning.
+Tweebank V1 Dev comprises were equally sampled from two data set, OCT27 (tweets sampled from a particular day, October 27, 2010) and DAILY 547 (one random English tweet per day from January 2011 through June 2012, 547 tweets in total). We should note that all of the Tweebank V1 tweets were also drawn from OCT27 and DAILY547, and the new tweets we extracted are not in the Tweebank V1.
+The third are 2500 tweets from the Twitter streams from February 2017 to July 2017 from ArchiveTeam,\footnote{https://archive.org} which we call Feb\_Jul\_16 corpus. The Twitter streams are in Spritzer version, which provides a 1\% random sample of public tweets everyday, and the tweets are in twitter JSON format. 
+There are xxx tweets in all the streams. We filtered them with \textit{lang} attribute in \textit{user} and used \textit{langid.py}\footnote{https://github.com/saffsd/langid.py} to pick out English tweets, which ends in xxx tweets in English. Then we sampled 2500 tweets roughly equally from these months.
+
+Tweebank V2 contains 3550 tweets in total, split into training set with 1639 tweets, development set with 710 tweets and test set with 1201 tweets. 
+The training set contains all the 639 unique tweets in the training set of Tweebank V1 and another 1000 tweets in feb\_jul\_16 corpus.
+The development set contains 210 tweets of Tweebank V1 Dev and another 500 tweets in feb\_jul\_16 corpus.
+The test set contains all the 201 tweets in the test set of Tweebank V1 and another 1000 tweets in feb\_jul\_16 corpus.
+
+We process all the raw tweets of these corpora from scratch, from tokenization and POS tagging to dependency annotation. As Tweebank V1 and the POS-tagged Twitter corpus of~\newcite{Owo13} used a tweet tokenizer~\cite{Krieger10tweetmotif:exploratory} and POS tagger~\cite{Gimpel:2011:PTT:2002736.2002747} that do not conform with UD guidelines, as we discussed before, we did not use any data of the intermediate steps from these corpora. The basic statistics of Tweebank V2 is shown in Table~\ref{tab1}.
+
+% tweets, tokens, tokens/tweet, part/tweet, token types.
+\begin{table}[h!]
+\centering
+ \begin{tabular}{l r r r} 
+ \hline
+ 			& 	Train 		& 	Test		&	Dev\\[0.5ex] \hline
+tweets 		&	1639 		&	1201		&	709\\
+tokens 		&			&			&	\\
+types 		&	 		&			&	\\
+utterances 	&	 		&			&	\\ \hline
+\end{tabular}
+ \caption{Statistics of Tweebank}
+ \label{tab1}
+\end{table}
+
+% tokens and its proportions for the previous language phenomena.
+
+
+%annotation statistics, agreement
 
 
 \section{Pipeline}
