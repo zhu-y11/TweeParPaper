@@ -13,6 +13,8 @@
 \usepackage{latexsym}
 \usepackage{amsmath}
 \usepackage{multirow}
+\usepackage{xcolor}
+\usepackage{tikz-dependency}
 \usepackage{url}
 \makeatletter
 \newcommand{\@BIBLABEL}{\@emptybiblabel}
@@ -27,6 +29,7 @@
 \newcommand{\heart}{\ensuremath\heartsuit}
 \usepackage{multirow}
 
+\newcommand{\yjcomment}[1]{\textcolor{orange}{[$_\mathrm{L}^\mathrm{Y}$\textsc{#1}]}}
 
 
 \title{Parsing Tweets into Universal Dependencies}
@@ -53,7 +56,7 @@
 
 
 
-\section{introduction}
+\section{Introduction}
 Analyzing the syntax of tweets is challenging for traditional NLP tools because most of the tweet texts are informal and noisy.
 
 In this paper, we propose to parse the tweets in the convention of universal dependencies and built up the whole pipeline to parse the tweets from the raw text form.
@@ -91,40 +94,124 @@ Contribution of this paper includes:
 		% how many acornyms
 
 \subsection{Linguistic Phenomena of Twitter} \label{lingphen}
-%Eisenstan
-As the representative of the web language, different from the standard languages such as newswire, twitter has its own linguistic phenomena, that could be categorized into token level and structure level phenomena, and we will discuss them separately.
+Twitter, as an extreme example of informal domain, contains a collection of conversational languages (like abbreviation, informal contraction, and variant entity names) and twitter-specified markers (like retweet mark, and username).
+Despite the informal nature of tweets, we argue that they basically follow the same grammar as their formal language counterpart.
+The key issue lies in understanding the specific construction that doesn't carry any syntactic functions.
+In the following section, we studied such constructions from both the token and structure level. \yjcomment{I don't like the name of \textbf{structure level}}
+%As the representative of the web language, different from the standard languages such as newswire, twitter has its own linguistic phenomena, that could be categorized into token level and structure level phenomena, and we will discuss them separately.
 
 
 \subsubsection{Token Level}
+\paragraph{Informal Syntactic Tokens.}
+Informal tokens like phrase abbreviation (like {\tt mfw}: my face when, {\tt rn}: right now, and etc.) and orthographic variants (like {\tt sooo cooool}) have drawn much attention in previous literals \cite{finin-EtAl:2010:MTURK,eisenstein:2013:NAACL-HLT} \yjcomment{not sure orthographic variants is a good name, need reference.}
+However, in the sense of syntactic functions, they work in the same way as the ordinary words, which makes them requires less specialty in designing annotation conventions.
+%Syntactic tokens are just like normal tokens in the standard text.
+%They always have syntactic functions in tweets.
+%They could be orthographic variants or abbreviations that represents a phrase.
 
-There are special tokens that will appear only or much more frequently in tweets. According to the syntactic functions these tokens have in the tweets, we classify them into three types: syntactic tokens, non-syntactic tokens and optionally syntactic tokens. 
-Syntactic tokens are just like normal tokens in the standard text. They always have syntactic functions in tweets. They could be orthographic variants or abbreviations that represents a phrase.
-Non-syntactic tokens are tokens that will not have syntactic function in tweets, and they are not considered in the syntax analysis and need to be treated independently.
-Optionally syntactic tokens are tokens that can have either syntactic or non-syntactic functions based on the context. Usually they are tokens like URLs ad hashtags that do not participate in the syntax of the tweets, and we treat them as non-syntactic functions by default. However, similar in the analysis of \newcite{Gimpel:2011:PTT:2002736.2002747} and \newcite{kong-EtAl:2014:EMNLP2014}, in some cases they are perceived as the arguments or predicates of tweets and therefore have syntactic functions. In this case we treat them as syntactic tokens.
+\paragraph{Non-syntactic Tokens.}
 
-Here is a complete list of the special tokens in tweets classified in three types.
+\begin{figure*}[t]
+	\centering
+	\small
+	\begin{dependency}[edge slant=2, text only label, label style=above]
+		\begin{deptext}
+			Perfect \& \textcolor{red}{\bf $\heart$} \& \textcolor{orange}{\bf RT} \& @coldplay \& : \& Fix \& You \& from \& the \& back \& \textcolor{gray}{\bf \#ColdplayMinneapolis} \& \textcolor{blue}{\bf http://bit.ly/2dj2WCl}\\
+			\tiny ADJ \&\tiny SYM \&\tiny X \&\tiny X \&\tiny PUNCT \&\tiny VERB \&\tiny NOUN \&\tiny ADP \&\tiny DET \&\tiny NOUN \&\tiny X \&\tiny X \\
+		\end{deptext}
+		\deproot{1}{root}
+		\depedge[edge unit distance=1em]{1}{2}{discourse}
+		\deproot{6}{root}
+		\depedge[edge unit distance=1em]{6}{3}{discourse}
+		\depedge[edge unit distance=1em]{3}{4}{discourse}
+		\depedge[edge unit distance=1em]{3}{5}{punct}
+		\depedge[edge unit distance=1em]{6}{7}{obj}
+		\depedge[edge unit distance=0.8em]{6}{10}{obl}
+		\depedge[edge unit distance=1em]{10}{8}{case}
+		\depedge[edge unit distance=1em]{10}{9}{det}
+		\depedge[edge unit distance=0.8em]{6}{11}{discourse}
+		\depedge[edge unit distance=0.8em]{6}{12}{list}
+	\end{dependency}
+	\caption{A example tweet contains major non-syntactic tokens, with
+		\textcolor{red}{sentiment emoticon},
+		\textcolor{orange}{retweet mark},
+		\textcolor{gray}{topical hashtag}, and
+		\textcolor{blue}{referential URL}.}\label{fig:non-syn-toks}
+\end{figure*}
 
-\begin{itemize}
-\item syntactic tokens
-	\begin{itemize}
-		\item phrasal abbreviations: {\tt wtf} (what the fuck), {\tt rn} (right now), etc.
-		\item orthographic variants: {\tt u} (you), {\tt sooooo}, {\tt dat} (that), etc.
-	\end{itemize}
-\item Non-syntactic tokens
-	\begin{itemize}
-		\item truncated tokens: last tokens that are truncated in tweets exceeding twitter character limits. Although It might be possible to recover the original tokens from the context in some cases, it is still extremely hard to further predict the rest of the truncated part.
-	\end{itemize}
-\item Optionally syntactic tokens
-	\begin{itemize}
-		\item retweet discourse marker: RT
-		\item URL: http://bit.ly/xyz
-		\item hashtag: \#ACL
-		\item at-mentioned username: @user
-		\item emoticons and emojis: :), :-), $\heart$, etc.
-	\end{itemize}
-\end{itemize}
+\begin{figure*}[t]
+	\centering
+	\small
+	\begin{dependency}[edge slant=2, text only label, label style=above]
+		\begin{deptext}
+			its \& \#awesome \& u \& gonna \& $\heart$ \& it \& Chk \& out \& our \& cooool \& project \& on \& http:// \& + \& RT \& pls\\
+			\tiny PRON \& \tiny ADJ \& \tiny PRON \& \tiny VERB \& \tiny VERB \& \tiny PRON \& \tiny VERB \& \tiny ADP \& \tiny PRON \& \tiny ADJ \& \tiny NOUN \& \tiny ADP \& \tiny X \& \tiny SYM \& \tiny VERB\& \tiny INTJ\\
+		\end{deptext}
+		\deproot{2}{root}
+		\depedge[edge unit distance=1em]{2}{1}{nsubj}
+		\deproot{4}{root}
+		\depedge[edge unit distance=1em]{4}{3}{nsubj}
+		\depedge[edge unit distance=1em]{4}{5}{xcomp}
+		\depedge[edge unit distance=1em]{5}{6}{obj}
+		\deproot{7}{root}
+		\depedge[edge unit distance=1em]{7}{8}{compound:prt}
+		\depedge[edge unit distance=0.7em]{7}{11}{obj}
+		\depedge[edge unit distance=1em]{11}{9}{nmod:poss}
+		\depedge[edge unit distance=1em]{11}{10}{amod}
+		\depedge[edge unit distance=1em]{11}{13}{nmod}
+		\depedge[edge unit distance=1em]{13}{12}{case}
+		\depedge[edge unit distance=0.45em]{7}{15}{conj}
+		\depedge[edge unit distance=1em]{15}{14}{cc}
+		\depedge[edge unit distance=0.5em]{7}{16}{discourse}
+	\end{dependency}
+	\caption{}\label{fig:informal-toks}
+\end{figure*}
 
-As optionally syntactic tokens will be treated as syntactic or non-syntactic tokens based on the specific context, for the sake of simplicity, if not necessary, we will only discuss the syntactic and non-syntactic tokens in the following sections.
+Besides the informal but syntactic tokens, there are a large collection of tokens that cannot be handled by the syntactic theory designed for standard text.
+A major part of these tokens consists of meta data in tweets, like the sentiment emotion, retweet mark, topical hashtag, and referential URL shown in Figure \ref{tbl:non-syn-toks}. 
+
+However, whether a token convey some syntactic function cannot be simply decided by its form.
+For example, besides being a discourse marker, {\tt RT} can also works as a abbreviation of the verb {\tt retweet}.
+Emoticons are sometimes used as a nominal part of the sentence like `I {\tt $\heart$} it.'
+Twitter users have developed a casual habit of using hashtag, even with words expressing exclamation (like {\tt \#lol}).
+Thus, whether a token make a non-syntactic one is highly conditioned on its context.
+
+A kind of token that doesn't carry clearly syntactic functions can be resulted by the 140 characters limits of tweets.
+Since last tokens that exceeding 140 characters limits are truncated in tweets which leaves a broken sentence, it is impossible to fully recover their original form and figure out their syntactics.
+In this paper, we propose to treat these truncated tokens, along with the other 4 kinds of tokens mentioned above, as ones without syntactic functions.
+
+In the sense of dealing with the non-syntactic tokens, \newcite{kong-EtAl:2014:EMNLP2014} proposed an preprocessing step named {\it token selection} to remove non-syntactic tokens from the original tweets.
+However, concrete standard of non-syntactic tokens was not presented in their work.
+What's more, these unselected tokens are absent from downstream processing, including parsing.
+We differ from their work by proposing concrete standard of non-syntactic tokens and we include these non-syntactic tokens in our final analyzed dependencies by adding special attachment to them.
+%There are special tokens that will appear only or much more frequently in tweets.
+%According to the syntactic functions these tokens have in the tweets, we classify them into three types: syntactic tokens, non-syntactic tokens and optionally syntactic tokens. 
+%Non-syntactic tokens are tokens that will not have syntactic function in tweets, and they are not considered in the syntax analysis and need to be treated independently.
+%Optionally syntactic tokens are tokens that can have either syntactic or non-syntactic functions based on the context. Usually they are tokens like URLs ad hashtags that do not participate in the syntax of the tweets, and we treat them as non-syntactic functions by default. However, similar in the analysis of \newcite{Gimpel:2011:PTT:2002736.2002747} and \newcite{kong-EtAl:2014:EMNLP2014}, in some cases they are perceived as the arguments or predicates of tweets and therefore have syntactic functions. In this case we treat them as syntactic tokens.
+
+%Here is a complete list of the special tokens in tweets classified in three types.
+%
+%\begin{itemize}
+%\item syntactic tokens
+%	\begin{itemize}
+%		\item phrasal abbreviations: {\tt wtf} (what the fuck), {\tt rn} (right now), etc.
+%		\item orthographic variants: {\tt u} (you), {\tt sooooo}, {\tt dat} (that), etc.
+%	\end{itemize}
+%\item Non-syntactic tokens
+%	\begin{itemize}
+%		\item truncated tokens: last tokens that are truncated in tweets exceeding twitter character limits. Although It might be possible to recover the original tokens from the context in some cases, it is still extremely hard to further predict the rest of the truncated part.
+%	\end{itemize}
+%\item Optionally syntactic tokens
+%	\begin{itemize}
+%		\item retweet discourse marker: RT
+%		\item URL: http://bit.ly/xyz
+%		\item hashtag: \#ACL
+%		\item at-mentioned username: @user
+%		\item emoticons and emojis: :), :-), $\heart$, etc.
+%	\end{itemize}
+%\end{itemize}
+
+%As optionally syntactic tokens will be treated as syntactic or non-syntactic tokens based on the specific context, for the sake of simplicity, if not necessary, we will only discuss the syntactic and non-syntactic tokens in the following sections.
 
 	
 \subsubsection{Structure Level}
@@ -138,31 +225,12 @@ Besides the token level phenomena of twitter, there are also structural patterns
 
 We treat retweet structure and at-mentioned structure as structural patterns and keep their annotations consistent across tweets. For parataxis case, we treat each single sentence or phrase normally, and connect them together following the UD conventions. 
 
-\begin{figure}[h]
-\small
-{\tt
-RT @yijialiu : \#ACL2017 heading to Canada for ACL u gim me money rn :) http://url I would love to do it with th $\ldots$ %…
-}
-\caption{Tweet Example 1}
-\label{ex1}
-\end{figure}
-
 From Fig.~\ref{ex1}, we argue that {\tt u} and {\tt rn} are syntactic tokens.
 {\tt th} is a truncated token and does not have any syntactic function, although we can infer that the {\tt th} could be probably {\tt the}.
 {\tt \#ACL2017}, {\tt :)} and {\tt http://url} are optionally syntactic tokens, and should be all treated as non-syntactic tokens in this example.
 {\tt RT @Yijia :} should be analyzed as the retweet structure, and {\tt heading to Canada for ACL} and {\tt can u gimme some money} should be considered as paratactic clauses without punctuations.
 
-However, consider another example
-\begin{figure}[h]
-\small
-{\tt
-@zypandora u gonna $\heart$ it . \#NAACL will be \#Awesome . Check out our new paper with @nlpnoah on http://url . RT it !!
-}
-\caption{Tweet Example 2}
-\label{ex2}
-\end{figure}
-
-All of the optionally syntactic tokens ({\tt RT}, {\tt http://url}, {\tt \#NAACL}, {\tt \#Awesome}, {\tt @zypandora}, {\tt @nlpnoah} and {\tt $\heart$}) have syntactic functions, and we need to take them into account in the syntactic analysis.
+However, consider another example in Figure \ref{fig:informal-toks}. All of the optionally syntactic tokens ({\tt RT}, {\tt http://url}, {\tt \#NAACL}, {\tt \#Awesome}, {\tt @zypandora}, {\tt @nlpnoah} and {\tt $\heart$}) have syntactic functions, and we need to take them into account in the syntactic analysis.
 
 
 
@@ -194,6 +262,8 @@ Third, special tags were designed to handle twitter or online special tokens suc
 
 
 \subsection{Dependency Annotation}
+
+
 We follow the UD V2 syntax guideline and the English specific Universal Dependency Relations to annotate our data.
 
 In token level phenomena, we adopt the following rules for non-syntactic tokens, denoted as x: 
@@ -266,7 +336,7 @@ parts		 	&	 		&			&	\\ \hline
 \end{table}
 
 % tokens and its proportions for the previous language phenomena.
-\subsubsection{Twitter Specific Statistics}\label{lingphen}
+\subsubsection{Twitter Specific Statistics}\label{stats}
 Following the discussion of the Twitter specific linguistic phenomena, we obtain Table~\ref{tab2}.
 
 
@@ -333,7 +403,7 @@ They believe that rapid, small scale annotation efforts performed by imperfectly
 Therefore, they build a new corpus of tweets (Tweebank), with conventions informed by the domain, using new syntactic annotations that can tackle all the forementioned problems annotated in a day by two dozen annotators, most of whom had only cursory training in the annotation scheme. Then, they modify the decoder of the TurboParser, a graph-based dependency parser, which is open-source and has been found to perform well on a range of parsing problems in different languages~\cite{turbo13} to adapt to the Tweebank dataset, and incorporate new features such as Brown Clusters and Penn Treebank features and changes to specification
 in the output space into TurboParser.
 
-Like “mfw” is usually followed by an adverbial clause and “ima” is usually followed by a clausal complement. 
+Like ``mfw'' is usually followed by an adverbial clause and ``ima'' is usually followed by a clausal complement. 
 It is not reasonable to treat them in the same part-of-speech. 
 In this paper, when annotating the POS tagging for abbreviations, we first try to recover their original forms, then use the POS of the core-word as the POS for the abbreviation.
 Second, four special POS tags (S, L, M, Y) were designed to handle contraction words in Gimpel et al. \shortcite{Gimpel:2011:PTT:2002736.2002747}. Major concern of designing such tags is to minimize the effort of tokenization. 
@@ -346,7 +416,7 @@ At last, it’s arguable that some of the hashtags, URLs can work as a nominal i
 
 
 
-\bibliography{tacl}
+\bibliography{shortdb}
 \bibliographystyle{acl2012}
 \end{document}
 
