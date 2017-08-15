@@ -117,7 +117,7 @@ However, in the sense of syntactic functions, they work in the same way as the o
 	\begin{dependency}[edge slant=2, text only label, label style=above]
 		\begin{deptext}
 			Perfect \& \textcolor{red}{\bf $\heart$} \& \textcolor{orange}{\bf RT} \& @coldplay \& : \& Fix \& You \& from \& the \& back \& \textcolor{gray}{\bf \#ColdplayMinneapolis} \& \textcolor{blue}{\bf http://bit.ly/2dj2WCl}\\
-			\tiny ADJ \&\tiny SYM \&\tiny X \&\tiny X \&\tiny PUNCT \&\tiny VERB \&\tiny NOUN \&\tiny ADP \&\tiny DET \&\tiny NOUN \&\tiny X \&\tiny X \\
+			\tiny ADJ \&\tiny SYM \&\tiny X \&\tiny PROPN \&\tiny PUNCT \&\tiny VERB \&\tiny NOUN \&\tiny ADP \&\tiny DET \&\tiny NOUN \&\tiny X \&\tiny X \\
 		\end{deptext}
 		\deproot{1}{root}
 		\depedge[edge unit distance=1em]{1}{2}{discourse}
@@ -245,9 +245,10 @@ In this paper, we treat the at-mentions as vocative expressions for their connec
 %However, consider another example in Figure \ref{fig:informal-toks}. All of the optionally syntactic tokens ({\tt RT}, {\tt http://url}, {\tt \#NAACL}, {\tt \#Awesome}, {\tt @zypandora}, {\tt @nlpnoah} and {\tt $\heart$}) have syntactic functions, and we need to take them into account in the syntactic analysis.
 
 
-
 \subsection{POS Tagging}
-We follow the UD V2 morphology guideline and use the Universal POS tags~\cite{PETROV12.274} to tag the tweet tokens. For twitter specific linguistic phenomena, we have set different strategies and try to align with the UD conventions and UD\textunderscore English as close as possible.\footnote{\url{https://github.com/UniversalDependencies/UD\_English}}
+We adopt the universal Part-of-Speech (POS) tagset \cite{PETROV12.274} to annotate the tweets.
+The POS annotation of a word in tweets is generally based on its syntactic distribution, which indicates typical nouns can be tagged as verbs in some certain context.
+%We follow the UD V2 morphology guideline and use the Universal POS tags~ to tag the tweet tokens. For twitter specific linguistic phenomena, we have set different strategies and try to align with the UD conventions and UD\textunderscore English as close as possible.\footnote{\url{https://github.com/UniversalDependencies/UD\_English}}
 
 In token level phenomena, for non-syntactic tokens, we tag most of them as X (other), except for the emojis and emoticons, which would be tagged as SYM, as same in the UD\_English. 
 For syntactic tokens, we tag them considering their corresponding syntactic function.
