@@ -96,7 +96,7 @@ Contribution of this paper includes:
 \subsection{Linguistic Phenomena of Twitter} \label{lingphen}
 Twitter, as an extreme example of informal domain, contains a collection of conversational languages (like abbreviation, informal contraction, and variant entity names) and twitter-specified markers (like retweet mark, and username).
 Despite the informal nature of tweets, we argue that they basically follow the same grammar as their formal language counterpart.
-The key issue lies in understanding the specific construction that doesn't carry any syntactic functions.
+The key issue lies in understanding the specific construction that doesn't carry any syntactic functions, and designed rules to handle the specific constructions in tweets.
 In the following section, we studied such constructions from both the token and structure level. \yjcomment{I don't like the name of \textbf{structure level}}
 %As the representative of the web language, different from the standard languages such as newswire, twitter has its own linguistic phenomena, that could be categorized into token level and structure level phenomena, and we will discuss them separately.
 
@@ -149,11 +149,11 @@ However, in the sense of syntactic functions, they work in the same way as the o
 		\end{deptext}
 		\deproot{2}{root}
 		\depedge[edge unit distance=1em]{2}{1}{nsubj}
-		\deproot{4}{root}
+		\depedge[edge unit distance=1em]{2}{4}{parataxis}
 		\depedge[edge unit distance=1em]{4}{3}{nsubj}
 		\depedge[edge unit distance=1em]{4}{5}{xcomp}
 		\depedge[edge unit distance=1em]{5}{6}{obj}
-		\deproot{7}{root}
+		\depedge[edge unit distance=0.7em]{2}{7}{parataxis}
 		\depedge[edge unit distance=1em]{7}{8}{compound:prt}
 		\depedge[edge unit distance=0.7em]{7}{11}{obj}
 		\depedge[edge unit distance=1em]{11}{9}{nmod:poss}
@@ -162,19 +162,20 @@ However, in the sense of syntactic functions, they work in the same way as the o
 		\depedge[edge unit distance=1em]{13}{12}{case}
 		\depedge[edge unit distance=0.45em]{7}{15}{conj}
 		\depedge[edge unit distance=1em]{15}{14}{cc}
-		\depedge[edge unit distance=0.5em]{7}{16}{discourse}
+		\depedge[edge unit distance=0.35em]{2}{16}{discourse}
 	\end{dependency}
-	\caption{}\label{fig:informal-toks}
+	\caption{An example tweet with informal but syntactic tokens.}\label{fig:informal-toks}
 \end{figure*}
 
 Besides the informal but syntactic tokens, there are a large collection of tokens that cannot be handled by the syntactic theory designed for standard text.
-A major part of these tokens consists of meta data in tweets, like the sentiment emotion, retweet mark, topical hashtag, and referential URL shown in Figure \ref{tbl:non-syn-toks}. 
+A major part of these tokens consists of meta data in tweets, like the sentiment emotion, retweet mark, topical hashtag, and referential URL shown in Figure \ref{fig:non-syn-toks}. 
 
 However, whether a token convey some syntactic function cannot be simply decided by its form.
 For example, besides being a discourse marker, {\tt RT} can also works as a abbreviation of the verb {\tt retweet}.
-Emoticons are sometimes used as a nominal part of the sentence like `I {\tt $\heart$} it.'
-Twitter users have developed a casual habit of using hashtag, even with words expressing exclamation (like {\tt \#lol}).
-Thus, whether a token make a non-syntactic one is highly conditioned on its context.
+Emoticons are sometimes used as a verbal part of the sentence.
+Twitter users have developed a casual habit of using hashtag, and even use hashtag as a adjective.
+The sentence in Figure \ref{fig:informal-toks} gives a comprehensive example of those informal but syntactic tokens.
+It shows whether a token makes a non-syntactic one is highly conditioned on its context.
 
 A kind of token that doesn't carry clearly syntactic functions can be resulted by the 140 characters limits of tweets.
 Since last tokens that exceeding 140 characters limits are truncated in tweets which leaves a broken sentence, it is impossible to fully recover their original form and figure out their syntactics.
@@ -215,22 +216,33 @@ We differ from their work by proposing concrete standard of non-syntactic tokens
 
 	
 \subsubsection{Structure Level}
-Besides the token level phenomena of twitter, there are also structural patterns appearing in the twitter.
+The syntactic constructions vary greatly across different tweets.
+Unconventional constructions which frequently occur include ellipsis, irregular word orders, and para-tactic sentences without the segmentation of punctuations \yjcomment{I move the 3rd bullet point here because this construction was handled by UD-guidelines}.
+And these unconventional ones are more or less resolved by the universal dependencies.
+The unresolved cases are mainly resulted by the format of twitter.
+The {\it retweet} and {\it at-mention} are of two major constructions.
+\paragraph{Retweet.} For the {\it retweet} construction (`{\tt RT @coldplay :}' in Figure \ref{fig:non-syn-toks}), although it can be treated as a verbal phrase in which retweet marker works as a verb and the following at-mention is its objective, we argue that such convention lead to a uninformative root word.
+It also increase the difficulty for downstream tasks in figuring out the core predicate and arguments for one certain tweet.
+Thus, we treat the whole construction as a non-syntactic phrase. \yjcomment{correct me if I am wrong.}
+\paragraph{At-mention.} At-mention in the beginning of a tweet is the format of indicating the `reply' action.
+In this paper, we treat the at-mentions as vocative expressions for their connections with the traditional vocative words, rather than treat them as non-syntactic metadata, which increase the complexity for analyzing a tweet.
+\yjcomment{since the original discussion mainly focus on tokens, I move them to the former section.}
+%Besides the token level phenomena of twitter, there are also structural patterns appearing in the twitter.
 
-\begin{itemize}
-\item Retweet structure: {\tt RT @user : \{tweet content\}} is a typical structural pattern when a user is retweeting from other users. 
-\item At-mentioned structure: Except the retweet structure and syntactically at-mentioned username, we think that all of other at-mentions are vocative case, usually appearing at the beginning or the end of the sentences in tweets.
-\item Paratactic parts without punctuations: We use ``part'' to refer to a self-contained clause or phrase, which is independent of other ``part''. Very often, one tweet is comprised of multiple parts without any delimiting punctuations, such as {\tt \{part 1\} \{part 2\} ...}
-\end{itemize}
+%\begin{itemize}
+%\item Retweet structure: {\tt RT @user : \{tweet content\}} is a typical structural pattern when a user is retweeting from other users. 
+%\item At-mentioned structure: Except the retweet structure and syntactically at-mentioned username, we think that all of other at-mentions are vocative case, usually appearing at the beginning or the end of the sentences in tweets.
+%\item Paratactic parts without punctuations: We use ``part'' to refer to a self-contained clause or phrase, which is independent of other ``part''. Very often, one tweet is comprised of multiple parts without any delimiting punctuations, such as {\tt \{part 1\} \{part 2\} ...}
+%\end{itemize}
 
-We treat retweet structure and at-mentioned structure as structural patterns and keep their annotations consistent across tweets. For parataxis case, we treat each single sentence or phrase normally, and connect them together following the UD conventions. 
+%We treat retweet structure and at-mentioned structure as structural patterns and keep their annotations consistent across tweets. For parataxis case, we treat each single sentence or phrase normally, and connect them together following the UD conventions. 
 
-From Fig.~\ref{ex1}, we argue that {\tt u} and {\tt rn} are syntactic tokens.
-{\tt th} is a truncated token and does not have any syntactic function, although we can infer that the {\tt th} could be probably {\tt the}.
-{\tt \#ACL2017}, {\tt :)} and {\tt http://url} are optionally syntactic tokens, and should be all treated as non-syntactic tokens in this example.
-{\tt RT @Yijia :} should be analyzed as the retweet structure, and {\tt heading to Canada for ACL} and {\tt can u gimme some money} should be considered as paratactic clauses without punctuations.
-
-However, consider another example in Figure \ref{fig:informal-toks}. All of the optionally syntactic tokens ({\tt RT}, {\tt http://url}, {\tt \#NAACL}, {\tt \#Awesome}, {\tt @zypandora}, {\tt @nlpnoah} and {\tt $\heart$}) have syntactic functions, and we need to take them into account in the syntactic analysis.
+%From Fig.~\ref{ex1}, we argue that {\tt u} and {\tt rn} are syntactic tokens.
+%{\tt th} is a truncated token and does not have any syntactic function, although we can infer that the {\tt th} could be probably {\tt the}.
+%{\tt \#ACL2017}, {\tt :)} and {\tt http://url} are optionally syntactic tokens, and should be all treated as non-syntactic tokens in this example.
+%{\tt RT @Yijia :} should be analyzed as the retweet structure, and {\tt heading to Canada for ACL} and {\tt can u gimme some money} should be considered as paratactic clauses without punctuations.
+%
+%However, consider another example in Figure \ref{fig:informal-toks}. All of the optionally syntactic tokens ({\tt RT}, {\tt http://url}, {\tt \#NAACL}, {\tt \#Awesome}, {\tt @zypandora}, {\tt @nlpnoah} and {\tt $\heart$}) have syntactic functions, and we need to take them into account in the syntactic analysis.
 
 
 
