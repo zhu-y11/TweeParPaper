@@ -117,7 +117,7 @@ However, in the sense of syntactic functions, they work in the same way as the o
 	\begin{dependency}[edge slant=2, text only label, label style=above]
 		\begin{deptext}
 			Perfect \& \textcolor{red}{\bf $\heart$} \& \textcolor{orange}{\bf RT} \& @coldplay \& : \& Fix \& You \& from \& the \& back \& \textcolor{gray}{\bf \#ColdplayMinneapolis} \& \textcolor{blue}{\bf http://bit.ly/2dj2WCl}\\
-			\tiny ADJ \&\tiny SYM \&\tiny X \&\tiny PROPN \&\tiny PUNCT \&\tiny VERB \&\tiny NOUN \&\tiny ADP \&\tiny DET \&\tiny NOUN \&\tiny X \&\tiny X \\
+			\tiny ADJ \&\tiny SYM \&\tiny X \&\tiny X \&\tiny PUNCT \&\tiny VERB \&\tiny NOUN \&\tiny ADP \&\tiny DET \&\tiny NOUN \&\tiny X \&\tiny X \\
 		\end{deptext}
 		\deproot{1}{root}
 		\depedge[edge unit distance=1em]{1}{2}{discourse}
@@ -134,7 +134,7 @@ However, in the sense of syntactic functions, they work in the same way as the o
 	\end{dependency}
 	\caption{A example tweet contains major non-syntactic tokens, with
 		\textcolor{red}{sentiment emoticon},
-		\textcolor{orange}{retweet mark},
+		\textcolor{orange}{retweet marker},
 		\textcolor{gray}{topical hashtag}, and
 		\textcolor{blue}{referential URL}.}\label{fig:non-syn-toks}
 \end{figure*}
@@ -245,33 +245,64 @@ In this paper, we treat the at-mentions as vocative expressions for their connec
 %However, consider another example in Figure \ref{fig:informal-toks}. All of the optionally syntactic tokens ({\tt RT}, {\tt http://url}, {\tt \#NAACL}, {\tt \#Awesome}, {\tt @zypandora}, {\tt @nlpnoah} and {\tt $\heart$}) have syntactic functions, and we need to take them into account in the syntactic analysis.
 
 
-\subsection{POS Tagging}
+\subsection{Part-of-Speech Annotation}
 We adopt the universal Part-of-Speech (POS) tagset \cite{PETROV12.274} to annotate the tweets.
-The POS annotation of a word in tweets is generally based on its syntactic distribution, which indicates typical nouns can be tagged as verbs in some certain context.
+The POS annotation of a word in tweets is generally based on its syntactic distribution, which indicates that the POS of word changes on different context.
+Sticking to the syntactic distribution makes it possible that a `$\heart$' symbol is tagged as a verb as shown in Figure \ref{fig:non-syn-toks}. \yjcomment{Need a better explanation.}
 %We follow the UD V2 morphology guideline and use the Universal POS tags~ to tag the tweet tokens. For twitter specific linguistic phenomena, we have set different strategies and try to align with the UD conventions and UD\textunderscore English as close as possible.\footnote{\url{https://github.com/UniversalDependencies/UD\_English}}
 
-In token level phenomena, for non-syntactic tokens, we tag most of them as X (other), except for the emojis and emoticons, which would be tagged as SYM, as same in the UD\_English. 
-For syntactic tokens, we tag them considering their corresponding syntactic function.
+We need to note that in some certain cases, the distribution criteria doesn't holds.
+For example, the nominal URL in Figure \ref{fig:informal-toks} is tagged as {\it other} ({\tt X}) and the conjunctor {\tt +} symbol is tagged as {\it symbol} ({\tt SYM}) rather than {\it conjunction} ({\tt CCONJ}).
+Such violation is resulted by our attempt of conforming the annotation to the {\it universal dependencies - English dependency treebank} (UD\_English), in which all the URLs are tagged as {\it other} and symbolic conjunctors are tagged as {\it symbol}.\footnote{\url{https://github.com/UniversalDependencies/UD\_English}}
+By conforming our annotation to the UD\_English data, hopefully, the tools we built on tweets can benefit from the dataset on broader domain. \yjcomment{need wording}
 
-In structure level phenomena, we think {\tt RT @user} in retweet structure have no contribution to the tweet syntax and tag both of them as X.
-We tag usernames in at-mentioned structure as PROPN as they present the vocative case.
+Again, there are un-conventional linguistic constructions in tweets that syntactic distribution doesn't handle well.
+One of the cases is the non-syntactic tokens.
+We consider most of them as {\tt X}, except for the sentiment emoticons, which would be tagged as {\tt SYM}, in practice of matching the UD\_English.
+Another case is the retweet construction which is considered as a non-syntactic phrase and both the RT and at-mention are tagged as {\tt X}.
+For the at-mention, we tag them as proper noun ({\tt PROPN}) in spirit of following the vocative example in UD\_English.
+%In token level phenomena, for non-syntactic tokens,  
+%For syntactic tokens, we tag them considering their corresponding syntactic function.
 
-In Fig.~\ref{ex1}, {\tt RT} {\tt @yijialiu}, {\tt \#ACL2017}, {\tt http://url} and {\tt th} are all tagged as X and {\tt :)} is tagged as SYM. 
-{\tt rn} is tagged as ADV.
-We should note that multiple tokens are actually included in a phrasal abbreviation, and we use one of their tags as the tag of the whole abbreviation according to their dependency relation or semantic priority.
-If there is a hierarchy in the abbreviation, we use the tag of the head word. In UD, ``Right'' is the dependent of ``now '' in the dependency of {\tt rn}, so we tag {\tt rn} as ADV. 
+%In structure level phenomena, we think {\tt RT @user} in retweet structure have no contribution to the tweet syntax and tag both of them as X.
+%We tag usernames in at-mentioned structure as PROPN as they present the vocative case.
+
+The informal syntactic tokens can generally be handled by their distribution.
+However, one of the exception is the {\tt phrasal abbreviations} in which one token carries multiple syntactic functions.
+In dealing with such phrases, we propose a routine that first recover their original forms, then, use the POS of their syntactic head word as the POS of the whole phrase.
+Therefore, {\it idk} (I don't care) is a verb because {\it care} is its syntactic head.
+Such routine works for most of the phrasal abbreviations.
+When it falls, we just use the POS of the left-most sub-phrase. \footnote{Such failure can be resulted by the mis-match of phrase boundaries between the original form and the definition of `phrase' in UD. For example, `mfw' (my face when) doesn't make a phrase because `when' belongs to the subordination that modifies `my face'.}
+
+%In Fig.~\ref{ex1}, {\tt RT} {\tt @yijialiu}, {\tt \#ACL2017}, {\tt http://url} and {\tt th} are all tagged as X and {\tt :)} is tagged as SYM. 
+%{\tt rn} is tagged as ADV.
+%We should note that multiple tokens are actually included in a phrasal abbreviation, and we use one of their tags as the tag of the whole abbreviation according to their dependency relation or semantic priority.
+%If there is a hierarchy in the abbreviation, we use the tag of the head word. In UD, ``Right'' is the dependent of ``now '' in the dependency of {\tt rn}, so we tag {\tt rn} as ADV. 
 %Although there is no head word in {\tt im}, we think that the subject is usually more informative than the tense in many downstream tasks such as semantic role labelling, so we use the tag of ``I'', e.g. PROPN as the tag of {\tt im}.  
-In Fig.~\ref{ex2}, {\tt RT} and {\tt $\heart$} would be tagged as VERB, {\tt http://url} as X, {\tt \#Awesome} as ADJ, {\tt \#NAACL}, {\tt @zypandora} and {\tt @nlpnoah} as PROPN. One exception is that we tag URLs always as X regardless whether they are syntactic tokens. The reason is that we observed, in UD\_English, that the URLs are all tagged as X and we want to conform with the UD dataset, although we think it is not appropriate and should be changed to tags such as PROPN when they are treated as syntactic tokens.
+%In Fig.~\ref{ex2}, {\tt RT} and {\tt $\heart$} would be tagged as VERB, {\tt http://url} as X, {\tt \#Awesome} as ADJ, {\tt \#NAACL}, {\tt @zypandora} and {\tt @nlpnoah} as PROPN. One exception is that we tag URLs always as X regardless whether they are syntactic tokens. The reason is that we observed, in UD\_English, that the URLs are all tagged as X and we want to conform with the UD dataset, although we think it is not appropriate and should be changed to tags such as PROPN when they are treated as syntactic tokens.
 
-\newcite{Gimpel:2011:PTT:2002736.2002747} proposed a twitter POS tagset that handles most of the token level phenomena. However, we found that their methods did not conform with UD conventions and our strategies have some advantages over their tagset. We discuss the main difference as follows.
-The first difference lies in the tokenizations.
-\newcite{Gimpel:2011:PTT:2002736.2002747} opted not to split contractions or possessives and introduced four new tags (S, Z, L, M) for combined forms: \{nominal, proper noun\} $\times$ \{verb, possessive\}. 
-Major concern of designing such tags is to minimize the effort of tokenization, but it is not comprehensive and far from including all of the possible combinations of POS tags within the contractions. 
-What's more, only a small proportion of tokens can be categorized into these tags (2.7 \% in total), which casts a doubt of the usefulness of these tags.
-Instead UD conventions suggest that we put such complexity into the tokenization module and split contractions and possessives, then tag them accordingly, so that we do not need extra POS tags for the combined forms.
-The second difference is that although the phrasal abbreviations are not split in both methods, they use tag G for all the phrasal abbreviations, while we use the tag of the head word or the highest hierarchical word in terms of dependencies as the tag of the whole phrasal abbreviations. 
-We think it is not reasonable to treat the phrasal abbreviations in the same part of speech because obviously abbreviations can have different syntactic functions and we want to preserve the most useful information for both parser and the downstream tasks. For example, {\tt wtf} could be tagged as PRON or INTJ according to the context, and {\tt rn} is usually tagged as ADV. Tagging them merely as G will definitely lose much information.
-Third, special tags were designed to handle twitter or online special tokens such as URLs, hashtags and emoticon in \newcite{Gimpel:2011:PTT:2002736.2002747}. However, in most cases, as long as theses tokens are non syntactic, they play the same role in tweets, hence should be tagged the same. In this paper, except for the emoticon and emoji, tagged as SYM, we tag all the other non-syntactic tokens as X.
+Similar to our work, \newcite{gimpel-EtAl:2011:ACL-HLT2011} proposed a course grain twitter POS tagset that handles most of the token level phenomena.
+However, our work diverge theirs in several ways.
+Compared with the Gimpel's work, which assigns different tags to non-syntactic tokens in different categories, we simplify them into the {\tt X} tag.
+At the same time, all the abbreviations in \newcite{gimpel-EtAl:2011:ACL-HLT2011} are tagged with one POS, which doesn't distinguish their syntactic functions.
+We argue that such approach over-simplify the abbreviations.
+One example is that {\it idc} (I don't care) and {\it rn} (right now) carries significantly different syntactic functions and should not be treated as the same.
+In this paper, we stick more to the syntactic distribution when handling such abbreviations and it allows them to function differently in different context.
+
+The last difference between \newcite{gimpel-EtAl:2011:ACL-HLT2011} is resulted by the tokenization process.
+In \newcite{gimpel-EtAl:2011:ACL-HLT2011}, they opted out the tokenization on contractions and possessives and introduce several tags for these un-tokenized words.
+As mentioned above, the goal of conforming our annotation to the UD\_English makes us adopt the same the UD-styled tokenization.
+Thus, these tags for contractions and possessives are not necessary at all in our case.
+What's more, as \newcite{gimpel-EtAl:2011:ACL-HLT2011} mentioned, only a small proportion of tokens can be categorized into these tags (2.7 \% in total), which casts a doubt of the usefulness of these tags.
+%However, we found that their methods did not conform with UD conventions and our strategies have some advantages over their tagset. We discuss the main difference as follows.
+%The first difference lies in the tokenizations.
+%\newcite{Gimpel:2011:PTT:2002736.2002747} opted not to split contractions or possessives and introduced four new tags (S, Z, L, M) for combined forms: \{nominal, proper noun\} $\times$ \{verb, possessive\}. 
+%Major concern of designing such tags is to minimize the effort of tokenization, but it is not comprehensive and far from including all of the possible combinations of POS tags within the contractions. 
+%What's more, only a small proportion of tokens can be categorized into these tags (2.7 \% in total), which casts a doubt of the usefulness of these tags.
+%Instead UD conventions suggest that we put such complexity into the tokenization module and split contractions and possessives, then tag them accordingly, so that we do not need extra POS tags for the combined forms.
+%The second difference is that although the phrasal abbreviations are not split in both methods, they use tag G for all the phrasal abbreviations, while we use the tag of the head word or the highest hierarchical word in terms of dependencies as the tag of the whole phrasal abbreviations. 
+%We think it is not reasonable to treat the phrasal abbreviations in the same part of speech because obviously abbreviations can have different syntactic functions and we want to preserve the most useful information for both parser and the downstream tasks. For example, {\tt wtf} could be tagged as PRON or INTJ according to the context, and {\tt rn} is usually tagged as ADV. Tagging them merely as G will definitely lose much information.
+%Third, special tags were designed to handle twitter or online special tokens such as URLs, hashtags and emoticon in \newcite{Gimpel:2011:PTT:2002736.2002747}. However, in most cases, as long as theses tokens are non syntactic, they play the same role in tweets, hence should be tagged the same. In this paper, except for the emoticon and emoji, tagged as SYM, we tag all the other non-syntactic tokens as X.
 
 
 \subsection{Dependency Annotation}
