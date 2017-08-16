@@ -353,7 +353,7 @@ The first is the original Tweebank created by~\cite{kong-EtAl:2014:EMNLP2014}, d
 The second are 210 tweets from POS-tagged Twitter corpus of~\newcite{Owo13}, denoted as Tweebank V1 Dev. It was initially created as a development set of Tweebank V1 for hyperparameter tuning.
 Tweebank V1 Dev comprises were equally sampled from two data set, OCT27 (tweets sampled from a particular day, October 27, 2010) and DAILY 547 (one random English tweet per day from January 2011 through June 2012, 547 tweets in total). We should note that all of the Tweebank V1 tweets were also drawn from OCT27 and DAILY547, and the new tweets we extracted are not in the Tweebank V1.
 The third are 2500 tweets from the Twitter streams from February 2017 to July 2017 from ArchiveTeam,\footnote{https://archive.org} which we call Feb\_Jul\_16 corpus. The Twitter streams are in Spritzer version, which provides a 1\% random sample of public tweets everyday, and the tweets are in twitter JSON format. 
-There are xxx tweets in all the streams. We filtered them with \textit{lang} attribute in \textit{user} and used \textit{langid.py}\footnote{https://github.com/saffsd/langid.py} to pick out English tweets, which ends in xxx tweets in English. Then we sampled 2500 tweets roughly equally from these months.
+There over 2k million tweets in all the streams. We filtered them with \textit{lang} attribute in \textit{user} and used \textit{langid.py}\footnote{https://github.com/saffsd/langid.py} to pick out English tweets, and then we sampled 2500 tweets roughly equally from these months.
 
 
 \subsubsection{Basic Statistics}
@@ -391,44 +391,44 @@ Following the discussion of the Twitter specific linguistic phenomena, we obtain
  \hline
 \multicolumn{4}{l}{}	&	Train		&	Test	&	Dev	&	All	&	Per\\[0.5ex] \hline\hline
 \multirow{10}{*}{\textit{token}}	&	syntactic						&	\multicolumn{2}{l |}{phrasal abbreviation}				
-			 	&	  		&		&		&		&		\\
+			 	&	 12 		&	12	&	10	&	34	&	0.06\%	\\
 \cline{2-9}
 						&	\multirow{8}{*}{optionally syntactic}	&	\multirow{2}{*}{RT}					&	syntactic	
-			 	&	  		&		&		&		&		\\
+			 	&	 40 		&	19	&	18	&	77	&	0.14\%	\\
 						&								&									&	non-syntactic
-				&	  		&		&		&		&		\\
+				&	600  		&	500	&	286	&	1386	&	2.49\%	\\
 \cline{3-9}
 						&								&	\multirow{2}{*}{hashtag}				&	syntactic
-				&	  		&		&		&		&		\\
+				&	251  		&	212	&	103	&	566	&	1.02 \%	\\
 						&								&									&	non-syntactic
-				&	  		&		&		&		&		\\
+				&	 290 		&	246	&	155	&	691	&	1.24\%	\\
 \cline{3-9}
 						&								&	\multirow{2}{*}{at-mentioned}			&	syntactic
-				&	  		&		&		&		&		\\
+				&	  659		&	420	&	257	&	1336	&	2.40\%	\\
 						&								&									&	non-syntactic
-				&	  		&		&		&		&		\\
+				&	  640		&	519	&	311	&	1470	&	2.64\%	\\
 \cline{3-9}
 						&								&	\multirow{2}{*}{emoticon/emoji}			&	syntactic
-				&	  		&		&		&		&		\\
+				&	  59		&	31	&	24	&	114	&	2.05\%	\\
 						&								&									&	non-syntactic
-				&	  		&		&		&		&		\\
+				&	 233		&	164	&	98	&	495	&	0.89\%	\\
 \cline{2-9}
 						&	non-syntactic 					&	\multicolumn{2}{l |}{truncated}
-				&	  		&		&		&		&		\\
+				&	  111		&	110	&	50	&	271	&	0.49\%	\\
 
 \hline
 \multirow{3}{*}{\textit{structure}}	& 	\multicolumn{3}{l |}{retweet}
-			 	&	  		&		&		&		&		\\
+			 	&	  596		&	498	&	282	&	1376	&	2.47\%	\\
 						&	\multicolumn{3}{l |}{at-mentioned}
-				&	  		&		&		&		&		\\
-						&	\multicolumn{3}{l |}{parataxis without punctuations}
-				&	  		&		&		&		&		\\
+				&	  485		&	305	&	175	&	965	&	1.74\%	\\
 \hline
 \end{tabular}
  \caption{Twitter Specific Statistics of Tweebank V2}
  \label{tab2}
 \end{table*}
 %annotation statistics, agreement
+
+The inter-annotator agreement of POS tagging is 95.02\%, the unlabelled dependency agreement is 88\% and the labelled dependency agreement is 84\%.
 
 
 \section{Pipeline}
