@@ -245,7 +245,7 @@ In this paper, we treat the at-mentions as vocative expressions for their connec
 %However, consider another example in Figure \ref{fig:informal-toks}. All of the optionally syntactic tokens ({\tt RT}, {\tt http://url}, {\tt \#NAACL}, {\tt \#Awesome}, {\tt @zypandora}, {\tt @nlpnoah} and {\tt $\heart$}) have syntactic functions, and we need to take them into account in the syntactic analysis.
 
 
-\subsection{Part-of-Speech Annotation}
+\subsection{Part-of-Speech Annotation}\label{sec:pos-anno}
 We adopt the universal Part-of-Speech (POS) tagset \cite{PETROV12.274} to annotate the tweets.
 The POS annotation of a word in tweets is generally based on its syntactic distribution, which indicates that the POS of word changes on different context.
 Sticking to the syntactic distribution makes it possible that a `$\heart$' symbol is tagged as a verb as shown in Figure \ref{fig:non-syn-toks}. \yjcomment{Need a better explanation.}
@@ -270,7 +270,7 @@ For the at-mention, we tag them as proper noun ({\tt PROPN}) in spirit of follow
 The informal syntactic tokens can generally be handled by their distribution.
 However, one of the exception is the {\tt phrasal abbreviations} in which one token carries multiple syntactic functions.
 In dealing with such phrases, we propose a routine that first recover their original forms, then, use the POS of their syntactic head word as the POS of the whole phrase.
-Therefore, {\it idk} (I don't care) is a verb because {\it care} is its syntactic head.
+Therefore, {\it idc} (I don't care) is a verb because {\it care} is its syntactic head.
 Such routine works for most of the phrasal abbreviations.
 When it falls, we just use the POS of the left-most sub-phrase. \footnote{Such failure can be resulted by the mis-match of phrase boundaries between the original form and the definition of `phrase' in UD. For example, `mfw' (my face when) doesn't make a phrase because `when' belongs to the subordination that modifies `my face'.}
 
@@ -307,45 +307,51 @@ What's more, as \newcite{gimpel-EtAl:2011:ACL-HLT2011} mentioned, only a small p
 
 \subsection{Dependency Annotation}
 
+We adopt universal dependency (UD) \cite{Marneffe2014UniversalSD} v2 guideline to annotate the syntax relations between tokens in tweets.
+UD was designed to handle the variant syntactic phenomenons across different languages and we expect its `context head' principle will bring convenience to the parsing of informal and even ungrammatical tweets. 
+\yjcomment{I still feel we should give a reason why we choose UD. One example is that twitter users tend to leave out the copula verb and it will be messy for the `function head' principle to deal with this case. One observation is that informal tokens/syntax happens more on function words rather than content word.}
+%We follow the UD v2 syntax guideline and the English specific {\it universal dependency relations} to annotate our data.
 
-We follow the UD V2 syntax guideline and the English specific Universal Dependency Relations to annotate our data.
-
-In token level phenomena, we adopt the following rules for non-syntactic tokens, denoted as x: 
-
+%In token level phenomena, we adopt the following rules for non-syntactic tokens, denoted as x: 
+Again, as shown in Section \ref{sec:pos-anno}, the major challenge in adopting UD on tweets lies on dealing with the non-syntactic parts.
+Inspired by the way UD deal with punctuation, we adopt the following rules to obtain relation for the non-syntactic tokens:
 \begin{itemize}
-\item If the sentence x belongs to has a clear predicate with syntactic function, x should not have any dependent and is attached to this sentence’s predicate;
-\item If the sentence x belongs to consists of only non-syntactic tokens we attach x to the first token of the sentence;
-\item In parataxis case, when it is difficult to decide which sentence or phrase x should belong to, we always attach x to the previous predicate of the paratactic clause or phrase;
-\item x is mostly labelled as {\it discourse}, but URLs are always labelled as {\it list};
+\item If a non-syntactic token is within a sentence that has a clear predicate, it will be attached to this predicate;
+\item If the whole sentence is made of a sequence of non-syntactic tokens, we attach all these tokens to the first one;
+%\item In parataxis case, when it is difficult to decide which sentence or phrase x should belong to, we always attach x to the previous predicate of the paratactic clause or phrase;
+\item non-syntactic tokens are mostly labeled as {\it discourse}, but URLs are always labeled as {\it list} in conformation with the UD\_English;
 \end{itemize}
 
-The reason we annotate URLs differently is the same as in POS tagging, that UD\_English labelled them as {\it list} when they are non-syntactic tokens and we want to keep the dataset conformed with it.
+Considering the twitter specific constructions, we will treat the retweet construction as a whole non-syntactic phrase, and the inner structure will always be attaching {\tt at-mention} to {\tt RT} with {\tt discourse}, {\tt :} to {\tt RT} with {\tt punct}.
+The whole construction headed on the {\tt RT} marker modifies the predicate of following sentence.
+For the at-mentioned structure, we attach at-mentioned username to the predicate of the most relevant sentence with {\it vocative} label.
+%If it is hard to decide which sentence would be the most relevant, we attach it to the previous sentence's predicate.
+	%\item Paratactic parts without punctuations: we follow the UD convention, set the first part as the main part of the sentence, and set its predicate as the main predicate of the sentence. Every predicate of the following parts should attach to the main predicate. If the main part and some following part are both phrases, the label is {\it list}, otherwise the label is {\it parataxis}. Note that we still have an exception for URLs, conforming with UD, which are always labelled as {\it list}, regardless of the type of the other part.
+%\end{itemize}
 
-For syntactic tokens, they are considered the same as normal tokens and we just annotate them by following the UD guidelines.
+Besides these non-syntactic and special constructions, the informal but syntactic tokens are treated in the same way with their original form.
 
-we further adopt the following rules for structure level phenomena:
+%We further adopt the following rules for structure level phenomena:
 
-\begin{itemize}
-\item Retweet structure: we attach {\tt @user} to {\tt RT} and {\tt RT} to the predicate of the following sentence with {\it discourse} as labels.
-\item At-mentioned structure: we attach at-mentioned username to the predicate of the most relevant sentence with {\it vocative} label. If it is hard to decide which sentence would be the most relevant, we attach it to the previous sentence's predicate.
-\item Paratactic parts without punctuations: we follow the UD convention, set the first part as the main part of the sentence, and set its predicate as the main predicate of the sentence. Every predicate of the following parts should attach to the main predicate. If the main part and some following part are both phrases, the label is {\it list}, otherwise the label is {\it parataxis}. Note that we still have an exception for URLs, conforming with UD, which are always labelled as {\it list}, regardless of the type of the other part.
-\end{itemize}
 
 % unlabelled, Informal
 % exclude non-syntactic tokens, punctuations
 % Annotation conventions
-\newcite{kong-EtAl:2014:EMNLP2014} built a syntactic treebank of tweets called Tweebank using Gimpel et al.'s POS tagset. 
-Apart from the difference in POS tagging, we found the following difference in both methods.
-First, Tweebank is an unlabelled dependency treebank. There is clearly a doubt about the usefulness of the Tweebank. We annotate the labelled dependencies by following the UD annotation guideline.
-Second, most of Tweebank was built in a day by two dozen annotators, most of whom had only cursory training in the annotation scheme~\cite{kong-EtAl:2014:EMNLP2014}. We think, after investigation, that despite the speed, the quality of data is still to be improved. We follow strictly the UD annotation guideline and only make twitter specific conventions when there is no suitable convention to adopt in UD guideline or no relevant data found in UD\_English.
-Third, \newcite{kong-EtAl:2014:EMNLP2014} developed a first-order sequence model to filter out the non-syntactic tokens and punctuations, and exclude them before parsing.
-It is very different from most of the annotation conventions, especially for UD conventions. We believe that every token should be included in the dependency tree, whether they have syntactic functions or are to be evaluated in the end, as in most of the conventions, so we annotate all tokens.
-Last, \newcite{kong-EtAl:2014:EMNLP2014} adopt the ``Yamada-Matsumoto" conventions~\cite{Yamada03statisticaldependency}, where auxiliary verbs are parents of main verbs, and prepositions are parents of their arguments, in contrast to UD conventions, where content words are put into the primacy, and dependency relations hold primarily between them, rather than being indirect relations mediated by function words. Auxiliary verbs and prepositions are all function words, and are attached to the most related content words in UD.
+\newcite{kong-EtAl:2014:EMNLP2014} presented a syntactic treebank on Gimpel et al.'s POS tagset.
+Compared with their work which create an unlabeled treebank, we further attach dependency relations and it's expected to be more helpful for the downstream tasks.
+We also provide concrete guidelines on dealing with the special constructions in tweets along with their variant linguistic phenomenon.
+It solve the annotation inconsistency problem in \newcite{kong-EtAl:2014:EMNLP2014}'s treebank.
+Our definition of the non-syntactic tokens is similar in spirit to the token selection process but we further define the concrete cases for such tokens.
+\yjcomment{We can put the ellipsis example in as a comparison of the `function headed' Yamada dependency and `content head' UD dependency.}
+%Second, most of Tweebank was built in a day by two dozen annotators, most of whom had only cursory training in the annotation scheme~\cite{kong-EtAl:2014:EMNLP2014}. We think, after investigation, that despite the speed, the quality of data is still to be improved. We follow strictly the UD annotation guideline and only make twitter specific conventions when there is no suitable convention to adopt in UD guideline or no relevant data found in UD\_English.
+%Third, \newcite{kong-EtAl:2014:EMNLP2014} developed a first-order sequence model to filter out the non-syntactic tokens and punctuations, and exclude them before parsing.
+%It is very different from most of the annotation conventions, especially for UD conventions. We believe that every token should be included in the dependency tree, whether they have syntactic functions or are to be evaluated in the end, as in most of the conventions, so we annotate all tokens.
+%Last, \newcite{kong-EtAl:2014:EMNLP2014} adopt the ``Yamada-Matsumoto" conventions~\cite{Yamada03statisticaldependency}, where auxiliary verbs are parents of main verbs, and prepositions are parents of their arguments, in contrast to UD conventions, where content words are put into the primacy, and dependency relations hold primarily between them, rather than being indirect relations mediated by function words. Auxiliary verbs and prepositions are all function words, and are attached to the most related content words in UD.
 
-
-
-\subsection{Tweebank V2}
-We present Tweebank V2, a version 2 of Tweebank~\cite{kong-EtAl:2014:EMNLP2014}.
+\subsection{Data Collection}
+\yjcomment{This section is un-finished.}
+Following the guideline mentioned above, we create a new annotated Twitter treebank, which we call tweebank v2.
+%We present tweebank v2, a version 2 of tweebank~\cite{kong-EtAl:2014:EMNLP2014}.
 
 %data aquisition/statistics
 The tweet source of Tweebank V2 consists of three parts. 
@@ -357,7 +363,7 @@ There are xxx tweets in all the streams. We filtered them with \textit{lang} att
 
 
 \subsubsection{Basic Statistics}
-Tweebank V2 contains 3550 tweets in total, split into training set with 1639 tweets, development set with 710 tweets and test set with 1201 tweets. 
+Tweebank v2 contains 3550 tweets in total, split into training set with 1639 tweets, development set with 710 tweets and test set with 1201 tweets. 
 The training set contains all the 639 unique tweets in the training set of Tweebank V1 and another 1000 tweets in feb\_jul\_16 corpus.
 The development set contains 210 tweets of Tweebank V1 Dev and another 500 tweets in feb\_jul\_16 corpus.
 The test set contains all the 201 tweets in the test set of Tweebank V1 and another 1000 tweets in feb\_jul\_16 corpus.
