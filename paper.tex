@@ -356,479 +356,10 @@ Following the guideline mentioned above, we create a new annotated Twitter treeb
 %data aquisition/statistics
 The tweet source of Tweebank V2 consists of three parts. 
 The first is the original Tweebank created by~\cite{kong-EtAl:2014:EMNLP2014}, denoted as Tweebank V1.  There are 639 unique tweets in the training data of Tweebank V1, and 201 unique tweets in the data set. All of the unique tweets in Tweebank V1 are included in Tweebank V2.
-The second are 210 tweets from POS-tagged Twitter corpus of~\newcite{Owo13}, denoted as Tweebank V1 Dev. It was initially created as a development set of Tweebank V1 for hyperparameter tuning.
+The second are 210 tweets from POS-tagged Twitter corpus of \newcite{owoputi-EtAl:2013:NAACL-HLT}, denoted as Tweebank V1 Dev. It was initially created as a development set of Tweebank V1 for hyperparameter tuning.
 Tweebank V1 Dev comprises were equally sampled from two data set, OCT27 (tweets sampled from a particular day, October 27, 2010) and DAILY 547 (one random English tweet per day from January 2011 through June 2012, 547 tweets in total). We should note that all of the Tweebank V1 tweets were also drawn from OCT27 and DAILY547, and the new tweets we extracted are not in the Tweebank V1.
 The third are 2500 tweets from the Twitter streams from February 2017 to July 2017 from ArchiveTeam,\footnote{https://archive.org} which we call Feb\_Jul\_16 corpus. The Twitter streams are in Spritzer version, which provides a 1\% random sample of public tweets everyday, and the tweets are in twitter JSON format. 
 There are xxx tweets in all the streams. We filtered them with \textit{lang} attribute in \textit{user} and used \textit{langid.py}\footnote{https://github.com/saffsd/langid.py} to pick out English tweets, which ends in xxx tweets in English. Then we sampled 2500 tweets roughly equally from these months.
-
-
-\subsubsection{Basic Statistics}
-Tweebank v2 contains 3550 tweets in total, split into training set with 1639 tweets, development set with 710 tweets and test set with 1201 tweets. 
-The training set contains all the 639 unique tweets in the training set of Tweebank V1 and another 1000 tweets in feb\_jul\_16 corpus.
-The development set contains 210 tweets of Tweebank V1 Dev and another 500 tweets in feb\_jul\_16 corpus.
-The test set contains all the 201 tweets in the test set of Tweebank V1 and another 1000 tweets in feb\_jul\_16 corpus.
-
-We process all the raw tweets of these corpora from scratch, from tokenization and POS tagging to dependency annotation. As Tweebank V1 and the POS-tagged Twitter corpus of~\newcite{Owo13} used a tweet tokenizer~\cite{Krieger10tweetmotif:exploratory} and POS tagger~\cite{Gimpel:2011:PTT:2002736.2002747} that do not conform with UD guidelines, as we discussed before, we did not use any data of the intermediate steps from these corpora. The basic statistics of Tweebank V2 is shown in Table~\ref{tab1}.
-
-% tweets, tokens, tokens/tweet, part/tweet, token types.
-\begin{table}[t]
-\centering
- \begin{tabular}{l r r r} 
- \hline
- 			& 	Train 		& 	Dev		&	Test\\[0.5ex] \hline
-tweets 		&	1639 		&	709		&	1201\\
-tokens 		&	24753		&	11742	&	19112\\
-types 		&	7579			&	4165		&	6228\\
-parts		 	&	3025 		&	1402		&	2252\\ \hline
-\end{tabular}
- \caption{Basic Statistics of Tweebank V2}
- \label{tab1}
-\end{table}
-
-% tokens and its proportions for the previous language phenomena.
-\subsubsection{Twitter Specific Statistics}\label{stats}
-Following the discussion of the Twitter specific linguistic phenomena, we obtain Table~\ref{tab2}.
-
-
-\begin{table*}[t]
-\centering
-\small
- \begin{tabular}{r | l | l | l | r r r r r} 
- \hline
-\multicolumn{4}{l}{}	&	Train		&	Test	&	Dev	&	All	&	Per\\[0.5ex] \hline\hline
-\multirow{10}{*}{\textit{token}}	&	syntactic						&	\multicolumn{2}{l |}{phrasal abbreviation}				
-			 	&	  		&		&		&		&		\\
-\cline{2-9}
-						&	\multirow{8}{*}{optionally syntactic}	&	\multirow{2}{*}{RT}					&	syntactic	
-			 	&	  		&		&		&		&		\\
-						&								&									&	non-syntactic
-				&	  		&		&		&		&		\\
-\cline{3-9}
-						&								&	\multirow{2}{*}{hashtag}				&	syntactic
-				&	  		&		&		&		&		\\
-						&								&									&	non-syntactic
-				&	  		&		&		&		&		\\
-\cline{3-9}
-						&								&	\multirow{2}{*}{at-mentioned}			&	syntactic
-				&	  		&		&		&		&		\\
-						&								&									&	non-syntactic
-				&	  		&		&		&		&		\\
-\cline{3-9}
-						&								&	\multirow{2}{*}{emoticon/emoji}			&	syntactic
-				&	  		&		&		&		&		\\
-						&								&									&	non-syntactic
-				&	  		&		&		&		&		\\
-\cline{2-9}
-						&	non-syntactic 					&	\multicolumn{2}{l |}{truncated}
-				&	  		&		&		&		&		\\
-
-\hline
-\multirow{3}{*}{\textit{structure}}	& 	\multicolumn{3}{l |}{retweet}
-			 	&	  		&		&		&		&		\\
-						&	\multicolumn{3}{l |}{at-mentioned}
-				&	  		&		&		&		&		\\
-						&	\multicolumn{3}{l |}{parataxis without punctuations}
-				&	  		&		&		&		&		\\
-\hline
-\end{tabular}
- \caption{Twitter Specific Statistics of Tweebank V2}
- \label{tab2}
-\end{table*}
-%annotation statistics, agreement
-
-
-\section{Pipeline}
-
-\section{Model}
-
-\section{Experiments}
-
-
-\section{Related Work}
-\newcite{eisenstein:2013:NAACL-HLT} reviewed NLP approaches for analyzing text on social media, especially for tweets and showed that there are two major directions for NLP community to handle the tweets, including normalization and domain adaptation. He also pointed out that normalization can be problematic because precisely defining the normalization task is difficult. 
-
-\newcite{kong-EtAl:2014:EMNLP2014} argues that the Penn Treebank approach to annotation is poorly suited to more informal genres of text, as some of the annotation challenges for tweets,
-including token selection, multiword expressions, multiple roots, and structure within noun phrases diverge significantly from conventional approaches. 
-They believe that rapid, small scale annotation efforts performed by imperfectly-trained annotators should provide enough evidence to train an effective parser, given the rapidly changing nature of tweets~\cite{eisenstein:2013:NAACL-HLT}, the attested difficulties of domain adaptation for parsing~\cite{dred07}, and the expense of creating Penn Treebank-style annotations~\cite{penn93}. 
-Therefore, they build a new corpus of tweets (Tweebank), with conventions informed by the domain, using new syntactic annotations that can tackle all the forementioned problems annotated in a day by two dozen annotators, most of whom had only cursory training in the annotation scheme. Then, they modify the decoder of the TurboParser, a graph-based dependency parser, which is open-source and has been found to perform well on a range of parsing problems in different languages~\cite{turbo13} to adapt to the Tweebank dataset, and incorporate new features such as Brown Clusters and Penn Treebank features and changes to specification
-in the output space into TurboParser.
-
-Like ``mfw'' is usually followed by an adverbial clause and ``ima'' is usually followed by a clausal complement. 
-It is not reasonable to treat them in the same part-of-speech. 
-In this paper, when annotating the POS tagging for abbreviations, we first try to recover their original forms, then use the POS of the core-word as the POS for the abbreviation.
-Second, four special POS tags (S, L, M, Y) were designed to handle contraction words in Gimpel et al. \shortcite{Gimpel:2011:PTT:2002736.2002747}. Major concern of designing such tags is to minimize the effort of tokenization. 
-However, contractions of common nouns and pronouns are casted into the same category which increase the difficulty of distinguishing their syntactic function (say, there's and book'll are treated with the same syntactic function). What's more, only a small proportion of words can be categorized into these tags (2.7 \% in total), which cast a doubt of the usefulness of these certain tags. In this paper, we believe such contraction can be properly handled by tokenization module, so we suggest to tokenize the contraction word and annotate POS tag accordingly.
-Besides the contraction that be conventionally tokenized, tweets also witness a set of unconventional contraction like iv (I've), whatis (what is). In this paper, we follow the same idea of annotation abbreviation to handle the unconventional contractions and use the POS of core word of the original form as their POS.
-Third, special POS was designed to handle emoticon in Gimpel et al. \shortcite{Gimpel:2011:PTT:2002736.2002747}. However, in most cases, emoticon plays the same role as most of the symbolic tokens. In this paper, we follow the UD guideline to annotate the emoticon as symbol (SYM).
-At last, it’s arguable that some of the hashtags, URLs can work as a nominal in tweets. Whether treating them as the same part-of-speech or different ones according to their context is an open question. A preliminary survey on the standard UD English data shows that URL, email address are all tagged as the foreign language (X), so we also tag them as X and leave the disambiguation of their syntactic function to the annotation of parse tree.
-
-\section{Conclusion}
-
-
-
-\bibliography{shortdb}
-\bibliographystyle{acl2012}
-\end{document}
-
-
-
-=======
-%
-% File acl2012.tex
-%
-% Contact: Maggie Li (cswjli@comp.polyu.edu.hk), Michael White (mwhite@ling.osu.edu)
-%%
-%% Based on the style files for ACL2008 by Joakim Nivre and Noah Smith
-%% and that of ACL2010 by Jing-Shin Chang and Philipp Koehn
-
-\documentclass[11pt,letterpaper]{article}
-\usepackage[letterpaper]{geometry}
-\usepackage{acl2012}
-\usepackage{times}
-\usepackage{latexsym}
-\usepackage{amsmath}
-\usepackage{multirow}
-\usepackage{xcolor}
-\usepackage{tikz-dependency}
-\usepackage{url}
-\makeatletter
-\newcommand{\@BIBLABEL}{\@emptybiblabel}
-\newcommand{\@emptybiblabel}[1]{}
-\makeatother
-\usepackage[hidelinks]{hyperref}
-\DeclareMathOperator*{\argmax}{arg\,max}
-\setlength\titlebox{6.5cm}    % Expanding the titlebox
-
-%%%%%%%
-\usepackage{graphicx}
-\newcommand{\heart}{\ensuremath\heartsuit}
-\usepackage{multirow}
-
-\newcommand{\yjcomment}[1]{\textcolor{orange}{[$_\mathrm{L}^\mathrm{Y}$\textsc{#1}]}}
-
-
-\title{Parsing Tweets into Universal Dependencies}
-
-\author{First Author \\
-  Affiliation / Address line 1 \\
-  Affiliation / Address line 2 \\
-  Affiliation / Address line 3 \\
-  {\tt email@domain} \\\And
-  Second Author \\
-  Affiliation / Address line 1 \\
-  Affiliation / Address line 2 \\
-  Affiliation / Address line 3 \\
-  {\tt email@domain} \\}
-
-\date{}
-
-\begin{document}
-\maketitle
-\begin{abstract}
-
-\end{abstract}
-
-
-
-
-\section{Introduction}
-Analyzing the syntax of tweets is challenging for traditional NLP tools because most of the tweet texts are informal and noisy.
-
-In this paper, we propose to parse the tweets in the convention of universal dependencies and built up the whole pipeline to parse the tweets from the raw text form.
-
-Contribution of this paper includes:
-\begin{itemize}
-\item We create a new version of tweet Treebank Tweebank 2.0
-\item We propose a neural network method to parse tweets into universal dependencies
-\item We study the adaptation of universal dependencies for analyzing tweets
-\end{itemize}
-
-
-
-\section{Data}
-% Linguistic phenomena
-	% word level
-		% RT
-		% Hashtag
-		% Mention, urls
-		% Symbols and Emoticons
-		% Truncated tokens
-	% twitter level
-		% RT
-		% Parataxis	
-% POS
-	% Acronym priority
-	% URL tagged as X	
-% Depenency
-	% Concentrate on NON-UD phenomena
-% Statistics
-	% Scale
-	% Inter-annotator agreement
-	% Proportion
-		% how many hashtags, mentions, ....
-		% how many acornyms
-
-\subsection{Linguistic Phenomena of Twitter} \label{lingphen}
-Twitter, as an extreme example of informal domain, contains a collection of conversational languages (like abbreviation, informal contraction, and variant entity names) and twitter-specified markers (like retweet mark, and username).
-Despite the informal nature of tweets, we argue that they basically follow the same grammar as their formal language counterpart.
-The key issue lies in understanding the specific construction that doesn't carry any syntactic functions, and designed rules to handle the specific constructions in tweets.
-In the following section, we studied such constructions from both the token and structure level. \yjcomment{I don't like the name of \textbf{structure level}}
-%As the representative of the web language, different from the standard languages such as newswire, twitter has its own linguistic phenomena, that could be categorized into token level and structure level phenomena, and we will discuss them separately.
-
-
-\subsubsection{Token Level}
-\paragraph{Informal Syntactic Tokens.}
-Informal tokens like phrase abbreviation (like {\tt mfw}: my face when, {\tt rn}: right now, and etc.) and orthographic variants (like {\tt sooo cooool}) have drawn much attention in previous literals \cite{finin-EtAl:2010:MTURK,eisenstein:2013:NAACL-HLT} \yjcomment{not sure orthographic variants is a good name, need reference.}
-However, in the sense of syntactic functions, they work in the same way as the ordinary words, which makes them requires less specialty in designing annotation conventions.
-%Syntactic tokens are just like normal tokens in the standard text.
-%They always have syntactic functions in tweets.
-%They could be orthographic variants or abbreviations that represents a phrase.
-
-\paragraph{Non-syntactic Tokens.}
-
-\begin{figure*}[t]
-	\centering
-	\small
-	\begin{dependency}[edge slant=2, text only label, label style=above]
-		\begin{deptext}
-			Perfect \& \textcolor{red}{\bf $\heart$} \& \textcolor{orange}{\bf RT} \& @coldplay \& : \& Fix \& You \& from \& the \& back \& \textcolor{gray}{\bf \#ColdplayMinneapolis} \& \textcolor{blue}{\bf http://bit.ly/2dj2WCl}\\
-			\tiny ADJ \&\tiny SYM \&\tiny X \&\tiny X \&\tiny PUNCT \&\tiny VERB \&\tiny NOUN \&\tiny ADP \&\tiny DET \&\tiny NOUN \&\tiny X \&\tiny X \\
-		\end{deptext}
-		\deproot{1}{root}
-		\depedge[edge unit distance=1em]{1}{2}{discourse}
-		\deproot{6}{root}
-		\depedge[edge unit distance=1em]{6}{3}{discourse}
-		\depedge[edge unit distance=1em]{3}{4}{discourse}
-		\depedge[edge unit distance=1em]{3}{5}{punct}
-		\depedge[edge unit distance=1em]{6}{7}{obj}
-		\depedge[edge unit distance=0.8em]{6}{10}{obl}
-		\depedge[edge unit distance=1em]{10}{8}{case}
-		\depedge[edge unit distance=1em]{10}{9}{det}
-		\depedge[edge unit distance=0.8em]{6}{11}{discourse}
-		\depedge[edge unit distance=0.8em]{6}{12}{list}
-	\end{dependency}
-	\caption{A example tweet contains major non-syntactic tokens, with
-		\textcolor{red}{sentiment emoticon},
-		\textcolor{orange}{retweet marker},
-		\textcolor{gray}{topical hashtag}, and
-		\textcolor{blue}{referential URL}.}\label{fig:non-syn-toks}
-\end{figure*}
-
-\begin{figure*}[t]
-	\centering
-	\small
-	\begin{dependency}[edge slant=2, text only label, label style=above]
-		\begin{deptext}
-			its \& \#awesome \& u \& gonna \& $\heart$ \& it \& Chk \& out \& our \& cooool \& project \& on \& http:// \& + \& RT \& pls\\
-			\tiny PRON \& \tiny ADJ \& \tiny PRON \& \tiny VERB \& \tiny VERB \& \tiny PRON \& \tiny VERB \& \tiny ADP \& \tiny PRON \& \tiny ADJ \& \tiny NOUN \& \tiny ADP \& \tiny X \& \tiny SYM \& \tiny VERB\& \tiny INTJ\\
-		\end{deptext}
-		\deproot{2}{root}
-		\depedge[edge unit distance=1em]{2}{1}{nsubj}
-		\depedge[edge unit distance=1em]{2}{4}{parataxis}
-		\depedge[edge unit distance=1em]{4}{3}{nsubj}
-		\depedge[edge unit distance=1em]{4}{5}{xcomp}
-		\depedge[edge unit distance=1em]{5}{6}{obj}
-		\depedge[edge unit distance=0.7em]{2}{7}{parataxis}
-		\depedge[edge unit distance=1em]{7}{8}{compound:prt}
-		\depedge[edge unit distance=0.7em]{7}{11}{obj}
-		\depedge[edge unit distance=1em]{11}{9}{nmod:poss}
-		\depedge[edge unit distance=1em]{11}{10}{amod}
-		\depedge[edge unit distance=1em]{11}{13}{nmod}
-		\depedge[edge unit distance=1em]{13}{12}{case}
-		\depedge[edge unit distance=0.45em]{7}{15}{conj}
-		\depedge[edge unit distance=1em]{15}{14}{cc}
-		\depedge[edge unit distance=0.35em]{2}{16}{discourse}
-	\end{dependency}
-	\caption{An example tweet with informal but syntactic tokens.}\label{fig:informal-toks}
-\end{figure*}
-
-Besides the informal but syntactic tokens, there are a large collection of tokens that cannot be handled by the syntactic theory designed for standard text.
-A major part of these tokens consists of meta data in tweets, like the sentiment emotion, retweet mark, topical hashtag, and referential URL shown in Figure \ref{fig:non-syn-toks}. 
-
-However, whether a token convey some syntactic function cannot be simply decided by its form.
-For example, besides being a discourse marker, {\tt RT} can also works as a abbreviation of the verb {\tt retweet}.
-Emoticons are sometimes used as a verbal part of the sentence.
-Twitter users have developed a casual habit of using hashtag, and even use hashtag as a adjective.
-The sentence in Figure \ref{fig:informal-toks} gives a comprehensive example of those informal but syntactic tokens.
-It shows whether a token makes a non-syntactic one is highly conditioned on its context.
-
-A kind of token that doesn't carry clearly syntactic functions can be resulted by the 140 characters limits of tweets.
-Since last tokens that exceeding 140 characters limits are truncated in tweets which leaves a broken sentence, it is impossible to fully recover their original form and figure out their syntactics.
-In this paper, we propose to treat these truncated tokens, along with the other 4 kinds of tokens mentioned above, as ones without syntactic functions.
-
-In the sense of dealing with the non-syntactic tokens, \newcite{kong-EtAl:2014:EMNLP2014} proposed an preprocessing step named {\it token selection} to remove non-syntactic tokens from the original tweets.
-However, concrete standard of non-syntactic tokens was not presented in their work.
-What's more, these unselected tokens are absent from downstream processing, including parsing.
-We differ from their work by proposing concrete standard of non-syntactic tokens and we include these non-syntactic tokens in our final analyzed dependencies by adding special attachment to them.
-%There are special tokens that will appear only or much more frequently in tweets.
-%According to the syntactic functions these tokens have in the tweets, we classify them into three types: syntactic tokens, non-syntactic tokens and optionally syntactic tokens. 
-%Non-syntactic tokens are tokens that will not have syntactic function in tweets, and they are not considered in the syntax analysis and need to be treated independently.
-%Optionally syntactic tokens are tokens that can have either syntactic or non-syntactic functions based on the context. Usually they are tokens like URLs ad hashtags that do not participate in the syntax of the tweets, and we treat them as non-syntactic functions by default. However, similar in the analysis of \newcite{Gimpel:2011:PTT:2002736.2002747} and \newcite{kong-EtAl:2014:EMNLP2014}, in some cases they are perceived as the arguments or predicates of tweets and therefore have syntactic functions. In this case we treat them as syntactic tokens.
-
-%Here is a complete list of the special tokens in tweets classified in three types.
-%
-%\begin{itemize}
-%\item syntactic tokens
-%	\begin{itemize}
-%		\item phrasal abbreviations: {\tt wtf} (what the fuck), {\tt rn} (right now), etc.
-%		\item orthographic variants: {\tt u} (you), {\tt sooooo}, {\tt dat} (that), etc.
-%	\end{itemize}
-%\item Non-syntactic tokens
-%	\begin{itemize}
-%		\item truncated tokens: last tokens that are truncated in tweets exceeding twitter character limits. Although It might be possible to recover the original tokens from the context in some cases, it is still extremely hard to further predict the rest of the truncated part.
-%	\end{itemize}
-%\item Optionally syntactic tokens
-%	\begin{itemize}
-%		\item retweet discourse marker: RT
-%		\item URL: http://bit.ly/xyz
-%		\item hashtag: \#ACL
-%		\item at-mentioned username: @user
-%		\item emoticons and emojis: :), :-), $\heart$, etc.
-%	\end{itemize}
-%\end{itemize}
-
-%As optionally syntactic tokens will be treated as syntactic or non-syntactic tokens based on the specific context, for the sake of simplicity, if not necessary, we will only discuss the syntactic and non-syntactic tokens in the following sections.
-
-	
-\subsubsection{Structure Level}
-The syntactic constructions vary greatly across different tweets.
-Unconventional constructions which frequently occur include ellipsis, irregular word orders, and para-tactic sentences without the segmentation of punctuations \yjcomment{I move the 3rd bullet point here because this construction was handled by UD-guidelines}.
-And these unconventional ones are more or less resolved by the universal dependencies.
-The unresolved cases are mainly resulted by the format of twitter.
-The {\it retweet} and {\it at-mention} are of two major constructions.
-\paragraph{Retweet.} For the {\it retweet} construction (`{\tt RT @coldplay :}' in Figure \ref{fig:non-syn-toks}), although it can be treated as a verbal phrase in which retweet marker works as a verb and the following at-mention is its objective, we argue that such convention lead to a uninformative root word.
-It also increase the difficulty for downstream tasks in figuring out the core predicate and arguments for one certain tweet.
-Thus, we treat the whole construction as a non-syntactic phrase. \yjcomment{correct me if I am wrong.}
-\paragraph{At-mention.} At-mention in the beginning of a tweet is the format of indicating the `reply' action.
-In this paper, we treat the at-mentions as vocative expressions for their connections with the traditional vocative words, rather than treat them as non-syntactic metadata, which increase the complexity for analyzing a tweet.
-\yjcomment{since the original discussion mainly focus on tokens, I move them to the former section.}
-%Besides the token level phenomena of twitter, there are also structural patterns appearing in the twitter.
-
-%\begin{itemize}
-%\item Retweet structure: {\tt RT @user : \{tweet content\}} is a typical structural pattern when a user is retweeting from other users. 
-%\item At-mentioned structure: Except the retweet structure and syntactically at-mentioned username, we think that all of other at-mentions are vocative case, usually appearing at the beginning or the end of the sentences in tweets.
-%\item Paratactic parts without punctuations: We use ``part'' to refer to a self-contained clause or phrase, which is independent of other ``part''. Very often, one tweet is comprised of multiple parts without any delimiting punctuations, such as {\tt \{part 1\} \{part 2\} ...}
-%\end{itemize}
-
-%We treat retweet structure and at-mentioned structure as structural patterns and keep their annotations consistent across tweets. For parataxis case, we treat each single sentence or phrase normally, and connect them together following the UD conventions. 
-
-%From Fig.~\ref{ex1}, we argue that {\tt u} and {\tt rn} are syntactic tokens.
-%{\tt th} is a truncated token and does not have any syntactic function, although we can infer that the {\tt th} could be probably {\tt the}.
-%{\tt \#ACL2017}, {\tt :)} and {\tt http://url} are optionally syntactic tokens, and should be all treated as non-syntactic tokens in this example.
-%{\tt RT @Yijia :} should be analyzed as the retweet structure, and {\tt heading to Canada for ACL} and {\tt can u gimme some money} should be considered as paratactic clauses without punctuations.
-%
-%However, consider another example in Figure \ref{fig:informal-toks}. All of the optionally syntactic tokens ({\tt RT}, {\tt http://url}, {\tt \#NAACL}, {\tt \#Awesome}, {\tt @zypandora}, {\tt @nlpnoah} and {\tt $\heart$}) have syntactic functions, and we need to take them into account in the syntactic analysis.
-
-
-\subsection{Part-of-Speech Annotation}
-We adopt the universal Part-of-Speech (POS) tagset \cite{PETROV12.274} to annotate the tweets.
-The POS annotation of a word in tweets is generally based on its syntactic distribution, which indicates that the POS of word changes on different context.
-Sticking to the syntactic distribution makes it possible that a `$\heart$' symbol is tagged as a verb as shown in Figure \ref{fig:non-syn-toks}. \yjcomment{Need a better explanation.}
-%We follow the UD V2 morphology guideline and use the Universal POS tags~ to tag the tweet tokens. For twitter specific linguistic phenomena, we have set different strategies and try to align with the UD conventions and UD\textunderscore English as close as possible.\footnote{\url{https://github.com/UniversalDependencies/UD\_English}}
-
-We need to note that in some certain cases, the distribution criteria doesn't holds.
-For example, the nominal URL in Figure \ref{fig:informal-toks} is tagged as {\it other} ({\tt X}) and the conjunctor {\tt +} symbol is tagged as {\it symbol} ({\tt SYM}) rather than {\it conjunction} ({\tt CCONJ}).
-Such violation is resulted by our attempt of conforming the annotation to the {\it universal dependencies - English dependency treebank} (UD\_English), in which all the URLs are tagged as {\it other} and symbolic conjunctors are tagged as {\it symbol}.\footnote{\url{https://github.com/UniversalDependencies/UD\_English}}
-By conforming our annotation to the UD\_English data, hopefully, the tools we built on tweets can benefit from the dataset on broader domain. \yjcomment{need wording}
-
-Again, there are un-conventional linguistic constructions in tweets that syntactic distribution doesn't handle well.
-One of the cases is the non-syntactic tokens.
-We consider most of them as {\tt X}, except for the sentiment emoticons, which would be tagged as {\tt SYM}, in practice of matching the UD\_English.
-Another case is the retweet construction which is considered as a non-syntactic phrase and both the RT and at-mention are tagged as {\tt X}.
-For the at-mention, we tag them as proper noun ({\tt PROPN}) in spirit of following the vocative example in UD\_English.
-%In token level phenomena, for non-syntactic tokens,  
-%For syntactic tokens, we tag them considering their corresponding syntactic function.
-
-%In structure level phenomena, we think {\tt RT @user} in retweet structure have no contribution to the tweet syntax and tag both of them as X.
-%We tag usernames in at-mentioned structure as PROPN as they present the vocative case.
-
-The informal syntactic tokens can generally be handled by their distribution.
-However, one of the exception is the {\tt phrasal abbreviations} in which one token carries multiple syntactic functions.
-In dealing with such phrases, we propose a routine that first recover their original forms, then, use the POS of their syntactic head word as the POS of the whole phrase.
-Therefore, {\it idk} (I don't care) is a verb because {\it care} is its syntactic head.
-Such routine works for most of the phrasal abbreviations.
-When it falls, we just use the POS of the left-most sub-phrase. \footnote{Such failure can be resulted by the mis-match of phrase boundaries between the original form and the definition of `phrase' in UD. For example, `mfw' (my face when) doesn't make a phrase because `when' belongs to the subordination that modifies `my face'.}
-
-%In Fig.~\ref{ex1}, {\tt RT} {\tt @yijialiu}, {\tt \#ACL2017}, {\tt http://url} and {\tt th} are all tagged as X and {\tt :)} is tagged as SYM. 
-%{\tt rn} is tagged as ADV.
-%We should note that multiple tokens are actually included in a phrasal abbreviation, and we use one of their tags as the tag of the whole abbreviation according to their dependency relation or semantic priority.
-%If there is a hierarchy in the abbreviation, we use the tag of the head word. In UD, ``Right'' is the dependent of ``now '' in the dependency of {\tt rn}, so we tag {\tt rn} as ADV. 
-%Although there is no head word in {\tt im}, we think that the subject is usually more informative than the tense in many downstream tasks such as semantic role labelling, so we use the tag of ``I'', e.g. PROPN as the tag of {\tt im}.  
-%In Fig.~\ref{ex2}, {\tt RT} and {\tt $\heart$} would be tagged as VERB, {\tt http://url} as X, {\tt \#Awesome} as ADJ, {\tt \#NAACL}, {\tt @zypandora} and {\tt @nlpnoah} as PROPN. One exception is that we tag URLs always as X regardless whether they are syntactic tokens. The reason is that we observed, in UD\_English, that the URLs are all tagged as X and we want to conform with the UD dataset, although we think it is not appropriate and should be changed to tags such as PROPN when they are treated as syntactic tokens.
-
-Similar to our work, \newcite{gimpel-EtAl:2011:ACL-HLT2011} proposed a course grain twitter POS tagset that handles most of the token level phenomena.
-However, our work diverge theirs in several ways.
-Compared with the Gimpel's work, which assigns different tags to non-syntactic tokens in different categories, we simplify them into the {\tt X} tag.
-At the same time, all the abbreviations in \newcite{gimpel-EtAl:2011:ACL-HLT2011} are tagged with one POS, which doesn't distinguish their syntactic functions.
-We argue that such approach over-simplify the abbreviations.
-One example is that {\it idc} (I don't care) and {\it rn} (right now) carries significantly different syntactic functions and should not be treated as the same.
-In this paper, we stick more to the syntactic distribution when handling such abbreviations and it allows them to function differently in different context.
-
-The last difference between \newcite{gimpel-EtAl:2011:ACL-HLT2011} is resulted by the tokenization process.
-In \newcite{gimpel-EtAl:2011:ACL-HLT2011}, they opted out the tokenization on contractions and possessives and introduce several tags for these un-tokenized words.
-As mentioned above, the goal of conforming our annotation to the UD\_English makes us adopt the same the UD-styled tokenization.
-Thus, these tags for contractions and possessives are not necessary at all in our case.
-What's more, as \newcite{gimpel-EtAl:2011:ACL-HLT2011} mentioned, only a small proportion of tokens can be categorized into these tags (2.7 \% in total), which casts a doubt of the usefulness of these tags.
-%However, we found that their methods did not conform with UD conventions and our strategies have some advantages over their tagset. We discuss the main difference as follows.
-%The first difference lies in the tokenizations.
-%\newcite{Gimpel:2011:PTT:2002736.2002747} opted not to split contractions or possessives and introduced four new tags (S, Z, L, M) for combined forms: \{nominal, proper noun\} $\times$ \{verb, possessive\}. 
-%Major concern of designing such tags is to minimize the effort of tokenization, but it is not comprehensive and far from including all of the possible combinations of POS tags within the contractions. 
-%What's more, only a small proportion of tokens can be categorized into these tags (2.7 \% in total), which casts a doubt of the usefulness of these tags.
-%Instead UD conventions suggest that we put such complexity into the tokenization module and split contractions and possessives, then tag them accordingly, so that we do not need extra POS tags for the combined forms.
-%The second difference is that although the phrasal abbreviations are not split in both methods, they use tag G for all the phrasal abbreviations, while we use the tag of the head word or the highest hierarchical word in terms of dependencies as the tag of the whole phrasal abbreviations. 
-%We think it is not reasonable to treat the phrasal abbreviations in the same part of speech because obviously abbreviations can have different syntactic functions and we want to preserve the most useful information for both parser and the downstream tasks. For example, {\tt wtf} could be tagged as PRON or INTJ according to the context, and {\tt rn} is usually tagged as ADV. Tagging them merely as G will definitely lose much information.
-%Third, special tags were designed to handle twitter or online special tokens such as URLs, hashtags and emoticon in \newcite{Gimpel:2011:PTT:2002736.2002747}. However, in most cases, as long as theses tokens are non syntactic, they play the same role in tweets, hence should be tagged the same. In this paper, except for the emoticon and emoji, tagged as SYM, we tag all the other non-syntactic tokens as X.
-
-
-\subsection{Dependency Annotation}
-
-
-We follow the UD V2 syntax guideline and the English specific Universal Dependency Relations to annotate our data.
-
-In token level phenomena, we adopt the following rules for non-syntactic tokens, denoted as x: 
-
-\begin{itemize}
-\item If the sentence x belongs to has a clear predicate with syntactic function, x should not have any dependent and is attached to this sentence’s predicate;
-\item If the sentence x belongs to consists of only non-syntactic tokens we attach x to the first token of the sentence;
-\item In parataxis case, when it is difficult to decide which sentence or phrase x should belong to, we always attach x to the previous predicate of the paratactic clause or phrase;
-\item x is mostly labelled as {\it discourse}, but URLs are always labelled as {\it list};
-\end{itemize}
-
-The reason we annotate URLs differently is the same as in POS tagging, that UD\_English labelled them as {\it list} when they are non-syntactic tokens and we want to keep the dataset conformed with it.
-
-For syntactic tokens, they are considered the same as normal tokens and we just annotate them by following the UD guidelines.
-
-we further adopt the following rules for structure level phenomena:
-
-\begin{itemize}
-\item Retweet structure: we attach {\tt @user} to {\tt RT} and {\tt RT} to the predicate of the following sentence with {\it discourse} as labels.
-\item At-mentioned structure: we attach at-mentioned username to the predicate of the most relevant sentence with {\it vocative} label. If it is hard to decide which sentence would be the most relevant, we attach it to the previous sentence's predicate.
-\item Paratactic parts without punctuations: we follow the UD convention, set the first part as the main part of the sentence, and set its predicate as the main predicate of the sentence. Every predicate of the following parts should attach to the main predicate. If the main part and some following part are both phrases, the label is {\it list}, otherwise the label is {\it parataxis}. Note that we still have an exception for URLs, conforming with UD, which are always labelled as {\it list}, regardless of the type of the other part.
-\end{itemize}
-
-% unlabelled, Informal
-% exclude non-syntactic tokens, punctuations
-% Annotation conventions
-\newcite{kong-EtAl:2014:EMNLP2014} built a syntactic treebank of tweets called Tweebank using Gimpel et al.'s POS tagset. 
-Apart from the difference in POS tagging, we found the following difference in both methods.
-First, Tweebank is an unlabelled dependency treebank. There is clearly a doubt about the usefulness of the Tweebank. We annotate the labelled dependencies by following the UD annotation guideline.
-Second, most of Tweebank was built in a day by two dozen annotators, most of whom had only cursory training in the annotation scheme~\cite{kong-EtAl:2014:EMNLP2014}. We think, after investigation, that despite the speed, the quality of data is still to be improved. We follow strictly the UD annotation guideline and only make twitter specific conventions when there is no suitable convention to adopt in UD guideline or no relevant data found in UD\_English.
-Third, \newcite{kong-EtAl:2014:EMNLP2014} developed a first-order sequence model to filter out the non-syntactic tokens and punctuations, and exclude them before parsing.
-It is very different from most of the annotation conventions, especially for UD conventions. We believe that every token should be included in the dependency tree, whether they have syntactic functions or are to be evaluated in the end, as in most of the conventions, so we annotate all tokens.
-Last, \newcite{kong-EtAl:2014:EMNLP2014} adopt the ``Yamada-Matsumoto" conventions~\cite{Yamada03statisticaldependency}, where auxiliary verbs are parents of main verbs, and prepositions are parents of their arguments, in contrast to UD conventions, where content words are put into the primacy, and dependency relations hold primarily between them, rather than being indirect relations mediated by function words. Auxiliary verbs and prepositions are all function words, and are attached to the most related content words in UD.
-
-
-
-\subsection{Tweebank V2}
-We present Tweebank V2, a version 2 of Tweebank~\cite{kong-EtAl:2014:EMNLP2014}.
-
-%data aquisition/statistics
-The tweet source of Tweebank V2 consists of three parts. 
-The first is the original Tweebank created by~\cite{kong-EtAl:2014:EMNLP2014}, denoted as Tweebank V1.  There are 639 unique tweets in the training data of Tweebank V1, and 201 unique tweets in the data set. All of the unique tweets in Tweebank V1 are included in Tweebank V2.
-The second are 210 tweets from POS-tagged Twitter corpus of~\newcite{Owo13}, denoted as Tweebank V1 Dev. It was initially created as a development set of Tweebank V1 for hyperparameter tuning.
-Tweebank V1 Dev comprises were equally sampled from two data set, OCT27 (tweets sampled from a particular day, October 27, 2010) and DAILY 547 (one random English tweet per day from January 2011 through June 2012, 547 tweets in total). We should note that all of the Tweebank V1 tweets were also drawn from OCT27 and DAILY547, and the new tweets we extracted are not in the Tweebank V1.
-The third are 2500 tweets from the Twitter streams from February 2017 to July 2017 from ArchiveTeam,\footnote{https://archive.org} which we call Feb\_Jul\_16 corpus. The Twitter streams are in Spritzer version, which provides a 1\% random sample of public tweets everyday, and the tweets are in twitter JSON format. 
-There over 2k million tweets in all the streams. We filtered them with \textit{lang} attribute in \textit{user} and used \textit{langid.py}\footnote{https://github.com/saffsd/langid.py} to pick out English tweets, and then we sampled 2500 tweets roughly equally from these months.
 
 
 \subsubsection{Basic Statistics}
@@ -837,21 +368,22 @@ The training set contains all the 639 unique tweets in the training set of Tweeb
 The development set contains 210 tweets of Tweebank V1 Dev and another 500 tweets in feb\_jul\_16 corpus.
 The test set contains all the 201 tweets in the test set of Tweebank V1 and another 1000 tweets in feb\_jul\_16 corpus.
 
-We process all the raw tweets of these corpora from scratch, from tokenization and POS tagging to dependency annotation. As Tweebank V1 and the POS-tagged Twitter corpus of~\newcite{Owo13} used a tweet tokenizer~\cite{Krieger10tweetmotif:exploratory} and POS tagger~\cite{Gimpel:2011:PTT:2002736.2002747} that do not conform with UD guidelines, as we discussed before, we did not use any data of the intermediate steps from these corpora. The basic statistics of Tweebank V2 is shown in Table~\ref{tab1}.
+We process all the raw tweets of these corpora from scratch, from tokenization and POS tagging to dependency annotation.
+As Tweebank V1 and the POS-tagged Twitter corpus of \newcite{gimpel-EtAl:2011:ACL-HLT2011} used a tweet tokenizer~\cite{ICWSM101540} that do not conform with UD guidelines, as we discussed before, we did not use any data of the intermediate steps from these corpora. The basic statistics of Tweebank V2 is shown in Table~\ref{tab1}.
 
 % tweets, tokens, tokens/tweet, part/tweet, token types.
 \begin{table}[t]
-\centering
- \begin{tabular}{l r r r} 
- \hline
- 			& 	Train 		& 	Dev		&	Test\\[0.5ex] \hline
-tweets 		&	1639 		&	709		&	1201\\
-tokens 		&	24753		&	11742	&	19112\\
-types 		&	7579			&	4165		&	6228\\
-parts		 	&	3025 		&	1402		&	2252\\ \hline
-\end{tabular}
- \caption{Basic Statistics of Tweebank V2}
- \label{tab1}
+	\centering
+	\begin{tabular}{l r r r} 
+		\hline
+		& 	Train 		& 	Dev		&	Test\\[0.5ex] \hline
+		tweets 		&	1639 		&	709		&	1201\\
+		tokens 		&	24753		&	11742	&	19112\\
+		types 		&	7579			&	4165		&	6228\\
+		parts		 	&	3025 		&	1402		&	2252\\ \hline
+	\end{tabular}
+	\caption{Basic Statistics of Tweebank V2}
+	\label{tab1}
 \end{table}
 
 % tokens and its proportions for the previous language phenomena.
@@ -860,50 +392,51 @@ Following the discussion of the Twitter specific linguistic phenomena, we obtain
 
 
 \begin{table*}[t]
-\centering
-\small
- \begin{tabular}{r | l | l | l | r r r r r} 
- \hline
-\multicolumn{4}{l}{}	&	Train		&	Test	&	Dev	&	All	&	Per\\[0.5ex] \hline\hline
-\multirow{10}{*}{\textit{token}}	&	syntactic						&	\multicolumn{2}{l |}{phrasal abbreviation}				
-			 	&	 12 		&	12	&	10	&	34	&	0.06\%	\\
-\cline{2-9}
-						&	\multirow{8}{*}{optionally syntactic}	&	\multirow{2}{*}{RT}					&	syntactic	
-			 	&	 40 		&	19	&	18	&	77	&	0.14\%	\\
-						&								&									&	non-syntactic
-				&	600  		&	500	&	286	&	1386	&	2.49\%	\\
-\cline{3-9}
-						&								&	\multirow{2}{*}{hashtag}				&	syntactic
-				&	251  		&	212	&	103	&	566	&	1.02 \%	\\
-						&								&									&	non-syntactic
-				&	 290 		&	246	&	155	&	691	&	1.24\%	\\
-\cline{3-9}
-						&								&	\multirow{2}{*}{at-mentioned}			&	syntactic
-				&	  659		&	420	&	257	&	1336	&	2.40\%	\\
-						&								&									&	non-syntactic
-				&	  640		&	519	&	311	&	1470	&	2.64\%	\\
-\cline{3-9}
-						&								&	\multirow{2}{*}{emoticon/emoji}			&	syntactic
-				&	  59		&	31	&	24	&	114	&	2.05\%	\\
-						&								&									&	non-syntactic
-				&	 233		&	164	&	98	&	495	&	0.89\%	\\
-\cline{2-9}
-						&	non-syntactic 					&	\multicolumn{2}{l |}{truncated}
-				&	  111		&	110	&	50	&	271	&	0.49\%	\\
-
-\hline
-\multirow{3}{*}{\textit{structure}}	& 	\multicolumn{3}{l |}{retweet}
-			 	&	  596		&	498	&	282	&	1376	&	2.47\%	\\
-						&	\multicolumn{3}{l |}{at-mentioned}
-				&	  485		&	305	&	175	&	965	&	1.74\%	\\
-\hline
-\end{tabular}
- \caption{Twitter Specific Statistics of Tweebank V2}
- \label{tab2}
+	\centering
+	\small
+	\begin{tabular}{r | l | l | l | r r r r r} 
+		\hline
+		\multicolumn{4}{l}{}	&	Train		&	Test	&	Dev	&	All	&	Per\\[0.5ex] \hline\hline
+		\multirow{10}{*}{\textit{token}}	&	syntactic						&	\multicolumn{2}{l |}{phrasal abbreviation}				
+		&	 12 		&	12	&	10	&	34	&	0.06\%	\\
+		\cline{2-9}
+		&	\multirow{8}{*}{optionally syntactic}	&	\multirow{2}{*}{RT}					&	syntactic	
+		&	 40 		&	19	&	18	&	77	&	0.14\%	\\
+		&								&									&	non-syntactic
+		&	600  		&	500	&	286	&	1386	&	2.49\%	\\
+		\cline{3-9}
+		&								&	\multirow{2}{*}{hashtag}				&	syntactic
+		&	251  		&	212	&	103	&	566	&	1.02 \%	\\
+		&								&									&	non-syntactic
+		&	 290 		&	246	&	155	&	691	&	1.24\%	\\
+		\cline{3-9}
+		&								&	\multirow{2}{*}{at-mentioned}			&	syntactic
+		&	  659		&	420	&	257	&	1336	&	2.40\%	\\
+		&								&									&	non-syntactic
+		&	  640		&	519	&	311	&	1470	&	2.64\%	\\
+		\cline{3-9}
+		&								&	\multirow{2}{*}{emoticon/emoji}			&	syntactic
+		&	  59		&	31	&	24	&	114	&	2.05\%	\\
+		&								&									&	non-syntactic
+		&	 233		&	164	&	98	&	495	&	0.89\%	\\
+		\cline{2-9}
+		&	non-syntactic 					&	\multicolumn{2}{l |}{truncated}
+		&	  111		&	110	&	50	&	271	&	0.49\%	\\
+		
+		\hline
+		\multirow{3}{*}{\textit{structure}}	& 	\multicolumn{3}{l |}{retweet}
+		&	  596		&	498	&	282	&	1376	&	2.47\%	\\
+		&	\multicolumn{3}{l |}{at-mentioned}
+		&	  485		&	305	&	175	&	965	&	1.74\%	\\
+		\hline
+	\end{tabular}
+	\caption{Twitter Specific Statistics of Tweebank V2}
+	\label{tab2}
 \end{table*}
 %annotation statistics, agreement
 
 The inter-annotator agreement of POS tagging is 95.02\%, the unlabelled dependency agreement is 88\% and the labelled dependency agreement is 84\%.
+
 
 
 \section{Pipeline}
@@ -938,6 +471,3 @@ At last, it’s arguable that some of the hashtags, URLs can work as a nominal i
 \bibliography{shortdb}
 \bibliographystyle{acl2012}
 \end{document}
-
-
-
