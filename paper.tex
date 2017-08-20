@@ -30,6 +30,7 @@
 \usepackage{multirow}
 
 \newcommand{\yjcomment}[1]{\textcolor{orange}{[$_\mathrm{L}^\mathrm{Y}$\textsc{#1}]}}
+\newcommand{\nascomment}[1]{\textcolor{blue}{[#1 ---\textsc{nas}]}}
 
 
 \title{Parsing Tweets into Universal Dependencies}
@@ -59,7 +60,31 @@
 \section{Introduction}
 Analyzing the syntax of tweets is challenging for traditional NLP tools because most of the tweet texts are informal and noisy.
 
-In this paper, we propose to parse the tweets in the convention of universal dependencies and built up the whole pipeline to parse the tweets from the raw text form.
+In this paper, we propose to parse the tweets in the convention of
+universal dependencies and built up the whole pipeline to parse the
+tweets from the raw text form.
+
+Motivation notes:  explain why UD is attractive (and more attractive
+than what previous work used, which was based on YM).  one reason is
+that it might allow sharing of texts annotated in different genres (or
+even languages, cite Waleed).  but universal annotation schemes are
+challenging!  this paper contends with the challenges of
+applying UD to social media texts.
+
+\nascomment{Points that were in older text that I want to keep around:}
+\begin{itemize}
+\item Despite the informal nature of tweets, we argue that they basically follow the same grammar as their formal language counterpart.
+\item UD was designed to handle the variant syntactic phenomenons across different languages and we expect its `context head' principle will bring convenience to the parsing of informal and even ungrammatical tweets. 
+\yjcomment{I still feel we should give a reason why we choose UD. One
+  example is that twitter users tend to leave out the copula verb and
+  it will be messy for the `function head' principle to deal with this
+  case. One observation is that informal tokens/syntax happens more on
+  function words rather than content word.} \nascomment{maybe we could
+  argue that, if UD is designed to work for many languages, it should
+  also be able to work for dialects, including AAVE, and informal
+  registers.  YM was not designed for cross-linguistic applicability.}
+
+\end{itemize}
 
 Contribution of this paper includes:
 \begin{itemize}
@@ -68,9 +93,164 @@ Contribution of this paper includes:
 \item We study the adaptation of universal dependencies for analyzing tweets
 \end{itemize}
 
+\nascomment{not clear to me:  did we reannotate the POS corpus?  was
+  that automatic or manual?  I wasn't sure what to do with the POS
+  section below.}
+
+\section{Annotation}
+
+\nascomment{need to introduce this section and explain the structure.
+I'm not crazy about what I have now, but I like it better than what
+we had before, which seemed to keep repeating the same ideas in
+different contexts.  the flow still seems wrong; we start by talking
+about dependencies, then take a detour to POS, then come back to
+dependencies.}
+\subsection{Background:  \textsc{Tweebank}}
+
+The annotation effort we describe stands in contrast to previous work
+by \newcite{kong-EtAl:2014:EMNLP2014}.  Their aim was the rapid
+development of a dependency parser for tweets, and to that end they
+contributed a new annotated corpus, \textsc{Tweebank}, consisting of
+929 tweets.  Their annotations added a layer to a portion of the data
+annotated with part-of-speech tags by
+\newcite{gimpel-EtAl:2011:ACL-HLT2011} and
+\newcite{owoputi-EtAl:2013:NAACL-HLT}.  They also contributed a system
+for parsing;
+we defer discussion of their parser to \S\ref{sec:parsing}.
+
+Kong et al.'s rapid, small-scale annotation effort was heavily constrained.  It was
+carried out mostly by non-native speakers, in a very short amount of
+time (a day).  Driven both by the style of the text they sought to annotate
+and by exigency, some of their annotation conventions included:
+\begin{itemize}
+\item Allowing an annotator to exclude tokens from the dependency
+  tree.  A clear criterion for exclusion was not given, but many
+  tokens were excluded because they were deemed ``non-syntactic.''
+\item Allowing an annotator to merge a multiword expression into a
+  single node in the dependency tree, with no internal structure.
+  Annotators were allowed to take the same step with noun phrases.
+\item Allowing multiple roots, since a single tweet might contain more
+  than one sentence.
+\end{itemize}
+These conventions were justified on the grounds of making the
+annotation easier for non-experts, but they must be revisited in our
+effort to apply UD to tweets.
 
 
-\section{Data}
+\subsection{Part-of-Speech Annotation}\label{sec:pos-anno}
+
+Before turning to UD annotations, we (re)annotated the data with 
+part-of-speech, for consistency with other UD efforts,
+which adopt the universal POS tagset of \newcite{PETROV12.274}.
+% The POS annotation of a word in tweets is generally based on its syntactic distribution, which indicates that the POS of word changes on different context.
+% Sticking to the syntactic distribution makes it possible that a `$\heart$' symbol is tagged as a verb as shown in Figure \ref{fig:non-syn-toks}. \yjcomment{Need a better explanation.}
+%We follow the UD V2 morphology guideline and use the Universal POS tags~ to tag the tweet tokens. For twitter specific linguistic phenomena, we have set different strategies and try to align with the UD conventions and UD\textunderscore English as close as possible.\footnote{\url{https://github.com/UniversalDependencies/UD\_English}}
+
+In some cases, conflicts arose between the UD English 
+treebank conventions (UD\_English)
+\footnote{\url{https://github.com/UniversalDependencies/UD_English}}
+\nascomment{add cite}
+and the conventions of \newcite{gimpel-EtAl:2011:ACL-HLT2011} and
+\newcite{owoputi-EtAl:2013:NAACL-HLT}.  In these cases, we always
+conformed to UD, enabling consistency (e.g., when we exploit the
+existing UD English treebank in our parser for tweets, \S\ref{???}).  For example,  
+the nominal URL in Figure \ref{fig:informal-toks} is tagged as {\it
+  other} ({\tt X}) and {\tt +} is tagged as {\it symbol} ({\tt SYM})
+rather than {\it conjunction} ({\tt CCONJ}).  
+% Such violation is resulted by our attempt of conforming the annotation to the {\it universal dependencies - English dependency treebank} (UD\_English), in which all the URLs are tagged as {\it other} and symbolic conjunctors are tagged as {\it symbol}.
+% By conforming our annotation to the UD\_English data, hopefully, the tools we built on tweets can benefit from the dataset on broader domain. \yjcomment{need wording}
+
+Tokens that do not have a syntactic function (discussed at greater
+length in the next section) were usually annotated as \emph{other}
+(\texttt{X}), except for emoticons, which are tagged as \emph{symbol}
+(\texttt{SYM}), following UD\_English.  
+
+% Again, there are un-conventional linguistic constructions in tweets that syntactic distribution doesn't handle well.
+% One of the cases is the non-syntactic tokens.
+% We consider most of them as {\tt X}, except for the sentiment emoticons, which would be tagged as {\tt SYM}, in practice of matching the UD\_English.
+% Another case is the retweet construction which is considered as a non-syntactic phrase and both the RT and at-mention are tagged as {\tt X}.
+% For the at-mention, we tag them as proper noun ({\tt PROPN}) in spirit of following the vocative example in UD\_English.
+%In token level phenomena, for non-syntactic tokens,  
+%For syntactic tokens, we tag them considering their corresponding syntactic function.
+
+%In structure level phenomena, we think {\tt RT @user} in retweet structure have no contribution to the tweet syntax and tag both of them as X.
+%We tag usernames in at-mentioned structure as PROPN as they present the vocative case.
+
+Tokens that abbreviate multiple words, such as \emph{idc} (``I don't
+care'') are resolved to the POS of the syntactic head of the
+expression, following UD conventions (in this example, the head \emph{care} is
+a verb, so \emph{idc} is tagged as a verb).
+% The informal syntactic tokens can generally be handled by their distribution.
+% However, one of the exception is the {\tt phrasal abbreviations} in which one token carries multiple syntactic functions.
+% In dealing with such phrases, we propose a routine that first recover their original forms, then, use the POS of their syntactic head word as the POS of the whole phrase.
+% Therefore, {\it idc} (I don't care) is a verb because {\it care} is its syntactic head.
+% Such routine works for most of the phrasal abbreviations.
+When the token is not phrasal, we use the POS of the left-most
+sub-phrase.  For example, \emph{mfw} (``my face when'') is tagged as a
+noun (for \emph{face}).  % \footnote{Such failure can be resulted by the mis-match of phrase boundaries between the original form and the definition of `phrase' in UD. For example, `mfw' (my face when) doesn't make a phrase because `when' belongs to the subordination that modifies `my face'.}
+
+%In Fig.~\ref{ex1}, {\tt RT} {\tt @yijialiu}, {\tt \#ACL2017}, {\tt http://url} and {\tt th} are all tagged as X and {\tt :)} is tagged as SYM. 
+%{\tt rn} is tagged as ADV.
+%We should note that multiple tokens are actually included in a phrasal abbreviation, and we use one of their tags as the tag of the whole abbreviation according to their dependency relation or semantic priority.
+%If there is a hierarchy in the abbreviation, we use the tag of the head word. In UD, ``Right'' is the dependent of ``now '' in the dependency of {\tt rn}, so we tag {\tt rn} as ADV. 
+%Although there is no head word in {\tt im}, we think that the subject is usually more informative than the tense in many downstream tasks such as semantic role labelling, so we use the tag of ``I'', e.g. PROPN as the tag of {\tt im}.  
+%In Fig.~\ref{ex2}, {\tt RT} and {\tt $\heart$} would be tagged as VERB, {\tt http://url} as X, {\tt \#Awesome} as ADJ, {\tt \#NAACL}, {\tt @zypandora} and {\tt @nlpnoah} as PROPN. One exception is that we tag URLs always as X regardless whether they are syntactic tokens. The reason is that we observed, in UD\_English, that the URLs are all tagged as X and we want to conform with the UD dataset, although we think it is not appropriate and should be changed to tags such as PROPN when they are treated as syntactic tokens.
+
+Compared to coarse-grained part-of-speech tagging effort of
+\newcite{gimpel-EtAl:2011:ACL-HLT2011}, our approach simplifies some
+matters.  For example, if a token is not considered syntactic by UD
+conventions, it gets an \emph{other} (\texttt{X}) tag (Gimpel et
+al.~had more extensive conventions).  Other phenomena, like
+abbreviations, are more complicated for us, as discussed above;
+Gimpel et al.~used a single part of speech for such expressions.
+
+%  proposed a course grain twitter POS tagset that handles most of the token level phenomena.
+% However, our work diverge theirs in several ways.
+% Compared with the Gimpel's work, which assigns different tags to non-syntactic tokens in different categories, we simplify them into the {\tt X} tag.
+% At the same time, all the abbreviations in \newcite{gimpel-EtAl:2011:ACL-HLT2011} are tagged with one POS, which doesn't distinguish their syntactic functions.
+% We argue that such approach over-simplify the abbreviations.
+% One example is that {\it idc} (I don't care) and {\it rn} (right now) carries significantly different syntactic functions and should not be treated as the same.
+% In this paper, we stick more to the syntactic distribution when handling such abbreviations and it allows them to function differently in different context.
+
+Another important difference is in tokenization.  UD calls for more
+aggressive tokenization than that used by
+\newcite{gimpel-EtAl:2011:ACL-HLT2011}, which followed
+\newcite{oconnor-2010}.  In particular, they opted out of tokenizing
+contractions and possessives, introducing new parts of speech
+instead.\footnote{These tags only accounted for 2.7\% of tokens,
+  leading to concerns about data sparseness in tagging and all
+  downstream analyses.}  For us, these tokens must be split, but
+universal parts of speech can be applied.
+
+%  is resulted by the tokenization process.
+% In \newcite{gimpel-EtAl:2011:ACL-HLT2011}, they opted out the tokenization on contractions and possessives and introduce several tags for these un-tokenized words.
+% As mentioned above, the goal of conforming our annotation to the UD\_English makes us adopt the same the UD-styled tokenization.
+% Thus, these tags for contractions and possessives are not necessary at all in our case.
+% What's more, as \newcite{gimpel-EtAl:2011:ACL-HLT2011} mentioned, only a small proportion of tokens can be categorized into these tags (2.7 \% in total), which casts a doubt of the usefulness of these tags.
+% %However, we found that their methods did not conform with UD conventions and our strategies have some advantages over their tagset. We discuss the main difference as follows.
+% %The first difference lies in the tokenizations.
+% %\newcite{Gimpel:2011:PTT:2002736.2002747} opted not to split contractions or possessives and introduced four new tags (S, Z, L, M) for combined forms: \{nominal, proper noun\} $\times$ \{verb, possessive\}. 
+% %Major concern of designing such tags is to minimize the effort of tokenization, but it is not comprehensive and far from including all of the possible combinations of POS tags within the contractions. 
+% %What's more, only a small proportion of tokens can be categorized into these tags (2.7 \% in total), which casts a doubt of the usefulness of these tags.
+% %Instead UD conventions suggest that we put such complexity into the tokenization module and split contractions and possessives, then tag them accordingly, so that we do not need extra POS tags for the combined forms.
+% %The second difference is that although the phrasal abbreviations are not split in both methods, they use tag G for all the phrasal abbreviations, while we use the tag of the head word or the highest hierarchical word in terms of dependencies as the tag of the whole phrasal abbreviations. 
+% %We think it is not reasonable to treat the phrasal abbreviations in the same part of speech because obviously abbreviations can have different syntactic functions and we want to preserve the most useful information for both parser and the downstream tasks. For example, {\tt wtf} could be tagged as PRON or INTJ according to the context, and {\tt rn} is usually tagged as ADV. Tagging them merely as G will definitely lose much information.
+% %Third, special tags were designed to handle twitter or online special tokens such as URLs, hashtags and emoticon in \newcite{Gimpel:2011:PTT:2002736.2002747}. However, in most cases, as long as theses tokens are non syntactic, they play the same role in tweets, hence should be tagged the same. In this paper, except for the emoticon and emoji, tagged as SYM, we tag all the other non-syntactic tokens as X.
+
+
+
+
+\subsection{Universal Dependencies Applied to Tweets}
+
+We adopt UD version 2 
+\cite{Marneffe2014UniversalSD} guidelines to annotate the syntax of tweets.
+In applying UD annotation conventions to tweets, the choices of 
+\newcite{kong-EtAl:2014:EMNLP2014} must be revisited.  We consider the
+key questions that arose in our annotation effort, and how we resolved them.
+
+\nascomment{for each thing we talk about here, might be nice to
+  quantify it in our annotated corpus}
+
 % Linguistic phenomena
 	% word level
 		% RT
@@ -93,23 +273,70 @@ Contribution of this paper includes:
 		% how many hashtags, mentions, ....
 		% how many acornyms
 
-\subsection{Linguistic Phenomena of Twitter} \label{lingphen}
-Twitter, as an extreme example of informal domain, contains a collection of conversational languages (like abbreviation, informal contraction, and variant entity names) and twitter-specified markers (like retweet mark, and username).
-Despite the informal nature of tweets, we argue that they basically follow the same grammar as their formal language counterpart.
-The key issue lies in understanding the specific construction that doesn't carry any syntactic functions, and designed rules to handle the specific constructions in tweets.
-In the following section, we studied such constructions from both the token and structure level. \yjcomment{I don't like the name of \textbf{structure level}}
-%As the representative of the web language, different from the standard languages such as newswire, twitter has its own linguistic phenomena, that could be categorized into token level and structure level phenomena, and we will discuss them separately.
+%\subsection{Linguistic Phenomena of Twitter} \label{lingphen}
+% Twitter, as an extreme example of informal domain, contains a collection of conversational languages (like abbreviation, informal contraction, and variant entity names) and twitter-specified markers (like retweet mark, and username).
+% The key issue lies in understanding the specific construction that doesn't carry any syntactic functions, and designed rules to handle the specific constructions in tweets.
+% In the following section, we studied such constructions from both the token and structure level. \yjcomment{I don't like the name of \textbf{structure level}}
+% %As the representative of the web language, different from the standard languages such as newswire, twitter has its own linguistic phenomena, that could be categorized into token level and structure level phenomena, and we will discuss them separately.
 
 
-\subsubsection{Token Level}
-\paragraph{Informal Syntactic Tokens.}
-Informal tokens like phrase abbreviation (like {\tt mfw}: my face when, {\tt rn}: right now, and etc.) and orthographic variants (like {\tt sooo cooool}) have drawn much attention in previous literals \cite{finin-EtAl:2010:MTURK,eisenstein:2013:NAACL-HLT} \yjcomment{not sure orthographic variants is a good name, need reference.}
-However, in the sense of syntactic functions, they work in the same way as the ordinary words, which makes them requires less specialty in designing annotation conventions.
-%Syntactic tokens are just like normal tokens in the standard text.
-%They always have syntactic functions in tweets.
-%They could be orthographic variants or abbreviations that represents a phrase.
+\paragraph{Acronym abbreviations.}  How should we syntactically
+analyze acronym tokens like \emph{mfw}
+(abbreviating ``my face when'') and \emph{rn} (``right now'')?  Should
+they be decomposed into their component words, and if so should those
+words be ``normalized'' into explicitly spelled out intermediate
+forms?  \nascomment{explain what we do, and include how this is
+  similar to or different from Kong et al}
 
-\paragraph{Non-syntactic Tokens.}
+\nascomment{maybe we owe citations to
+  \cite{finin-EtAl:2010:MTURK,eisenstein:2013:NAACL-HLT} here?  maybe
+  better papers to cite}
+
+
+\paragraph{Non-syntactic tokens.}  
+Figure \ref{fig:non-syn-toks} illustrates examples of tokens that have
+no syntactic function.  Note that these generally have the
+\emph{other} (\texttt{X}) part of speech.
+
+It is important to note that these types may, in some
+contexts, have syntactic functions.
+For example, besides being a discourse marker, \emph{RT} can
+abbreviate the verb {\tt retweet}, and emoticons and hashtags may be
+used as content words within a sentence; see  Figure
+\ref{fig:informal-toks}.  Therefore, the criteria for annotating a
+token as non-syntactic must be context-dependent.
+To our knowledge, this issue has not previously been addressed in UD
+annotation efforts \nascomment{check!}.
+
+\nascomment{I'm confused about (1) how we define non-syntactic tokens
+  (what are the criteria) and (2) whether this is something we kick
+  over to POS annotation}
+
+Inspired by the way UD deals with \emph{punctuation} (which is
+canonically non-syntactic), we adopt the following
+conventions:
+\begin{itemize}
+\item If a non-syntactic token is within a sentence that has a clear predicate, it will be attached to this predicate;
+\item If the whole sentence is made of a sequence of non-syntactic tokens, we attach all these tokens to the first one;
+%\item In parataxis case, when it is difficult to decide which sentence or phrase x should belong to, we always attach x to the previous predicate of the paratactic clause or phrase;
+\item non-syntactic tokens are mostly labeled as {\it discourse}, but
+  URLs are always labeled as {\it list}, following the UD\_English dataset.
+\end{itemize}
+
+
+\nascomment{explain our conventions and how
+  they relate to Kong and to UD.  in the draft before, we said that we
+had conventions, and Kong didn't, but we didn't really say what ours were.}
+
+% \subsubsection{Token Level}
+% \paragraph{Informal Syntactic Tokens.}
+% Informal tokens like phrase abbreviation (like {\tt mfw}: my face when, {\tt rn}: right now, and etc.) and orthographic variants (like {\tt sooo cooool}) have drawn much attention in previous literals \cite{finin-EtAl:2010:MTURK,eisenstein:2013:NAACL-HLT} \yjcomment{not sure orthographic variants is a good name, need reference.}
+% However, in the sense of syntactic functions, they work in the same way as the ordinary words, which makes them requires less specialty in designing annotation conventions.
+% %Syntactic tokens are just like normal tokens in the standard text.
+% %They always have syntactic functions in tweets.
+% %They could be orthographic variants or abbreviations that represents a phrase.
+
+% \paragraph{Non-syntactic Tokens.}
 
 \begin{figure*}[t]
 	\centering
@@ -167,24 +394,38 @@ However, in the sense of syntactic functions, they work in the same way as the o
 	\caption{An example tweet with informal but syntactic tokens.}\label{fig:informal-toks}
 \end{figure*}
 
-Besides the informal but syntactic tokens, there are a large collection of tokens that cannot be handled by the syntactic theory designed for standard text.
-A major part of these tokens consists of meta data in tweets, like the sentiment emotion, retweet mark, topical hashtag, and referential URL shown in Figure \ref{fig:non-syn-toks}. 
+% Besides the informal but syntactic tokens, there are a large collection of tokens that cannot be handled by the syntactic theory designed for standard text.
+% A major part of these tokens consists of meta data in tweets, like the sentiment emotion, retweet mark, topical hashtag, and referential URL shown in Figure \ref{fig:non-syn-toks}. 
 
-However, whether a token convey some syntactic function cannot be simply decided by its form.
-For example, besides being a discourse marker, {\tt RT} can also works as a abbreviation of the verb {\tt retweet}.
-Emoticons are sometimes used as a verbal part of the sentence.
-Twitter users have developed a casual habit of using hashtag, and even use hashtag as a adjective.
-The sentence in Figure \ref{fig:informal-toks} gives a comprehensive example of those informal but syntactic tokens.
-It shows whether a token makes a non-syntactic one is highly conditioned on its context.
+% However, whether a token convey some syntactic function cannot be simply decided by its form.
+% For example, besides being a discourse marker, {\tt RT} can also works as a abbreviation of the verb {\tt retweet}.
+% Emoticons are sometimes used as a verbal part of the sentence.
+% Twitter users have developed a casual habit of using hashtag, and even use hashtag as a adjective.
+% The sentence in Figure \ref{fig:informal-toks} gives a comprehensive example of those informal but syntactic tokens.
+% It shows whether a token makes a non-syntactic one is highly conditioned on its context.
 
-A kind of token that doesn't carry clearly syntactic functions can be resulted by the 140 characters limits of tweets.
-Since last tokens that exceeding 140 characters limits are truncated in tweets which leaves a broken sentence, it is impossible to fully recover their original form and figure out their syntactics.
-In this paper, we propose to treat these truncated tokens, along with the other 4 kinds of tokens mentioned above, as ones without syntactic functions.
+\nascomment{in latex source I've commented out a paragraph about
+  truncated content.  it's not clear to me what the nonsyntactic
+  tokens are, when that happens}
+% A kind of token that doesn't carry clearly syntactic functions can be resulted by the 140 characters limits of tweets.
+% Since last tokens that exceeding 140 characters limits are truncated in tweets which leaves a broken sentence, it is impossible to fully recover their original form and figure out their syntactics.
+% In this paper, we propose to treat these truncated tokens, along with the other 4 kinds of tokens mentioned above, as ones without syntactic functions.
 
-In the sense of dealing with the non-syntactic tokens, \newcite{kong-EtAl:2014:EMNLP2014} proposed an preprocessing step named {\it token selection} to remove non-syntactic tokens from the original tweets.
-However, concrete standard of non-syntactic tokens was not presented in their work.
-What's more, these unselected tokens are absent from downstream processing, including parsing.
-We differ from their work by proposing concrete standard of non-syntactic tokens and we include these non-syntactic tokens in our final analyzed dependencies by adding special attachment to them.
+\newcite{kong-EtAl:2014:EMNLP2014} proposed an additional
+preprocessing step, \emph{token selection}, to remove non-syntactic
+tokens before parsing.  \nascomment{confusing.  were they removed or
+  just labeled as non-syntactic and then excluded from the tree?  I
+  think they were not actually removed, and were still available,
+  e.g., for defining features of the input for parsing}  In order to
+keep our annotation conventions in line with UD norms, we include
+non-syntactic tokens in the dependency analysis, with a special label
+\nascomment{say what it is, and what they attach to, and clarify that
+  the annotators didn't do this manually (I think)}
+
+%In the sense of dealing with the non-syntactic tokens, \newcite{kong-EtAl:2014:EMNLP2014} proposed an preprocessing step named {\it token selection} to remove non-syntactic tokens from the original tweets.
+%However, concrete standard of non-syntactic tokens was not presented in their work.
+%What's more, these unselected tokens are absent from downstream processing, including parsing.
+%We differ from their work by proposing concrete standard of non-syntactic tokens and we include these non-syntactic tokens in our final analyzed dependencies by adding special attachment to them.
 %There are special tokens that will appear only or much more frequently in tweets.
 %According to the syntactic functions these tokens have in the tweets, we classify them into three types: syntactic tokens, non-syntactic tokens and optionally syntactic tokens. 
 %Non-syntactic tokens are tokens that will not have syntactic function in tweets, and they are not considered in the syntax analysis and need to be treated independently.
@@ -214,20 +455,50 @@ We differ from their work by proposing concrete standard of non-syntactic tokens
 
 %As optionally syntactic tokens will be treated as syntactic or non-syntactic tokens based on the specific context, for the sake of simplicity, if not necessary, we will only discuss the syntactic and non-syntactic tokens in the following sections.
 
+\paragraph{Retweet construction.} Figure \ref{fig:non-syn-toks} shows
+an example of the retweet construction (\emph{RT @coldplay :}).  This
+might be treated as a verb phrase, with \emph{RT} as a verb and the
+at-mention as its object.  This solution would lead to an uninformative root
+word and, since this expression is idiomatic to Twitter, might create
+unnecessary confusion for downstream applications aiming to identify
+the main predicate(s) of a tweet.  We therefore treat the whole
+expression as non-syntactic, including assigning the \emph{other}
+(\texttt{X}) part of speech to both \emph{RT} and \emph{@coldplay},
+attaching the at-mention to \emph{RT} with the \emph{discourse}
+label and the colon to \emph{RT} with the \emph{punct}(uation) label,
+and attaching \emph{RT} to the predicate of the following sentence. 
+
+% \nascomment{smooth this in: } Considering the twitter specific constructions, we will treat the retweet construction as a whole non-syntactic phrase, and the inner structure will always be attaching {\tt at-mention} to {\tt RT} with {\tt discourse}, {\tt :} to {\tt RT} with {\tt punct}.
+% The whole construction headed on the {\tt RT} marker modifies the predicate of following sentence.
+% For the at-mentioned structure, we attach at-mentioned username to the predicate of the most relevant sentence with {\it vocative} label.
+
+
+\paragraph{Constructions handled by UD.}  A number of constructions
+that are especially common in tweets are well handled by UD
+conventions:  ellipsis, irregular word orders, and paratactic sentences
+not explicitly delineated by punctuation.
 	
-\subsubsection{Structure Level}
-The syntactic constructions vary greatly across different tweets.
-Unconventional constructions which frequently occur include ellipsis, irregular word orders, and para-tactic sentences without the segmentation of punctuations \yjcomment{I move the 3rd bullet point here because this construction was handled by UD-guidelines}.
-And these unconventional ones are more or less resolved by the universal dependencies.
-The unresolved cases are mainly resulted by the format of twitter.
-The {\it retweet} and {\it at-mention} are of two major constructions.
-\paragraph{Retweet.} For the {\it retweet} construction (`{\tt RT @coldplay :}' in Figure \ref{fig:non-syn-toks}), although it can be treated as a verbal phrase in which retweet marker works as a verb and the following at-mention is its objective, we argue that such convention lead to a uninformative root word.
-It also increase the difficulty for downstream tasks in figuring out the core predicate and arguments for one certain tweet.
-Thus, we treat the whole construction as a non-syntactic phrase. \yjcomment{correct me if I am wrong.}
-\paragraph{At-mention.} At-mention in the beginning of a tweet is the format of indicating the `reply' action.
-In this paper, we treat the at-mentions as vocative expressions for their connections with the traditional vocative words, rather than treat them as non-syntactic metadata, which increase the complexity for analyzing a tweet.
-\yjcomment{since the original discussion mainly focus on tokens, I move them to the former section.}
-%Besides the token level phenomena of twitter, there are also structural patterns appearing in the twitter.
+% \subsubsection{Structure Level}
+% The syntactic constructions vary greatly across different tweets.
+% Unconventional constructions which frequently occur include ellipsis, irregular word orders, and para-tactic sentences without the segmentation of punctuations \yjcomment{I move the 3rd bullet point here because this construction was handled by UD-guidelines}.
+% And these unconventional ones are more or less resolved by the universal dependencies.
+% The unresolved cases are mainly resulted by the format of twitter.
+% The {\it retweet} and {\it at-mention} are of two major constructions.
+% \paragraph{Retweet.} For the {\it retweet} construction (`{\tt RT @coldplay :}' in Figure \ref{fig:non-syn-toks}), although it can be treated as a verbal phrase in which retweet marker works as a verb and the following at-mention is its objective, we argue that such convention lead to a uninformative root word.
+% It also increase the difficulty for downstream tasks in figuring out the core predicate and arguments for one certain tweet.
+% Thus, we treat the whole construction as a non-syntactic phrase. \yjcomment{correct me if I am wrong.}
+
+\paragraph{Vocative at-mentions.}  Another idiomatic construction on
+Twitter is an at-mention (followed by a colon \nascomment{?}) as a
+sign that a tweet is a reply to a tweet by the mentioned user.  We
+treat these at-mentions as vocative expressions, labeling them as
+\emph{proper noun} (\texttt{PROPN}) and attaching them to the
+following predicate with the label \emph{vocative}.  \nascomment{need an example.}
+
+% \paragraph{At-mention.} At-mention in the beginning of a tweet is the format of indicating the `reply' action.
+% In this paper, we treat the at-mentions as vocative expressions for their connections with the traditional vocative words, rather than treat them as non-syntactic metadata, which increase the complexity for analyzing a tweet.
+% \yjcomment{since the original discussion mainly focus on tokens, I move them to the former section.}
+% %Besides the token level phenomena of twitter, there are also structural patterns appearing in the twitter.
 
 %\begin{itemize}
 %\item Retweet structure: {\tt RT @user : \{tweet content\}} is a typical structural pattern when a user is retweeting from other users. 
@@ -245,91 +516,19 @@ In this paper, we treat the at-mentions as vocative expressions for their connec
 %However, consider another example in Figure \ref{fig:informal-toks}. All of the optionally syntactic tokens ({\tt RT}, {\tt http://url}, {\tt \#NAACL}, {\tt \#Awesome}, {\tt @zypandora}, {\tt @nlpnoah} and {\tt $\heart$}) have syntactic functions, and we need to take them into account in the syntactic analysis.
 
 
-\subsection{Part-of-Speech Annotation}\label{sec:pos-anno}
-We adopt the universal Part-of-Speech (POS) tagset \cite{PETROV12.274} to annotate the tweets.
-The POS annotation of a word in tweets is generally based on its syntactic distribution, which indicates that the POS of word changes on different context.
-Sticking to the syntactic distribution makes it possible that a `$\heart$' symbol is tagged as a verb as shown in Figure \ref{fig:non-syn-toks}. \yjcomment{Need a better explanation.}
-%We follow the UD V2 morphology guideline and use the Universal POS tags~ to tag the tweet tokens. For twitter specific linguistic phenomena, we have set different strategies and try to align with the UD conventions and UD\textunderscore English as close as possible.\footnote{\url{https://github.com/UniversalDependencies/UD\_English}}
 
-We need to note that in some certain cases, the distribution criteria doesn't holds.
-For example, the nominal URL in Figure \ref{fig:informal-toks} is tagged as {\it other} ({\tt X}) and the conjunctor {\tt +} symbol is tagged as {\it symbol} ({\tt SYM}) rather than {\it conjunction} ({\tt CCONJ}).
-Such violation is resulted by our attempt of conforming the annotation to the {\it universal dependencies - English dependency treebank} (UD\_English), in which all the URLs are tagged as {\it other} and symbolic conjunctors are tagged as {\it symbol}.\footnote{\url{https://github.com/UniversalDependencies/UD\_English}}
-By conforming our annotation to the UD\_English data, hopefully, the tools we built on tweets can benefit from the dataset on broader domain. \yjcomment{need wording}
+% \subsection{Dependency Annotation}
 
-Again, there are un-conventional linguistic constructions in tweets that syntactic distribution doesn't handle well.
-One of the cases is the non-syntactic tokens.
-We consider most of them as {\tt X}, except for the sentiment emoticons, which would be tagged as {\tt SYM}, in practice of matching the UD\_English.
-Another case is the retweet construction which is considered as a non-syntactic phrase and both the RT and at-mention are tagged as {\tt X}.
-For the at-mention, we tag them as proper noun ({\tt PROPN}) in spirit of following the vocative example in UD\_English.
-%In token level phenomena, for non-syntactic tokens,  
-%For syntactic tokens, we tag them considering their corresponding syntactic function.
-
-%In structure level phenomena, we think {\tt RT @user} in retweet structure have no contribution to the tweet syntax and tag both of them as X.
-%We tag usernames in at-mentioned structure as PROPN as they present the vocative case.
-
-The informal syntactic tokens can generally be handled by their distribution.
-However, one of the exception is the {\tt phrasal abbreviations} in which one token carries multiple syntactic functions.
-In dealing with such phrases, we propose a routine that first recover their original forms, then, use the POS of their syntactic head word as the POS of the whole phrase.
-Therefore, {\it idc} (I don't care) is a verb because {\it care} is its syntactic head.
-Such routine works for most of the phrasal abbreviations.
-When it falls, we just use the POS of the left-most sub-phrase. \footnote{Such failure can be resulted by the mis-match of phrase boundaries between the original form and the definition of `phrase' in UD. For example, `mfw' (my face when) doesn't make a phrase because `when' belongs to the subordination that modifies `my face'.}
-
-%In Fig.~\ref{ex1}, {\tt RT} {\tt @yijialiu}, {\tt \#ACL2017}, {\tt http://url} and {\tt th} are all tagged as X and {\tt :)} is tagged as SYM. 
-%{\tt rn} is tagged as ADV.
-%We should note that multiple tokens are actually included in a phrasal abbreviation, and we use one of their tags as the tag of the whole abbreviation according to their dependency relation or semantic priority.
-%If there is a hierarchy in the abbreviation, we use the tag of the head word. In UD, ``Right'' is the dependent of ``now '' in the dependency of {\tt rn}, so we tag {\tt rn} as ADV. 
-%Although there is no head word in {\tt im}, we think that the subject is usually more informative than the tense in many downstream tasks such as semantic role labelling, so we use the tag of ``I'', e.g. PROPN as the tag of {\tt im}.  
-%In Fig.~\ref{ex2}, {\tt RT} and {\tt $\heart$} would be tagged as VERB, {\tt http://url} as X, {\tt \#Awesome} as ADJ, {\tt \#NAACL}, {\tt @zypandora} and {\tt @nlpnoah} as PROPN. One exception is that we tag URLs always as X regardless whether they are syntactic tokens. The reason is that we observed, in UD\_English, that the URLs are all tagged as X and we want to conform with the UD dataset, although we think it is not appropriate and should be changed to tags such as PROPN when they are treated as syntactic tokens.
-
-Similar to our work, \newcite{gimpel-EtAl:2011:ACL-HLT2011} proposed a course grain twitter POS tagset that handles most of the token level phenomena.
-However, our work diverge theirs in several ways.
-Compared with the Gimpel's work, which assigns different tags to non-syntactic tokens in different categories, we simplify them into the {\tt X} tag.
-At the same time, all the abbreviations in \newcite{gimpel-EtAl:2011:ACL-HLT2011} are tagged with one POS, which doesn't distinguish their syntactic functions.
-We argue that such approach over-simplify the abbreviations.
-One example is that {\it idc} (I don't care) and {\it rn} (right now) carries significantly different syntactic functions and should not be treated as the same.
-In this paper, we stick more to the syntactic distribution when handling such abbreviations and it allows them to function differently in different context.
-
-The last difference between \newcite{gimpel-EtAl:2011:ACL-HLT2011} is resulted by the tokenization process.
-In \newcite{gimpel-EtAl:2011:ACL-HLT2011}, they opted out the tokenization on contractions and possessives and introduce several tags for these un-tokenized words.
-As mentioned above, the goal of conforming our annotation to the UD\_English makes us adopt the same the UD-styled tokenization.
-Thus, these tags for contractions and possessives are not necessary at all in our case.
-What's more, as \newcite{gimpel-EtAl:2011:ACL-HLT2011} mentioned, only a small proportion of tokens can be categorized into these tags (2.7 \% in total), which casts a doubt of the usefulness of these tags.
-%However, we found that their methods did not conform with UD conventions and our strategies have some advantages over their tagset. We discuss the main difference as follows.
-%The first difference lies in the tokenizations.
-%\newcite{Gimpel:2011:PTT:2002736.2002747} opted not to split contractions or possessives and introduced four new tags (S, Z, L, M) for combined forms: \{nominal, proper noun\} $\times$ \{verb, possessive\}. 
-%Major concern of designing such tags is to minimize the effort of tokenization, but it is not comprehensive and far from including all of the possible combinations of POS tags within the contractions. 
-%What's more, only a small proportion of tokens can be categorized into these tags (2.7 \% in total), which casts a doubt of the usefulness of these tags.
-%Instead UD conventions suggest that we put such complexity into the tokenization module and split contractions and possessives, then tag them accordingly, so that we do not need extra POS tags for the combined forms.
-%The second difference is that although the phrasal abbreviations are not split in both methods, they use tag G for all the phrasal abbreviations, while we use the tag of the head word or the highest hierarchical word in terms of dependencies as the tag of the whole phrasal abbreviations. 
-%We think it is not reasonable to treat the phrasal abbreviations in the same part of speech because obviously abbreviations can have different syntactic functions and we want to preserve the most useful information for both parser and the downstream tasks. For example, {\tt wtf} could be tagged as PRON or INTJ according to the context, and {\tt rn} is usually tagged as ADV. Tagging them merely as G will definitely lose much information.
-%Third, special tags were designed to handle twitter or online special tokens such as URLs, hashtags and emoticon in \newcite{Gimpel:2011:PTT:2002736.2002747}. However, in most cases, as long as theses tokens are non syntactic, they play the same role in tweets, hence should be tagged the same. In this paper, except for the emoticon and emoji, tagged as SYM, we tag all the other non-syntactic tokens as X.
-
-
-\subsection{Dependency Annotation}
-
-We adopt universal dependency (UD) \cite{Marneffe2014UniversalSD} v2 guideline to annotate the syntax relations between tokens in tweets.
-UD was designed to handle the variant syntactic phenomenons across different languages and we expect its `context head' principle will bring convenience to the parsing of informal and even ungrammatical tweets. 
-\yjcomment{I still feel we should give a reason why we choose UD. One example is that twitter users tend to leave out the copula verb and it will be messy for the `function head' principle to deal with this case. One observation is that informal tokens/syntax happens more on function words rather than content word.}
 %We follow the UD v2 syntax guideline and the English specific {\it universal dependency relations} to annotate our data.
 
 %In token level phenomena, we adopt the following rules for non-syntactic tokens, denoted as x: 
-Again, as shown in Section \ref{sec:pos-anno}, the major challenge in adopting UD on tweets lies on dealing with the non-syntactic parts.
-Inspired by the way UD deal with punctuation, we adopt the following rules to obtain relation for the non-syntactic tokens:
-\begin{itemize}
-\item If a non-syntactic token is within a sentence that has a clear predicate, it will be attached to this predicate;
-\item If the whole sentence is made of a sequence of non-syntactic tokens, we attach all these tokens to the first one;
-%\item In parataxis case, when it is difficult to decide which sentence or phrase x should belong to, we always attach x to the previous predicate of the paratactic clause or phrase;
-\item non-syntactic tokens are mostly labeled as {\it discourse}, but URLs are always labeled as {\it list} in conformation with the UD\_English;
-\end{itemize}
+%Again, as shown in Section \ref{sec:pos-anno}, the major challenge in adopting UD on tweets lies on dealing with the non-syntactic parts.
 
-Considering the twitter specific constructions, we will treat the retweet construction as a whole non-syntactic phrase, and the inner structure will always be attaching {\tt at-mention} to {\tt RT} with {\tt discourse}, {\tt :} to {\tt RT} with {\tt punct}.
-The whole construction headed on the {\tt RT} marker modifies the predicate of following sentence.
-For the at-mentioned structure, we attach at-mentioned username to the predicate of the most relevant sentence with {\it vocative} label.
 %If it is hard to decide which sentence would be the most relevant, we attach it to the previous sentence's predicate.
 	%\item Paratactic parts without punctuations: we follow the UD convention, set the first part as the main part of the sentence, and set its predicate as the main predicate of the sentence. Every predicate of the following parts should attach to the main predicate. If the main part and some following part are both phrases, the label is {\it list}, otherwise the label is {\it parataxis}. Note that we still have an exception for URLs, conforming with UD, which are always labelled as {\it list}, regardless of the type of the other part.
 %\end{itemize}
 
-Besides these non-syntactic and special constructions, the informal but syntactic tokens are treated in the same way with their original form.
+% Besides these non-syntactic and special constructions, the informal but syntactic tokens are treated in the same way with their original form.
 
 %We further adopt the following rules for structure level phenomena:
 
@@ -337,16 +536,18 @@ Besides these non-syntactic and special constructions, the informal but syntacti
 % unlabelled, Informal
 % exclude non-syntactic tokens, punctuations
 % Annotation conventions
-\newcite{kong-EtAl:2014:EMNLP2014} presented a syntactic treebank on Gimpel et al.'s POS tagset.
-Compared with their work which create an unlabeled treebank, we further attach dependency relations and it's expected to be more helpful for the downstream tasks.
-We also provide concrete guidelines on dealing with the special constructions in tweets along with their variant linguistic phenomenon.
-It solve the annotation inconsistency problem in \newcite{kong-EtAl:2014:EMNLP2014}'s treebank.
-Our definition of the non-syntactic tokens is similar in spirit to the token selection process but we further define the concrete cases for such tokens.
-\yjcomment{We can put the ellipsis example in as a comparison of the `function headed' Yamada dependency and `content head' UD dependency.}
+%\newcite{kong-EtAl:2014:EMNLP2014} presented a syntactic treebank on Gimpel et al.'s POS tagset.
+%Compared with their work which create an unlabeled treebank, we further attach dependency relations and it's expected to be more helpful for the downstream tasks.
+%We also provide concrete guidelines on dealing with the special constructions in tweets along with their variant linguistic phenomenon.
+% It solve the annotation inconsistency problem in \newcite{kong-EtAl:2014:EMNLP2014}'s treebank.
+%Our definition of the non-syntactic tokens is similar in spirit to the token selection process but we further define the concrete cases for such tokens.
+%\yjcomment{We can put the ellipsis example in as a comparison of the `function headed' Yamada dependency and `content head' UD dependency.}
 %Second, most of Tweebank was built in a day by two dozen annotators, most of whom had only cursory training in the annotation scheme~\cite{kong-EtAl:2014:EMNLP2014}. We think, after investigation, that despite the speed, the quality of data is still to be improved. We follow strictly the UD annotation guideline and only make twitter specific conventions when there is no suitable convention to adopt in UD guideline or no relevant data found in UD\_English.
 %Third, \newcite{kong-EtAl:2014:EMNLP2014} developed a first-order sequence model to filter out the non-syntactic tokens and punctuations, and exclude them before parsing.
 %It is very different from most of the annotation conventions, especially for UD conventions. We believe that every token should be included in the dependency tree, whether they have syntactic functions or are to be evaluated in the end, as in most of the conventions, so we annotate all tokens.
 %Last, \newcite{kong-EtAl:2014:EMNLP2014} adopt the ``Yamada-Matsumoto" conventions~\cite{Yamada03statisticaldependency}, where auxiliary verbs are parents of main verbs, and prepositions are parents of their arguments, in contrast to UD conventions, where content words are put into the primacy, and dependency relations hold primarily between them, rather than being indirect relations mediated by function words. Auxiliary verbs and prepositions are all function words, and are attached to the most related content words in UD.
+
+\nascomment{I didn't touch anything below here}
 
 \subsection{Data Collection}
 \yjcomment{This section is un-finished.}
@@ -439,7 +640,8 @@ The inter-annotator agreement of POS tagging is 95.02\%, the unlabelled dependen
 
 
 
-\section{Pipeline}
+\section{Pipeline} 
+\label{sec:parsing}
 
 \section{Model}
 
