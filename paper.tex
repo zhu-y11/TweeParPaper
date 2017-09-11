@@ -6,9 +6,8 @@
 %% Based on the style files for ACL2008 by Joakim Nivre and Noah Smith
 %% and that of ACL2010 by Jing-Shin Chang and Philipp Koehn
 
-\documentclass[11pt,letterpaper]{article}
-\usepackage[letterpaper]{geometry}
-\usepackage{acl2012}
+\documentclass[11pt,a4paper]{article}
+\usepackage[hyperref]{naaclhlt2018}
 \usepackage{times}
 \usepackage{latexsym}
 \usepackage{amsmath}
@@ -16,22 +15,15 @@
 \usepackage{xcolor}
 \usepackage{tikz-dependency}
 \usepackage{url}
-\makeatletter
-\newcommand{\@BIBLABEL}{\@emptybiblabel}
-\newcommand{\@emptybiblabel}[1]{}
-\makeatother
-\usepackage[hidelinks]{hyperref}
-\DeclareMathOperator*{\argmax}{arg\,max}
-\setlength\titlebox{6.5cm}    % Expanding the titlebox
+\usepackage{multirow}
+\newcommand\BibTeX{B{\sc ib}\TeX}
 
 %%%%%%%
 \usepackage{graphicx}
 \newcommand{\heart}{\ensuremath\heartsuit}
-\usepackage{multirow}
 
 \newcommand{\yjcomment}[1]{\textcolor{orange}{[$_\mathrm{L}^\mathrm{Y}$\textsc{#1}]}}
 \newcommand{\nascomment}[1]{\textcolor{blue}{[#1 ---\textsc{nas}]}}
-
 
 \title{Parsing Tweets into Universal Dependencies}
 
@@ -53,9 +45,6 @@
 \begin{abstract}
 
 \end{abstract}
-
-
-
 
 \section{Introduction}
 Analyzing the syntax of tweets is challenging for traditional NLP tools because most of the tweet texts are informal and noisy.
@@ -105,7 +94,7 @@ we had before, which seemed to keep repeating the same ideas in
 different contexts.  the flow still seems wrong; we start by talking
 about dependencies, then take a detour to POS, then come back to
 dependencies.}
-\subsection{Background:  \textsc{Tweebank}}
+\subsection{Background: \textsc{Tweebank}}
 
 The annotation effort we describe stands in contrast to previous work
 by \newcite{kong-EtAl:2014:EMNLP2014}.  Their aim was the rapid
@@ -153,7 +142,7 @@ treebank conventions (UD\_English)
 and the conventions of \newcite{gimpel-EtAl:2011:ACL-HLT2011} and
 \newcite{owoputi-EtAl:2013:NAACL-HLT}.  In these cases, we always
 conformed to UD, enabling consistency (e.g., when we exploit the
-existing UD English treebank in our parser for tweets, \S\ref{???}).  For example,  
+existing UD English treebank in our parser for tweets, \S\ref{sec:parsing}).  For example,  
 the nominal URL in Figure \ref{fig:informal-toks} is tagged as {\it
   other} ({\tt X}) and {\tt +} is tagged as {\it symbol} ({\tt SYM})
 rather than {\it conjunction} ({\tt CCONJ}).  
@@ -549,21 +538,32 @@ following predicate with the label \emph{vocative}.  \nascomment{need an example
 
 \nascomment{I didn't touch anything below here}
 
-\subsection{Data Collection}
-\yjcomment{This section is un-finished.}
-Following the guideline mentioned above, we create a new annotated Twitter treebank, which we call tweebank v2.
-%We present tweebank v2, a version 2 of tweebank~\cite{kong-EtAl:2014:EMNLP2014}.
+\subsection{\sc Tweebank v2}
+Following the guideline mentioned above, we create a new annotated Twitter treebank, which we call {\sc Tweebank v2}.
 
-%data aquisition/statistics
-The tweet source of Tweebank V2 consists of three parts. 
-The first is the original Tweebank created by~\cite{kong-EtAl:2014:EMNLP2014}, denoted as Tweebank V1.  There are 639 unique tweets in the training data of Tweebank V1, and 201 unique tweets in the data set. All of the unique tweets in Tweebank V1 are included in Tweebank V2.
-The second are 210 tweets from POS-tagged Twitter corpus of \newcite{owoputi-EtAl:2013:NAACL-HLT}, denoted as Tweebank V1 Dev. It was initially created as a development set of Tweebank V1 for hyperparameter tuning.
-Tweebank V1 Dev comprises were equally sampled from two data set, OCT27 (tweets sampled from a particular day, October 27, 2010) and DAILY 547 (one random English tweet per day from January 2011 through June 2012, 547 tweets in total). We should note that all of the Tweebank V1 tweets were also drawn from OCT27 and DAILY547, and the new tweets we extracted are not in the Tweebank V1.
-The third are 2500 tweets from the Twitter streams from February 2017 to July 2017 from ArchiveTeam,\footnote{https://archive.org} which we call Feb\_Jul\_16 corpus. The Twitter streams are in Spritzer version, which provides a 1\% random sample of public tweets everyday, and the tweets are in twitter JSON format. 
-There are xxx tweets in all the streams. We filtered them with \textit{lang} attribute in \textit{user} and used \textit{langid.py}\footnote{https://github.com/saffsd/langid.py} to pick out English tweets, which ends in xxx tweets in English. Then we sampled 2500 tweets roughly equally from these months.
+\subsubsection{Data Collection}
+{\sc Tweebank v2} is built on the original data of {\sc Tweebank v1} (Kong et al., 2014, 639 tweets), along with additional 201 tweets sampled from \newcite{gimpel-EtAl:2011:ACL-HLT2011} and 2,500 tweets sampled  from the Twitter stream from Feb. 2017 to Jul. 2017.
+The latter data source consists 147.4M English tweets which are filtered by {\it lang} attribute in the tweet JSON and {\it langid.py}\footnote{\url{https://github.com/saffsd/langid.py}} toolkit.
+%The tweet source of Tweebank V2 consists of three parts. 
+%The first is the original Tweebank created by~\cite{kong-EtAl:2014:EMNLP2014}, denoted as Tweebank V1.  There are 639 unique tweets in the training data of Tweebank V1, and 201 unique tweets in the data set. All of the unique tweets in Tweebank V1 are included in Tweebank V2.
+%The second are 210 tweets from POS-tagged Twitter corpus of \newcite{owoputi-EtAl:2013:NAACL-HLT}, denoted as Tweebank V1 Dev. It was initially created as a development set of Tweebank V1 for hyperparameter tuning.
+%Tweebank V1 Dev comprises were equally sampled from two data set, OCT27 (tweets sampled from a particular day, October 27, 2010) and DAILY 547 (one random English tweet per day from January 2011 through June 2012, 547 tweets in total). We should note that all of the Tweebank V1 tweets were also drawn from OCT27 and DAILY547, and the new tweets we extracted are not in the Tweebank V1.
+%The third are 2500 tweets from the Twitter streams from February 2017 to July 2017 from ArchiveTeam,\footnote{https://archive.org} which we call Feb\_Jul\_16 corpus. The Twitter streams are in Spritzer version, which provides a 1\% random sample of public tweets everyday, and the tweets are in twitter JSON format. 
+%There are xxx tweets in all the streams. We filtered them with \textit{lang} attribute in \textit{user} and used \textit{langid.py}\footnote{https://github.com/saffsd/langid.py} to pick out English tweets, which ends in xxx tweets in English. Then we sampled 2500 tweets roughly equally from these months.
 
+\subsubsection{Annotation Process}
+The whole annotation process contains their stages.
+In the first stage, 18 researchers worked on the {\sc Tweebank v1} proportion and created the initial annotation in one day.
+This annotation was further refined by the authors of this paper to solve inconsistency between different annotators.
+In the second stage, a postagger and parser are trained on the annotated data from the first stage, and automatically analyze the sampled 2,500 tweets and the authors of this paper manually correct these automatically annotated.
+Finally, an extra layer of word-level normalization was manually annotated.
 
-\subsubsection{Basic Statistics}
+We report the inter-annotator agreement between the annotators in the second stage.
+The agreement on POS is 95.16\%, the unlabeled dependency agreement is 88.43\% and the labeled dependency agreement is 83.89\%.
+Further analysis shows the major disagreement on POS happens.
+
+\subsubsection{Statistics}
+\yjcomment{this part is not finished}
 Tweebank V2 contains 3550 tweets in total, split into training set with 1639 tweets, development set with 710 tweets and test set with 1201 tweets. 
 The training set contains all the 639 unique tweets in the training set of Tweebank V1 and another 1000 tweets in feb\_jul\_16 corpus.
 The development set contains 210 tweets of Tweebank V1 Dev and another 500 tweets in feb\_jul\_16 corpus.
@@ -578,10 +578,10 @@ As Tweebank V1 and the POS-tagged Twitter corpus of \newcite{gimpel-EtAl:2011:AC
 	\begin{tabular}{l r r r} 
 		\hline
 		& 	Train 		& 	Dev		&	Test\\[0.5ex] \hline
-		tweets 		&	1639 		&	709		&	1201\\
-		tokens 		&	24753		&	11742	&	19112\\
-		types 		&	7579			&	4165		&	6228\\
-		parts		 	&	3025 		&	1402		&	2252\\ \hline
+		tweets 		&	1,639 		&	709		&	1,201\\
+		tokens 		&	24,753		&	11,742	&	19,112\\
+		types 		&	7,579			&	4,165		&	6,228\\
+		parts		 	&	3,025 		&	1,402		&	2,252\\ \hline
 	\end{tabular}
 	\caption{Basic Statistics of Tweebank V2}
 	\label{tab1}
@@ -634,21 +634,116 @@ Following the discussion of the Twitter specific linguistic phenomena, we obtain
 	\caption{Twitter Specific Statistics of Tweebank V2}
 	\label{tab2}
 \end{table*}
-%annotation statistics, agreement
-
-The inter-annotator agreement of POS tagging is 95.02\%, the unlabelled dependency agreement is 88\% and the labelled dependency agreement is 84\%.
 
 
 
-\section{Pipeline} 
+\section{Pipeline}
 \label{sec:parsing}
 
-\section{Model}
+We present a pipeline model to parse tweets into universal dependency.
+
+\subsection{Tokenizer}
+Tokenization is non-trivial for Twitter domain \cite{ICWSM101540}.
+Due to the informal nature, tweets present cases which are unconventional for traditional toeknization module, like hashtags, at-mentions and emoticons.
+Some of them are even ambiguous without understanding their contexts.
+For example, the asterisk in {\it 4*3} works as a symbol for times and indicates to segment this token into {\it 4 * 3} but that in {\it SH*T} works as a mask and {\it SH*T} should not be segmented.
+
+Instead of manually crafting rules, we propose to deal with tweets tokenization with a character-level bidirectional LSTM (bi-LSTM) sequence-labeling model.
+Our model takes the raw sentence and tag each character in this sentence as whether it is the beginning of a word.
+
+%Our experimental results show that
+\subsection{POS-Tagger}
+
+We use the postagger of \newcite{owoputi-EtAl:2013:NAACL-HLT}.
+In our preliminary experiments, neural model didn't show superiority over the rich-feature linear model.
+
+\subsection{Parser}
+
+Time is a major concern on
+
+\subsection{Exploiting UD\_English}
+
+%\section{Model}
+%We propose a new model
 
 \section{Experiments}
 
+\subsection{Tokenization Result}
+
+\begin{table}[t]
+	\centering
+	\small
+	\begin{tabular}{rc}
+		\hline
+		\it System & F \\
+		\hline
+		Stanford Tokenizer & 96.6 \\
+		Twokenizer & 94.4 \\
+		UD pipe v1.2 & 94.7 \\
+		UD pipe v1.2 (re-trained) & 97.3 \\
+		Our Tokenizer & \bf 98.3 \\
+		\hline
+	\end{tabular}
+	\caption{The tokenization result.}\label{tbl:tok-result}
+\end{table}
+
+The tokenization results are shown in Table \ref{tbl:tok-result}.
+
+\subsection{POS tagging Result}
+
+\begin{table}[t]
+	\centering
+	\small
+	\begin{tabular}{rc}
+		\hline
+		\it System & P \\
+		\hline
+		Stanford Postagger & 65.6 \\
+		UD pipe v1.2 & 78.7 \\
+		UD pipe v1.2 (re-trained) & 83.8 \\
+		Our bi-LSTM & 91.8 \\
+		\newcite{owoputi-EtAl:2013:NAACL-HLT} & \bf 95.1 \\
+		\hline
+	\end{tabular}
+	\caption{The POS tagging result on gold tokenization.}\label{tbl:pos-result}
+\end{table}
+
+\begin{table}[t]
+	\centering
+	\small
+	\begin{tabular}{rc}
+		\hline
+		\it System & F \\
+		\hline
+		Stanford Tokenizer & 92.0 \\
+		Our Tokenizer & 93.6 \\
+		\hline
+	\end{tabular}
+	\caption{The POS tagging result on automatic tokenization. The POS-tagger we used is from Owoput et al., 2013.}\label{tbl:pos-result-vs-tok}
+\end{table}
+
+The POS-tagging results are shown in Table \ref{tbl:pos-result}.
+
+We also study the influence of tokenization on POS-tagging by evaluating the model's performance on automatically tokenized data.
+This result is shown in Table \ref{tbl:pos-result-vs-tok}.
+
+\subsection{Parsing Result}
+
+\begin{table}[t]
+	\centering
+	\small
+	\begin{tabular}{rcc}
+		\hline
+		\it System & UAS & LAS \\
+		\hline
+		Our Parser & & \\
+		\hline
+	\end{tabular}
+	\caption{The POS tagging result.}\label{tbl:parse-result}
+\end{table}
 
 \section{Related Work}
+\yjcomment{related word is not finished.}
 \newcite{eisenstein:2013:NAACL-HLT} reviewed NLP approaches for analyzing text on social media, especially for tweets and showed that there are two major directions for NLP community to handle the tweets, including normalization and domain adaptation. He also pointed out that normalization can be problematic because precisely defining the normalization task is difficult. 
 
 \newcite{kong-EtAl:2014:EMNLP2014} argues that the Penn Treebank approach to annotation is poorly suited to more informal genres of text, as some of the annotation challenges for tweets,
@@ -668,8 +763,6 @@ At last, it’s arguable that some of the hashtags, URLs can work as a nominal i
 
 \section{Conclusion}
 
-
-
 \bibliography{shortdb}
-\bibliographystyle{acl2012}
+\bibliographystyle{acl_natbib}
 \end{document}
