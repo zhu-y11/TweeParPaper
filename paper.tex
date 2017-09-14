@@ -77,10 +77,15 @@ applying UD to social media texts.
 
 Contribution of this paper includes:
 \begin{itemize}
-\item We create a new version of tweet Treebank Tweebank 2.0
-\item We propose a neural network method to parse tweets into universal dependencies
-\item We study the adaptation of universal dependencies for analyzing tweets
+\item We create a new annotated tweet dependency treebank ({\sc Tweebank v2}) following the UD convention.
+This annotation contains 3,549 tweets.
+Tokenization, part-of-speech tag, and dependencies of these tweets are annotated in this data.
+
+\item We propose to use the transition-based neural parser \cite{ballesteros-EtAl:2016:EMNLP2016} with consideration of the speed in processing social media data.
+To achieve a more accurate parser, we propose to train the parser with a distillation of an ensemble 20 parser and this achieve an improvement of 3 point LAS over the baseline.
 \end{itemize}
+
+We release our parser at.
 
 \nascomment{not clear to me:  did we reannotate the POS corpus?  was
   that automatic or manual?  I wasn't sure what to do with the POS
@@ -651,24 +656,7 @@ For example, the asterisk in {\it 4*3} works as a symbol for times and indicates
 Instead of manually crafting rules, we propose to deal with tweets tokenization with a character-level bidirectional LSTM (bi-LSTM) sequence-labeling model.
 Our model takes the raw sentence and tag each character in this sentence as whether it is the beginning of a word.
 
-%Our experimental results show that
-\subsection{POS-Tagger}
-
-We use the postagger of \newcite{owoputi-EtAl:2013:NAACL-HLT}.
-In our preliminary experiments, neural model didn't show superiority over the rich-feature linear model.
-
-\subsection{Parser}
-
-Time is a major concern on
-
-\subsection{Exploiting UD\_English}
-
-%\section{Model}
-%We propose a new model
-
-\section{Experiments}
-
-\subsection{Tokenization Result}
+\paragraph{Experimental Results}
 
 \begin{table}[t]
 	\centering
@@ -687,9 +675,20 @@ Time is a major concern on
 	\caption{The tokenization result.}\label{tbl:tok-result}
 \end{table}
 
-The tokenization results are shown in Table \ref{tbl:tok-result}.
+We test our tokenizer on Tweebank v2 test set.
+F-score was used to evaluate the tokenization accuracy.
+Our model was trained on a merge of UD\_English and Tweebank v2 training data.
+Table \ref{tbl:tok-result} shows the tokenization results along with comparison with other tokenizers.
+Our bi-LSTM tokenizer achieves the best accuracy among all these tokenizers.
+By comparing the rule-based group to the model-based group, we can see the model-based ones generally outperform the rule-based tokenizers, which shows the necessity of using statistical model for tweet tokenization.
 
-\subsection{POS tagging Result}
+%Our experimental results show that
+\subsection{POS-Tagger}
+
+We use the postagger of \newcite{owoputi-EtAl:2013:NAACL-HLT}.
+%In our preliminary experiments, neural model didn't show superiority over the rich-feature linear model.
+
+\paragraph{Experimental Results}
 
 \begin{table}[t]
 	\centering
@@ -699,6 +698,7 @@ The tokenization results are shown in Table \ref{tbl:tok-result}.
 		\it System & P \\
 		\hline
 		Stanford Postagger & 65.6 \\
+		Stanford Postagger (re-train) & 90.37 \\
 		UD pipe v1.2 & 78.7 \\
 		UD pipe v1.2 (re-trained) & 83.8 \\
 		Our bi-LSTM & 91.8 \\
@@ -719,15 +719,58 @@ The tokenization results are shown in Table \ref{tbl:tok-result}.
 		Our Tokenizer & 93.6 \\
 		\hline
 	\end{tabular}
-	\caption{The POS tagging result on automatic tokenization. The POS-tagger we used is from Owoput et al., 2013.}\label{tbl:pos-result-vs-tok}
+	\caption{The POS tagging result on automatic tokenization. The POS tagger we used is from Owoput et al., 2013.}\label{tbl:pos-result-vs-tok}
 \end{table}
 
-The POS-tagging results are shown in Table \ref{tbl:pos-result}.
-
+We test several different POS taggers on Tweebank v2.
 We also study the influence of tokenization on POS-tagging by evaluating the model's performance on automatically tokenized data.
 This result is shown in Table \ref{tbl:pos-result-vs-tok}.
 
-\subsection{Parsing Result}
+\subsection{Parser}
+
+%Time is a major concern on
+Social media applications usually require processing tones of data.
+Speed becomes important under such circumstance.
+In this paper, we use the neural greedy parser by \newcite{ballesteros-EtAl:2016:EMNLP2016}, which can parse a sentence in linear time and harness the useful character representations.
+To further improve the parsing accuracy, we propose a new method to distill an ensemble of 20 differently initialized parsers into one greedy parser.
+
+Distilling a smaller classifier from a single large neural network was explored in \newcite{DBLP:journals/corr/HintonVD15} and \newcite{kim-rush:2016:EMNLP2016}.
+In these works, the predicted distribution from the larger model serves as a soft target for training the small classifier.
+Training the smaller classifier is delivered by training with a interpolate between two losses:
+\begin{equation}\label{eq:distill}
+\mathcal{L}=(1-\alpha)\mathcal{L}_{NNL} + \alpha\mathcal{L}_{KD}
+\end{equation}
+where $\mathcal{L}_{NNL}$ is the traditional log-likelihood loss and $\mathcal{L}_{KD}$ is the loss from soft target.
+
+\newcite{kuncoro-16} was inspired by the distillation idea and proposed to incorporate the knowledge from an ensemble of 20 parsers into one single graph-based parser by adapting the soft target into a structure loss.
+However, as \newcite{kuncoro-16} pointed out, it's not straight-forward to incorporate the structure loss into a transition-based parser.
+Considering the efficiency advantage of transition-based parser over its graph-based counterpart, it's worth study distillation of an ensemble of different parsers.
+
+In this paper, we follow \newcite{DBLP:journals/corr/HintonVD15} and \newcite{kim-rush:2016:EMNLP2016} and distill one single parser from 20 parsers trained with different initialization.
+Training a transition-based greedy parser includes generating a transition sequence from the data and learning the classifier from the states in the sequence.
+And it also holds for training the ensemble parser.
+%We first study the necessity of log-likelihood loss (the first term in Equation \ref{eq:distill}).
+
+\paragraph{Effect of $\alpha$}
+
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=\columnwidth]{graphics/alpha}
+	\caption{The effect of $\alpha$ in distillation.}\label{fig:effect-alpha}
+\end{figure}
+
+We show the effect of $\alpha$ in Figure \ref{fig:effect-alpha}.
+This figure shows that a larger $\alpha$
+
+%\paragraph{Effect of $\mathcal{T}$}
+%
+%\begin{figure}[t]
+%	\centering
+%	\includegraphics[width=\columnwidth]{graphics/temperature}
+%	\caption{The effect of temperature $\alpha$.}\label{fig:effect-temp}
+%\end{figure}
+
+\paragraph{Results}
 
 \begin{table}[t]
 	\centering
@@ -736,30 +779,41 @@ This result is shown in Table \ref{tbl:pos-result-vs-tok}.
 		\hline
 		\it System & UAS & LAS \\
 		\hline
-		Our Parser & & \\
+		\newcite{ballesteros-EtAl:2016:EMNLP2016} & 79.25 & 74.17 \\
+		\newcite{dyer-EtAl:2015:ACL-IJCNLP} & & \\
+		Ensemble 20 & 82.80 & 78.69 \\
+		Distill & & \\
+		
 		\hline
 	\end{tabular}
 	\caption{The POS tagging result.}\label{tbl:parse-result}
 \end{table}
 
+%\subsection{Exploiting UD\_English}
+
+%UD\_English as an important source of training data.
+%\section{Model}
+%We propose a new model
+
+
 \section{Related Work}
-\yjcomment{related word is not finished.}
-\newcite{eisenstein:2013:NAACL-HLT} reviewed NLP approaches for analyzing text on social media, especially for tweets and showed that there are two major directions for NLP community to handle the tweets, including normalization and domain adaptation. He also pointed out that normalization can be problematic because precisely defining the normalization task is difficult. 
-
-\newcite{kong-EtAl:2014:EMNLP2014} argues that the Penn Treebank approach to annotation is poorly suited to more informal genres of text, as some of the annotation challenges for tweets,
-including token selection, multiword expressions, multiple roots, and structure within noun phrases diverge significantly from conventional approaches. 
-They believe that rapid, small scale annotation efforts performed by imperfectly-trained annotators should provide enough evidence to train an effective parser, given the rapidly changing nature of tweets~\cite{eisenstein:2013:NAACL-HLT}, the attested difficulties of domain adaptation for parsing~\cite{dred07}, and the expense of creating Penn Treebank-style annotations~\cite{penn93}. 
-Therefore, they build a new corpus of tweets (Tweebank), with conventions informed by the domain, using new syntactic annotations that can tackle all the forementioned problems annotated in a day by two dozen annotators, most of whom had only cursory training in the annotation scheme. Then, they modify the decoder of the TurboParser, a graph-based dependency parser, which is open-source and has been found to perform well on a range of parsing problems in different languages~\cite{turbo13} to adapt to the Tweebank dataset, and incorporate new features such as Brown Clusters and Penn Treebank features and changes to specification
-in the output space into TurboParser.
-
-Like ``mfw'' is usually followed by an adverbial clause and ``ima'' is usually followed by a clausal complement. 
-It is not reasonable to treat them in the same part-of-speech. 
-In this paper, when annotating the POS tagging for abbreviations, we first try to recover their original forms, then use the POS of the core-word as the POS for the abbreviation.
-Second, four special POS tags (S, L, M, Y) were designed to handle contraction words in Gimpel et al. \shortcite{Gimpel:2011:PTT:2002736.2002747}. Major concern of designing such tags is to minimize the effort of tokenization. 
-However, contractions of common nouns and pronouns are casted into the same category which increase the difficulty of distinguishing their syntactic function (say, there's and book'll are treated with the same syntactic function). What's more, only a small proportion of words can be categorized into these tags (2.7 \% in total), which cast a doubt of the usefulness of these certain tags. In this paper, we believe such contraction can be properly handled by tokenization module, so we suggest to tokenize the contraction word and annotate POS tag accordingly.
-Besides the contraction that be conventionally tokenized, tweets also witness a set of unconventional contraction like iv (I've), whatis (what is). In this paper, we follow the same idea of annotation abbreviation to handle the unconventional contractions and use the POS of core word of the original form as their POS.
-Third, special POS was designed to handle emoticon in Gimpel et al. \shortcite{Gimpel:2011:PTT:2002736.2002747}. However, in most cases, emoticon plays the same role as most of the symbolic tokens. In this paper, we follow the UD guideline to annotate the emoticon as symbol (SYM).
-At last, it’s arguable that some of the hashtags, URLs can work as a nominal in tweets. Whether treating them as the same part-of-speech or different ones according to their context is an open question. A preliminary survey on the standard UD English data shows that URL, email address are all tagged as the foreign language (X), so we also tag them as X and leave the disambiguation of their syntactic function to the annotation of parse tree.
+%\yjcomment{related word is not finished.}
+%\newcite{eisenstein:2013:NAACL-HLT} reviewed NLP approaches for analyzing text on social media, especially for tweets and showed that there are two major directions for NLP community to handle the tweets, including normalization and domain adaptation. He also pointed out that normalization can be problematic because precisely defining the normalization task is difficult. 
+%
+%\newcite{kong-EtAl:2014:EMNLP2014} argues that the Penn Treebank approach to annotation is poorly suited to more informal genres of text, as some of the annotation challenges for tweets,
+%including token selection, multiword expressions, multiple roots, and structure within noun phrases diverge significantly from conventional approaches. 
+%They believe that rapid, small scale annotation efforts performed by imperfectly-trained annotators should provide enough evidence to train an effective parser, given the rapidly changing nature of tweets~\cite{eisenstein:2013:NAACL-HLT}, the attested difficulties of domain adaptation for parsing~\cite{dred07}, and the expense of creating Penn Treebank-style annotations~\cite{penn93}. 
+%Therefore, they build a new corpus of tweets (Tweebank), with conventions informed by the domain, using new syntactic annotations that can tackle all the forementioned problems annotated in a day by two dozen annotators, most of whom had only cursory training in the annotation scheme. Then, they modify the decoder of the TurboParser, a graph-based dependency parser, which is open-source and has been found to perform well on a range of parsing problems in different languages~\cite{turbo13} to adapt to the Tweebank dataset, and incorporate new features such as Brown Clusters and Penn Treebank features and changes to specification
+%in the output space into TurboParser.
+%
+%Like ``mfw'' is usually followed by an adverbial clause and ``ima'' is usually followed by a clausal complement. 
+%It is not reasonable to treat them in the same part-of-speech. 
+%In this paper, when annotating the POS tagging for abbreviations, we first try to recover their original forms, then use the POS of the core-word as the POS for the abbreviation.
+%Second, four special POS tags (S, L, M, Y) were designed to handle contraction words in Gimpel et al. \shortcite{Gimpel:2011:PTT:2002736.2002747}. Major concern of designing such tags is to minimize the effort of tokenization. 
+%However, contractions of common nouns and pronouns are casted into the same category which increase the difficulty of distinguishing their syntactic function (say, there's and book'll are treated with the same syntactic function). What's more, only a small proportion of words can be categorized into these tags (2.7 \% in total), which cast a doubt of the usefulness of these certain tags. In this paper, we believe such contraction can be properly handled by tokenization module, so we suggest to tokenize the contraction word and annotate POS tag accordingly.
+%Besides the contraction that be conventionally tokenized, tweets also witness a set of unconventional contraction like iv (I've), whatis (what is). In this paper, we follow the same idea of annotation abbreviation to handle the unconventional contractions and use the POS of core word of the original form as their POS.
+%Third, special POS was designed to handle emoticon in Gimpel et al. \shortcite{Gimpel:2011:PTT:2002736.2002747}. However, in most cases, emoticon plays the same role as most of the symbolic tokens. In this paper, we follow the UD guideline to annotate the emoticon as symbol (SYM).
+%At last, it’s arguable that some of the hashtags, URLs can work as a nominal in tweets. Whether treating them as the same part-of-speech or different ones according to their context is an open question. A preliminary survey on the standard UD English data shows that URL, email address are all tagged as the foreign language (X), so we also tag them as X and leave the disambiguation of their syntactic function to the annotation of parse tree.
 
 \section{Conclusion}
 
