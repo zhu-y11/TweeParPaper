@@ -22,7 +22,7 @@
 \usepackage{graphicx}
 \newcommand{\heart}{\ensuremath\heartsuit}
 
-\newcommand{\yjcomment}[1]{\textcolor{orange}{[$_\mathrm{L}^\mathrm{Y}$\textsc{#1}]}}
+\newcommand{\yjcomment}[1]{\textcolor{orange}{[$_\mathrm{L}^\mathrm{Y}$#1]}}
 \newcommand{\nascomment}[1]{\textcolor{blue}{[#1 ---\textsc{nas}]}}
 
 \title{Parsing Tweets into Universal Dependencies}
@@ -47,51 +47,95 @@
 \end{abstract}
 
 \section{Introduction}
-Analyzing the syntax of tweets is challenging for traditional NLP tools because most of the tweet texts are informal and noisy.
+Analyzing the syntax of tweets is challenging. The challenges not
+only come from the difficulty of adapting the parser trained on the
+standard text to the Twitter domain, but also comes from creating
+reasonable dataset for training and evaluating tweet parsers. 
+\citet{AAAIW113912} pioneered in this research direction by
+annotating Penn Treebank \citep[PTB]{Marcus93buildinga}
+constituencies to a set of tweets which contains 7,630 tokens. 
+Stanford dependencies were converted afterwards. 
+\citet{kong-EtAl:2014:EMNLP2014} further studied the challenges in
+annotating tweets and presented a tweets treebank ({\sc Tweebank})
+which has 12,149 tokens and was created using the 
+\citet{Yamada03statisticaldependency} dependencies. Both these
+annotation efforts were highly influenced by the PTB whose guideline
+has a good grammatical coverage on newswire. However, when it comes
+to the noisy and informal user generated text, it's questionable
+whether such good coverage holds.
+%Motivation notes:  explain why UD is attractive (and more attractive
+%than what previous work used, which was based on YM).  one reason is
+%that it might allow sharing of texts annotated in different genres (or
+%even languages, cite Waleed).  but universal annotation schemes are
+%challenging!  this paper contends with the challenges of
+%applying UD to social media texts.
 
-In this paper, we propose to parse the tweets in the convention of
-universal dependencies and built up the whole pipeline to parse the
-tweets from the raw text form.
+%In this paper, we propose to parse the tweets in the convention of
+%universal dependencies and built up the whole pipeline to parse the
+%tweets from the raw text form.
 
-Motivation notes:  explain why UD is attractive (and more attractive
-than what previous work used, which was based on YM).  one reason is
-that it might allow sharing of texts annotated in different genres (or
-even languages, cite Waleed).  but universal annotation schemes are
-challenging!  this paper contends with the challenges of
-applying UD to social media texts.
+Universal dependencies \citep[UD]{NIVRE16.348} was created to delivery
+consistent annotation across different languages. To allow such
+consistency, UD was designed to be adaptive to different genres and languages
+\cite{guo-EtAl:2015:ACL-IJCNLP2,TACL892}. It's promising that analyzing
+the syntax of tweets can benefit from such adaptability. In this paper,
+we create a new tweets treebank of 55,607 tokens by following the UD
+guidelines but also contending the domain-specific challenges which wasn't
+covered by UD guidelines. Our annotation includes a whole pipeline of
+tokenization, part-of-speech (POS) tags and universal dependencies.
 
-\nascomment{Points that were in older text that I want to keep around:}
-\begin{itemize}
-\item Despite the informal nature of tweets, we argue that they basically follow the same grammar as their formal language counterpart.
-\item UD was designed to handle the variant syntactic phenomenons across different languages and we expect its `context head' principle will bring convenience to the parsing of informal and even ungrammatical tweets. 
-\yjcomment{I still feel we should give a reason why we choose UD. One
-  example is that twitter users tend to leave out the copula verb and
-  it will be messy for the `function head' principle to deal with this
-  case. One observation is that informal tokens/syntax happens more on
-  function words rather than content word.} \nascomment{maybe we could
-  argue that, if UD is designed to work for many languages, it should
-  also be able to work for dialects, including AAVE, and informal
-  registers.  YM was not designed for cross-linguistic applicability.}
+%\nascomment{Points that were in older text that I want to keep around:}
+%\begin{itemize}
+%\item Despite the informal nature of tweets, we argue that they basically follow the same grammar as their formal language counterpart.
+%\item UD was designed to handle the variant syntactic phenomenons across different languages and we expect its `context head' principle will bring convenience to the parsing of informal and even ungrammatical tweets. 
+%\yjcomment{I still feel we should give a reason why we choose UD. One
+%  example is that twitter users tend to leave out the copula verb and
+%  it will be messy for the `function head' principle to deal with this
+%  case. One observation is that informal tokens/syntax happens more on
+%  function words rather than content word.} \nascomment{maybe we could
+%  argue that, if UD is designed to work for many languages, it should
+%  also be able to work for dialects, including AAVE, and informal
+%  registers.  YM was not designed for cross-linguistic applicability.}
+%\end{itemize}
 
-\end{itemize}
+Based on these annotations, we built up a whole pipeline to parse the
+raw tweet text into universal dependencies. Our pipeline includes: a
+bidirectional LSTM (bi-LSTM) tokenizer, a word cluster enhanced POS
+tagger \cite{owoputi-EtAl:2013:NAACL-HLT}, and stack-lstm parser
+with character representation \cite{ballesteros-dyer-smith:2015:EMNLP}.
+
+To achieve better performance without sacrificing efficiency, we propose
+a new method to train the parser with the distillation 
+\cite{DBLP:journals/corr/HintonVD15} of 20 parsers ensemble.
+We show that learning from the exploration of the ensemble parser
+can be more beneficial than just learning from the gold standard
+transition sequence in the sense of training a transition-based
+distilling parser. Experimental results show an improvement of more
+than 3 points in LAS over baseline parser can be achieved with our
+distillation method.
 
 Contribution of this paper includes:
 \begin{itemize}
-\item We create a new annotated tweet dependency treebank ({\sc Tweebank v2}) following the UD convention.
-This annotation contains 3,549 tweets.
-Tokenization, part-of-speech tag, and dependencies of these tweets are annotated in this data.
+\item We study the challenges of annotating tweets in UD (\S\ref{sec:anno})
+and create a new tweet treebank ({\sc Tweebank v2}), which includes 
+tokenization, part-of-speech tagging, and dependencies annotation.
 
-\item We propose to use the transition-based neural parser \cite{ballesteros-EtAl:2016:EMNLP2016} with consideration of the speed in processing social media data.
-To achieve a more accurate parser, we propose to train the parser with a distillation of an ensemble 20 parser and this achieve an improvement of 3 point LAS over the baseline.
+\item We built up a whole pipeline to parse the raw tweet text into
+universal dependencies (\S\ref{sec:parsing}). We propose a new distillation
+method in training the parser in our pipeline which achieve 3 points improvement
+without sacrificing efficiency.
 \end{itemize}
 
-We release our parser at.
+We release our system at.
 
 \nascomment{not clear to me:  did we reannotate the POS corpus?  was
   that automatic or manual?  I wasn't sure what to do with the POS
   section below.}
+\yjcomment{we re-annotated the POS. In one way, Gimple's POS is not very
+consistent with UD POS. In another way, 2,500 new tweets were annotated
+from scratch and they didn't have Gimple's tags.}
 
-\section{Annotation}
+\section{Annotation}\label{sec:anno}
 
 \nascomment{need to introduce this section and explain the structure.
 I'm not crazy about what I have now, but I like it better than what
@@ -209,7 +253,7 @@ Gimpel et al.~used a single part of speech for such expressions.
 Another important difference is in tokenization.  UD calls for more
 aggressive tokenization than that used by
 \newcite{gimpel-EtAl:2011:ACL-HLT2011}, which followed
-\newcite{oconnor-2010}.  In particular, they opted out of tokenizing
+\newcite{ICWSM101540}.  In particular, they opted out of tokenizing
 contractions and possessives, introducing new parts of speech
 instead.\footnote{These tags only accounted for 2.7\% of tokens,
   leading to concerns about data sparseness in tagging and all
@@ -672,7 +716,7 @@ Our model takes the raw sentence and tag each character in this sentence as whet
 		Our Tokenizer & \bf 98.3 \\
 		\hline
 	\end{tabular}
-	\caption{The tokenization result.}\label{tbl:tok-result}
+	\caption{The tokenization results.}\label{tbl:tok-result}
 \end{table}
 
 We test our tokenizer on Tweebank v2 test set.
@@ -682,11 +726,10 @@ Table \ref{tbl:tok-result} shows the tokenization results along with comparison 
 Our bi-LSTM tokenizer achieves the best accuracy among all these tokenizers.
 By comparing the rule-based group to the model-based group, we can see the model-based ones generally outperform the rule-based tokenizers, which shows the necessity of using statistical model for tweet tokenization.
 
-%Our experimental results show that
 \subsection{POS-Tagger}
 
+Part-of-Speech tagging for tweets has been studied in previous literals \cite{ritter-EtAl:2011:EMNLP,gimpel-EtAl:2011:ACL-HLT2011,owoputi-EtAl:2013:NAACL-HLT,gui-EtAl:2017:EMNLP20172}.
 We use the postagger of \newcite{owoputi-EtAl:2013:NAACL-HLT}.
-%In our preliminary experiments, neural model didn't show superiority over the rich-feature linear model.
 
 \paragraph{Experimental Results}
 
@@ -698,11 +741,11 @@ We use the postagger of \newcite{owoputi-EtAl:2013:NAACL-HLT}.
 		\it System & P \\
 		\hline
 		Stanford Postagger & 65.6 \\
-		Stanford Postagger (re-train) & 90.37 \\
+		Stanford Postagger (re-train) & 90.4 \\
 		UD pipe v1.2 & 78.7 \\
 		UD pipe v1.2 (re-trained) & 83.8 \\
-		Our bi-LSTM & 91.8 \\
-		\newcite{owoputi-EtAl:2013:NAACL-HLT} & \bf 95.1 \\
+		bi-LSTM & 91.8 \\
+		ARK Tagger & \bf 95.1 \\
 		\hline
 	\end{tabular}
 	\caption{The POS tagging result on gold tokenization.}\label{tbl:pos-result}
@@ -760,7 +803,9 @@ And it also holds for training the ensemble parser.
 \end{figure}
 
 We show the effect of $\alpha$ in Figure \ref{fig:effect-alpha}.
-This figure shows that a larger $\alpha$
+This figure shows that parsers with larger $\alpha$ achieves better performance than that with smaller $\alpha$.
+This result shows that learning from the hard target in unnecessary.
+
 
 %\paragraph{Effect of $\mathcal{T}$}
 %
@@ -780,10 +825,10 @@ This figure shows that a larger $\alpha$
 		\it System & UAS & LAS \\
 		\hline
 		\newcite{ballesteros-EtAl:2016:EMNLP2016} & 79.25 & 74.17 \\
-		\newcite{dyer-EtAl:2015:ACL-IJCNLP} & & \\
+		\newcite{dyer-EtAl:2015:ACL-IJCNLP} & 77.90 & 72.95 \\
 		Ensemble 20 & 82.80 & 78.69 \\
-		Distill & & \\
-		
+		Distill expert ($\alpha$=0.)& 81.22 & 76.98 \\
+		Distill boltzmann ($\mathcal{T}$=1) & 81.55 & 77.32 \\
 		\hline
 	\end{tabular}
 	\caption{The POS tagging result.}\label{tbl:parse-result}
