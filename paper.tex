@@ -16,6 +16,9 @@
 \usepackage{tikz-dependency}
 \usepackage{url}
 \usepackage{multirow}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{arydshln}
 \newcommand\BibTeX{B{\sc ib}\TeX}
 
 %%%%%%%
@@ -461,11 +464,11 @@ had conventions, and Kong didn't, but we didn't really say what ours were.}
 		\depedge[edge unit distance=0.7em]{8}{12}{obj}
 		\depedge[edge unit distance=1em]{12}{10}{nmod:poss}
 		\depedge[edge unit distance=1em]{12}{11}{amod}
-		\depedge[edge unit distance=1em]{12}{14}{nmod}
+		\depedge[edge unit distance=0.6em]{8}{14}{obl}
 		\depedge[edge unit distance=1em]{14}{13}{case}
-		\depedge[edge unit distance=0.45em]{8}{16}{conj}
+		\depedge[edge unit distance=0.55em]{8}{16}{conj}
 		\depedge[edge unit distance=1em]{16}{15}{cc}
-		\depedge[edge unit distance=0.35em]{3}{17}{discourse}
+		\depedge[edge unit distance=0.37em]{3}{17}{discourse}
 	\end{dependency}
 	\caption{An example tweet with informal but syntactic tokens.}\label{fig:informal-toks}
 \end{figure*}
@@ -797,25 +800,30 @@ sentence as whether it is the beginning of a word.
 		\hline
 		Stanford Tokenizer & 96.6 \\
 		Twokenizer & 94.4 \\
-		UD pipe v1.2 & 94.7 \\
-		UD pipe v1.2 (re-trained) & 97.3 \\
-		Our Tokenizer & \bf 98.3 \\
+% 		UD pipe v1.2 & 94.7 \\
+		UD pipe v1.2 & 97.3 \\
+		Our bi-LSTM tokenizer & \bf 98.3 \\
 		\hline
 	\end{tabular}
 	\caption{The tokenization results.}\label{tbl:tok-result}
 \end{table}
 
-We test our tokenizer on Tweebank v2 test set.
-F-score was used to evaluate the tokenization accuracy.
-Our model was trained on a merge of UD\_English and Tweebank v2 training data.
-Table \ref{tbl:tok-result} shows the tokenization results along with comparison with other tokenizers.
+We test our tokenizer on Tweebank v2 test set. F-score was used to evaluate
+the tokenization accuracy. Our model was trained on a merge of UD\_English
+and Tweebank v2 training data. Table \ref{tbl:tok-result} shows the
+tokenization results along with comparison with other tokenizers. UD pipe v1.2
+\cite{straka-strakova:2017:K17-3} model was re-trained on the same data.
 Our bi-LSTM tokenizer achieves the best accuracy among all these tokenizers.
-By comparing the rule-based group to the model-based group, we can see the model-based ones generally outperform the rule-based tokenizers, which shows the necessity of using statistical model for tweet tokenization.
+From this table, we can also see that the model-based tokenizers
+generally outperform the rule-based tokenizers, which shows the necessity of
+using statistical model for tweet tokenization.
 
 \subsection{POS-Tagger}
 
 Part-of-Speech tagging for tweets has been studied in previous literals \cite{ritter-EtAl:2011:EMNLP,gimpel-EtAl:2011:ACL-HLT2011,owoputi-EtAl:2013:NAACL-HLT,gui-EtAl:2017:EMNLP20172}.
-We use the postagger of \newcite{owoputi-EtAl:2013:NAACL-HLT}.
+The goal is to give a fair comparison of these models on our annotation.
+We are especially interested in finding out the can neural network
+models win against the model enhanced by carefully crafted features.
 
 \paragraph{Experimental Results}
 
@@ -826,12 +834,16 @@ We use the postagger of \newcite{owoputi-EtAl:2013:NAACL-HLT}.
 		\hline
 		\it System & P \\
 		\hline
-		Stanford Postagger & 65.6 \\
-		Stanford Postagger (re-train) & 90.4 \\
-		UD pipe v1.2 & 78.7 \\
-		UD pipe v1.2 (re-trained) & 83.8 \\
-		bi-LSTM & 91.8 \\
-		ARK Tagger & \bf 95.1 \\
+%		Stanford Postagger & 65.6 \\
+		Stanford Postagger & 90.4 \\
+%		UD pipe v1.2 & 78.7 \\
+		ARK tagger (greedy) & 94.2 \\
+		ARK Tagger (CRF) & \bf 95.1 \\
+		\hdashline
+%		UD pipe v1.2 & 83.8 \\
+		\newcite{ma-hovy:2016:P16-1} & \\
+		Our word bi-LSTM & 89.1 \\
+		Our char bi-LSTM + word bi-LSTM & 91.4 \\
 		\hline
 	\end{tabular}
 	\caption{The POS tagging result on gold tokenization.}\label{tbl:pos-result}
@@ -848,36 +860,76 @@ We use the postagger of \newcite{owoputi-EtAl:2013:NAACL-HLT}.
 		Our Tokenizer & 93.6 \\
 		\hline
 	\end{tabular}
-	\caption{The POS tagging result on automatic tokenization. The POS tagger we used is from Owoput et al., 2013.}\label{tbl:pos-result-vs-tok}
+	\caption{The POS tagging result on automatic tokenization.}\label{tbl:pos-result-vs-tok}
 \end{table}
 
-We test several different POS taggers on Tweebank v2.
-We also study the influence of tokenization on POS-tagging by evaluating the model's performance on automatically tokenized data.
-This result is shown in Table \ref{tbl:pos-result-vs-tok}.
+We test the POS taggers on Tweebank v2 test set and the results are shown in
+Table \ref{tbl:pos-result}. All the comparison systems were re-trained on
+the merge of UD\_English and Tweebank v2 training set.
+Gold tokenization was used. This table shows that carefully feature engineer
+POS tagger \cite{owoputi-EtAl:2013:NAACL-HLT} outperform the neural network
+models.
+
+We also study the influence of tokenization on POS tagging
+by evaluating the model's performance on automatically
+tokenized data. We use the best performed POS tagger \cite{owoputi-EtAl:2013:NAACL-HLT}
+on gold tokenization as our POS tagger. The results are
+shown in Table \ref{tbl:pos-result-vs-tok}. Table \ref{tbl:pos-result-vs-tok}
+shows that tokenization errors propagate to POS tagging but these
+errors didn't significant influence the tagging decisions.
 
 \subsection{Parser}
 
 %Time is a major concern on
 Social media applications usually require processing tones of data.
-Speed becomes important under such circumstance.
-In this paper, we use the neural greedy parser by \newcite{ballesteros-EtAl:2016:EMNLP2016}, which can parse a sentence in linear time and harness the useful character representations.
-To further improve the parsing accuracy, we propose a new method to distill an ensemble of 20 differently initialized parsers into one greedy parser.
+Speed becomes important under such circumstance. In this paper, we
+use the neural greedy parser by \newcite{ballesteros-EtAl:2016:EMNLP2016},
+which can parse a sentence in linear time and harness the useful
+character representations. To further improve the parsing accuracy,
+we propose a new method to distill an ensemble of 20 differently
+initialized parsers into one parser.
 
-Distilling a smaller classifier from a single large neural network was explored in \newcite{DBLP:journals/corr/HintonVD15} and \newcite{kim-rush:2016:EMNLP2016}.
-In these works, the predicted distribution from the larger model serves as a soft target for training the small classifier.
-Training the smaller classifier is delivered by training with a interpolate between two losses:
+Distilling a simple and fast {\it student model} from the accurate but
+slow {\it teacher model} was explored in \newcite{DBLP:journals/corr/HintonVD15}
+and \newcite{kim-rush:2016:EMNLP2016}. In their works, the predicted
+distribution from the teacher model serves as a soft target for
+training the student model by minimizing
+\begin{equation}
+\mathcal{L}_{KD} = \sum_k q(y=k|x) p(y=k|x)
+\end{equation} where $q(y=k|x)$ is the probability distribution
+predicted by the teacher model. Training the student model is
+delivered by training with a interpolate between two losses:
 \begin{equation}\label{eq:distill}
 \mathcal{L}=(1-\alpha)\mathcal{L}_{NNL} + \alpha\mathcal{L}_{KD}
 \end{equation}
-where $\mathcal{L}_{NNL}$ is the traditional log-likelihood loss and $\mathcal{L}_{KD}$ is the loss from soft target.
+where $\mathcal{L}_{NNL}$ is the negative log-likelihood loss.
 
-\newcite{kuncoro-16} was inspired by the distillation idea and proposed to incorporate the knowledge from an ensemble of 20 parsers into one single graph-based parser by adapting the soft target into a structure loss.
-However, as \newcite{kuncoro-16} pointed out, it's not straight-forward to incorporate the structure loss into a transition-based parser.
-Considering the efficiency advantage of transition-based parser over its graph-based counterpart, it's worth study distillation of an ensemble of different parsers.
+\newcite{kuncoro-16} was inspired by the distillation idea and
+proposed to incorporate the knowledge from an ensemble of 20
+parsers into one single graph-based parser by adapting the soft
+target into a structure loss. However, as \newcite{kuncoro-16}
+pointed out, it's not straight-forward to incorporate the structure
+loss into a transition-based parser. Considering the efficiency
+advantage of transition-based parser over its graph-based counterpart,
+it's worth study distillation of an ensemble of different parsers.
 
-In this paper, we follow \newcite{DBLP:journals/corr/HintonVD15} and \newcite{kim-rush:2016:EMNLP2016} and distill one single parser from 20 parsers trained with different initialization.
-Training a transition-based greedy parser includes generating a transition sequence from the data and learning the classifier from the states in the sequence.
-And it also holds for training the ensemble parser.
+The generic algorithm for training a transition-based greedy parser
+usually includes 1) generating a sequence of transitions from the 
+training data with ``oracle'' and 2) learning the classifier from
+the transitions. One natural adoption of the distillation will be replacing
+$\mathcal{L}_{NLL}$ with the distillation objective (Equation \ref{eq:distill})
+in the second step. We name such method as {\it distill expert}. 
+We adopt such distilling method in our preliminary experiments.
+
+\paragraph{Preliminary Results}
+In our preliminary experiments, we train our parser on the merge of UD\_English
+and Tweebank v2 training set. Automatic POS tags are assigned with 5-fold
+jackknifing. Hyper-parameters including the value of $\alpha$ in Equation \ref{eq:distill}
+are tuned on Tweebank v2 development set. The 20 parsers are trained with
+different random seeds and ensembled by averaging their output probability
+distribution. The ensemble parser achieves a LAS of 78.8, which is more 
+than 3 points higher than the baseline single parser. Distilling from this
+parser leads to a single parser of 77.0 LAS.
 %We first study the necessity of log-likelihood loss (the first term in Equation \ref{eq:distill}).
 
 \paragraph{Effect of $\alpha$}
@@ -888,20 +940,39 @@ And it also holds for training the ensemble parser.
 	\caption{The effect of $\alpha$ in distillation.}\label{fig:effect-alpha}
 \end{figure}
 
-We show the effect of $\alpha$ in Figure \ref{fig:effect-alpha}.
-This figure shows that parsers with larger $\alpha$ achieves better performance than that with smaller $\alpha$.
-This result shows that learning from the hard target in unnecessary.
+We further study the effect of $\alpha$ by varying it from 0 to 1 and
+the results are shown in Figure \ref{fig:effect-alpha}. From this figure,
+we can see that distilling parsers with larger $\alpha$ achieves better
+performance, which means the model should pay more attention to learn
+from the teacher model. And the changes of $\alpha$ from 0.9 to 1.0
+didn't significantly influence the final result, which casts a doubt on
+the necessity of learning from $\mathcal{L}_{NNL}$.
 
+\paragraph{Learning from Exploration} We further set $\alpha$ to 1.0
+and this enable us to get rid of the ``oracle'' in the first step in generic
+transition-based parser training algorithm. Instead of generating
+training instances from the oracle, we generate them by random sampling
+transition from the teacher model's output distribution and follow the
+trajectory of these transitions. We name such method as {\it distill explore}.
 
-%\paragraph{Effect of $\mathcal{T}$}
-%
-%\begin{figure}[t]
-%	\centering
-%	\includegraphics[width=\columnwidth]{graphics/temperature}
-%	\caption{The effect of temperature $\alpha$.}\label{fig:effect-temp}
-%\end{figure}
-
-\paragraph{Results}
+\paragraph{Final Results}
+\begin{table}[t]
+	\centering
+	\small
+	\begin{tabular}{rcc}
+		\hline
+		\it System & UAS & LAS \\
+		\hline
+		\newcite{ballesteros-EtAl:2016:EMNLP2016} & 80.2 & 75.4 \\
+%		\newcite{dyer-EtAl:2015:ACL-IJCNLP} & 77.9 & 73.0 \\
+		Ensemble 20x & 83.0 & 78.8 \\
+		Distill 20x expert ($\alpha$=1.0) & 81.2 & 76.7 \\
+		Distill 20x expert ($\alpha$=0.9) & 81.4 & 77.0 \\		
+		Distill 20x explore & 82.2 & 77.9 \\
+		\hline
+	\end{tabular}
+	\caption{The parsing results on automatic POS tags.}\label{tbl:parse-result}
+\end{table}
 
 \begin{table}[t]
 	\centering
@@ -910,22 +981,29 @@ This result shows that learning from the hard target in unnecessary.
 		\hline
 		\it System & UAS & LAS \\
 		\hline
-		\newcite{ballesteros-EtAl:2016:EMNLP2016} & 79.25 & 74.17 \\
-		\newcite{dyer-EtAl:2015:ACL-IJCNLP} & 77.90 & 72.95 \\
-		Ensemble 20 & 82.80 & 78.69 \\
-		Distill expert ($\alpha$=0.)& 81.22 & 76.98 \\
-		Distill boltzmann ($\mathcal{T}$=1) & 81.55 & 77.32 \\
+		\newcite{dyer-EtAl:2015:ACL-IJCNLP} & 93.0 & 90.9 \\
+		%		\newcite{dyer-EtAl:2015:ACL-IJCNLP} & 77.9 & 73.0 \\
+		Ensemble 20x & 94.5 & 92.6 \\
+		Distill 20x expert ($\alpha$=1.0) & 93.8 & 91.7 \\
+		Distill 20x explore & 94.1 & 92.0 \\
+		\hline
+		\newcite{kuncoro-16} & 94.3 & 92.1 \\
 		\hline
 	\end{tabular}
-	\caption{The POS tagging result.}\label{tbl:parse-result}
+	\caption{Distillation on PTB.}\label{tbl:parse-result-PTB}
 \end{table}
 
-%\subsection{Exploiting UD\_English}
+Our final parsing experiments are shown in Table \ref{tbl:parse-result},
+in which we can see that distilling from exploration significant outperform
+distilling from expert by achieving one more point LAS improvement.
+Additional experiments on the Penn Treebank data are performed following
+the setting of \newcite{dyer-EtAl:2015:ACL-IJCNLP} and similar trend are
+witnessed. We address this improvement to the fact that learning
+from exploration enables the single parser to learn from the ensemble on
+states of different qualities.
 
-%UD\_English as an important source of training data.
-%\section{Model}
-%We propose a new model
-
+\subsection{Final Evaluation}
+Finally, we evaluate the tweet parsing in a pipeline manner.
 
 \section{Related Work}
 %\yjcomment{related word is not finished.}
@@ -947,6 +1025,7 @@ This result shows that learning from the hard target in unnecessary.
 %At last, it’s arguable that some of the hashtags, URLs can work as a nominal in tweets. Whether treating them as the same part-of-speech or different ones according to their context is an open question. A preliminary survey on the standard UD English data shows that URL, email address are all tagged as the foreign language (X), so we also tag them as X and leave the disambiguation of their syntactic function to the annotation of parse tree.
 
 \section{Conclusion}
+
 
 \bibliography{shortdb}
 \bibliographystyle{acl_natbib}
