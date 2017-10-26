@@ -60,7 +60,7 @@ constituencies to a set of tweets which contains 7,630 tokens.
 Stanford dependencies were converted afterwards. 
 \citet{kong-EtAl:2014:EMNLP2014} further studied the challenges in
 annotating tweets and presented a tweets treebank ({\sc Tweebank})
-which has 12,149 tokens and was created using the 
+which has 12,149 tokens and largely followed the conventionssuggested by \citet{schneider-EtAl:2013:LAW7-ID} that are close to 
 \citet{Yamada03statisticaldependency} dependencies. Both these
 annotation efforts were highly influenced by the PTB whose guideline
 has a good grammatical coverage on newswire. However, when it comes
@@ -395,7 +395,7 @@ conventions:
 	\small
 	\begin{dependency}[edge slant=2, text only label, label style=above]
 		\begin{deptext}
-			Perfect \& \textcolor{red}{\bf $\heart$} \& \textcolor{orange}{\bf RT} \& @coldplay \& : \& Fix \& You \& from \& the \& back \& \textcolor{gray}{\bf \#ColdplayMinneapolis} \& \textcolor{blue}{\bf http://bit.ly/2dj2WCl} \& Nice \& \textcolor{cyan}{\bf p} \& ...\\
+			Perfect \& \textcolor{red}{\bf $\heart$} \& \textcolor{orange}{\bf RT} \& \textcolor{green}{\bf @coldplay} \& : \& Fix \& You \& from \& the \& back \& \textcolor{gray}{\bf \#ColdplayMinneapolis} \& \textcolor{blue}{\bf http://bit.ly/2dj2WCl} \& Nice \& \textcolor{cyan}{\bf p} \& ...\\
 			\tiny ADJ \&\tiny SYM \&\tiny X \&\tiny X \&\tiny PUNCT \&\tiny VERB \&\tiny NOUN \&\tiny ADP \&\tiny DET \&\tiny NOUN \&\tiny X \&\tiny X \& \tiny ADJ \& \tiny X \& \tiny PUNCT \\
 		\end{deptext}
 		\deproot{1}{root}
@@ -417,6 +417,7 @@ conventions:
 	\caption{An example tweet that contains non-syntactic tokens:
 		\textcolor{red}{sentiment emoticon},
 		\textcolor{orange}{retweet marker},
+		\textcolor{green}{user at-mention}
 		\textcolor{gray}{topical hashtag},
 		\textcolor{blue}{referential URL}, and
 		\textcolor{cyan}{truncated word}.}\label{fig:non-syn-toks}
@@ -608,7 +609,7 @@ following predicate with the label \emph{vocative} (see Figure \ref{fig:informal
 Following the guidelines mentioned above, we create a new annotated Twitter treebank, which we call {\sc Tweebank v2}.
 
 \subsubsection{Data Collection}
-{\sc Tweebank v2} is built on the original data of {\sc Tweebank v1} (Kong et al., 2014, 639 tweets), along with additional 201 tweets sampled from \newcite{gimpel-EtAl:2011:ACL-HLT2011} and 2,500 tweets sampled  from the Twitter stream from February 2017 to July 2017.
+{\sc Tweebank v2} is built on the original data of {\sc Tweebank v1} (Kong et al., 2014, 639 tweets), along with additional 201 tweets sampled from \newcite{gimpel-EtAl:2011:ACL-HLT2011} and 2,500 tweets sampled  from the Twitter stream from February 2016 to July 2016.
 The latter data source consists 147.4M English tweets which are filtered by {\it lang} attribute in the tweet JSON and {\it langid.py}\footnote{\url{https://github.com/saffsd/langid.py}} toolkit.
 %The tweet source of Tweebank V2 consists of three parts. 
 %The first is the original Tweebank created by~\cite{kong-EtAl:2014:EMNLP2014}, denoted as Tweebank V1.  There are 639 unique tweets in the training data of Tweebank V1, and 201 unique tweets in the data set. All of the unique tweets in Tweebank V1 are included in Tweebank V2.
