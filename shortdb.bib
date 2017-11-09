@@ -1,7 +1,7 @@
 @InProceedings{schneider-EtAl:2013:LAW7-ID,
   author    = {Schneider, Nathan  and  O'Connor, Brendan  and  Saphra, Naomi  and  Bamman, David  and  Faruqui, Manaal  and  Smith, Noah A.  and  Dyer, Chris  and  Baldridge, Jason},
   title     = {A Framework for (Under)specifying Dependency Syntax without Overloading Annotators},
-  booktitle = {Proceedings of the 7th Linguistic Annotation Workshop and Interoperability with Discourse},
+  booktitle = {Proc. of the 7th Linguistic Annotation Workshop and Interoperability with Discourse},
   month     = {August},
   year      = {2013},
   address   = {Sofia, Bulgaria},
@@ -2083,4 +2083,76 @@ author={Do Kook Choe and Eugene Charniak},
 	year      = {2016},
 	publisher = {ACL},
 	url       = {http://www.aclweb.org/anthology/P16-1101}
+}
+@article{Brown:1992:CNG:176313.176316,
+	author = {Brown, Peter F. and deSouza, Peter V. and Mercer, Robert L. and Pietra, Vincent J. Della and Lai, Jenifer C.},
+	title = {Class-based N-gram Models of Natural Language},
+	journal = {Comput. Linguist.},
+	issue_date = {December 1992},
+	volume = {18},
+	number = {4},
+	month = dec,
+	year = {1992},
+	issn = {0891-2017},
+	numpages = {13},
+	url = {http://dl.acm.org/citation.cfm?id=176313.176316},
+	acmid = {176316},
+	publisher = {MIT Press},
+	address = {Cambridge, MA, USA},
+} 
+@InProceedings{manning-EtAl:2014:P14-5,
+	author    = {Manning, Christopher D. and  Surdeanu, Mihai  and  Bauer, John  and  Finkel, Jenny  and  Bethard, Steven J. and  McClosky, David},
+	title     = {The {Stanford} {CoreNLP} Natural Language Processing Toolkit},
+	booktitle = {ACL System Demonstrations},
+	year      = {2014},
+	url       = {http://www.aclweb.org/anthology/P/P14/P14-5010}
+}
+@article{Frnay2014ClassificationIT,
+	title={Classification in the Presence of Label Noise: A Survey},
+	author={Beno{\^i}t Fr{\'e}nay and Michel Verleysen},
+	journal={IEEE Transactions on Neural Networks and Learning Systems},
+	year={2014},
+	volume={25},
+	pages={845-869}
+}
+@InProceedings{lample-EtAl:2016:N16-1,
+	author    = {Lample, Guillaume  and  Ballesteros, Miguel  and  Subramanian, Sandeep  and  Kawakami, Kazuya  and  Dyer, Chris},
+	title     = {Neural Architectures for Named Entity Recognition},
+	booktitle = {Proc. of NAACL},
+	year      = {2016},
+	publisher = {ACL},
+	url       = {http://www.aclweb.org/anthology/N16-1030}
+}
+@Article{Dietterich2000,
+	author="Dietterich, Thomas G.",
+	title="An Experimental Comparison of Three Methods for Constructing Ensembles of Decision Trees: Bagging, Boosting, and Randomization",
+	journal="Machine Learning",
+	year="2000",
+	day="01",
+	volume="40",
+	number="2",
+	pages="139--157",
+	abstract="Bagging and boosting are methods that generate a diverse ensemble of classifiers by manipulating the training data given to a ``base'' learning algorithm. Breiman has pointed out that they rely for their effectiveness on the instability of the base learning algorithm. An alternative approach to generating an ensemble is to randomize the internal decisions made by the base algorithm. This general approach has been studied previously by Ali and Pazzani and by Dietterich and Kong. This paper compares the effectiveness of randomization, bagging, and boosting for improving the performance of the decision-tree algorithm C4.5. The experiments show that in situations with little or no classification noise, randomization is competitive with (and perhaps slightly superior to) bagging but not as accurate as boosting. In situations with substantial classification noise, bagging is much better than boosting, and sometimes better than randomization.",
+	issn="1573-0565",
+	doi="10.1023/A:1007607513941",
+	url="https://doi.org/10.1023/A:1007607513941"
+}
+@InProceedings{reimers-gurevych:2017:EMNLP2017,
+	author    = {Reimers, Nils  and  Gurevych, Iryna},
+	title     = {Reporting Score Distributions Makes a Difference: Performance Study of LSTM-networks for Sequence Tagging},
+	booktitle = {Proc. of EMNLP-2017},
+	year      = {2017},
+	abstract  = {In this paper we show that reporting a single performance score is insufficient
+	to compare non-deterministic approaches. We demonstrate for common sequence
+	tagging tasks that the seed value for the random number generator can result in
+	statistically significant p < 10\^{}-4 differences for state-of-the-art systems.
+	For two recent systems for NER, we observe an absolute difference of one
+	percentage point F\_1-score depending on the selected seed value, making these
+	systems perceived either as state-of-the-art or mediocre. Instead of publishing
+	and reporting single performance scores, we propose to compare score
+	distributions based on multiple executions. 
+	Based on the evaluation of 50.000 LSTM-networks for five sequence tagging
+	tasks, we present network architectures that produce both superior performance
+	as well as are more stable with respect to the remaining hyperparameters.},
+	url       = {https://www.aclweb.org/anthology/D17-1035}
 }

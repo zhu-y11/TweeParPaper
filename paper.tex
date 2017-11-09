@@ -46,7 +46,18 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-
+In this paper, we study the problem of analyzing tweets with
+universal dependencies \citep[UD]{NIVRE16.348}. We extend the UD guidelines to cover
+special constructions in tweets. Under such guidelines, we create
+a new tweet treebank which has 55,607 tokens and it's more than 4 times
+larger than the {\sc Tweebank v1}. We characterize the disagreements
+among our annotation and show that it is challenging to deliver
+consistent annotation due to the ambiguities in ways of
+understanding and explaining the tweets. Over the new treebank,
+we build a pipeline system to parse tweets into UD. To conquer the
+annotation noise without sacrificing efficiency, we propose a new
+method to distill an ensemble of 20 parsers into a single one. Our
+method achieve an improvement of 2.3 in LAS over the baseline.
 \end{abstract}
 
 \section{Introduction}
@@ -87,6 +98,9 @@ we create a new tweets treebank of 55,607 tokens by following the UD
 guidelines but also contending the domain-specific challenges which wasn't
 covered by UD guidelines. Our annotation includes a whole pipeline of
 tokenization, part-of-speech (POS) tags and universal dependencies.
+We characterize the disagreement among our annotations and show that
+consistent annotation is still challenging to deliver even with
+the extended guidelines.
 
 %\nascomment{Points that were in older text that I want to keep around:}
 %\begin{itemize}
@@ -108,8 +122,9 @@ bidirectional LSTM (bi-LSTM) tokenizer, a word cluster enhanced POS
 tagger \cite{owoputi-EtAl:2013:NAACL-HLT}, and stack-lstm parser
 with character representation \cite{ballesteros-dyer-smith:2015:EMNLP}.
 
-To achieve better performance without sacrificing efficiency, we propose
-a new method to train the parser with the distillation 
+To conquer the noise in our annotation and achieve better performance
+without sacrificing efficiency, we propose a new method to
+train the parser with the distillation 
 \cite{DBLP:journals/corr/HintonVD15} of 20 parsers ensemble.
 We show that learning from the exploration of the ensemble parser
 can be more beneficial than just learning from the gold standard
@@ -421,7 +436,9 @@ conventions:
 		\textcolor{green}{retweet at-mention},
 		\textcolor{gray}{topical hashtag},
 		\textcolor{blue}{referential URL}, and
-		\textcolor{cyan}{truncated word}.}\label{fig:non-syn-toks}
+		\textcolor{cyan}{truncated word}.
+		This example tweet is a concatenation of three real tweets.
+	}\label{fig:non-syn-toks}
 \end{figure*}
 
 \begin{figure*}[t]
@@ -450,7 +467,8 @@ conventions:
 		\depedge[edge unit distance=1em]{16}{15}{cc}
 		\depedge[edge unit distance=0.37em]{3}{17}{discourse}
 	\end{dependency}
-	\caption{An example tweet with informal but syntactic tokens.}\label{fig:informal-toks}
+	\caption{An example tweet with informal but syntactic tokens.
+	This is an artificial tweets inspired by several tweets.}\label{fig:informal-toks}
 \end{figure*}
 
 % Besides the informal but syntactic tokens, there are a large collection of tokens that cannot be handled by the syntactic theory designed for standard text.
@@ -606,7 +624,7 @@ following predicate with the label \emph{vocative} (see Figure \ref{fig:informal
 
 %\nascomment{I didn't touch anything below here}
 
-\subsection{\sc Tweebank v2}
+\subsection{\sc Tweebank v2}\label{sec:anno-process}
 Following the guidelines mentioned above, we create a new annotated Twitter treebank, which we call {\sc Tweebank v2}.
 
 \subsubsection{Data Collection}
@@ -623,17 +641,18 @@ The latter data source consists 147.4M English tweets which are filtered by {\it
 Our annotation process was conducted in three stages.
 In the first stage, 18 researchers worked on the {\sc Tweebank v1}
 proportion and created the initial annotations in one day.
-\nascomment{Check:} Before annotating, they were given a tutorial overview of the UD
+Before annotating, they were given a tutorial overview of the UD
 annotation conventions and our guidelines.
 Both the guidelines and annotation
 were further refined by the authors of this paper to increase
 the coverage of our guideline and solve inconsistency between
 different annotators during this exercise. In the second stage, a POS tagger and
-parser were trained on the annotated data from the first stage,
+parser were trained on the annotated data from the first stage (1,041 tweets in total),
 and used to automatically analyze the sampled 2,500 tweets.  Authors 
 of this paper manually corrected the parsed data. \nascomment{this is
   a little weird:  don't you have to do this before you parse?} Finally, an extra
-layer of word-level normalization was manually annotated.
+layer of word-level normalization was manually annotated for data
+analysis purposes.
 
 \begin{figure}
 \centering
@@ -658,7 +677,7 @@ layer of word-level normalization was manually annotated.
 %	\depedge[edge below, edge unit distance=1em]{6}{7}{flat}
 \end{dependency}
 \caption{An example of disagreement; one annotator's parse is shown above, disagreeing arcs from the other
-  annotator are shown below.}\label{fig:disagree}
+  annotator are shown below. This is a real example in our annotation.}\label{fig:disagree}
 \end{figure}
 
 We report the inter-annotator agreement between the annotators
@@ -764,14 +783,19 @@ the asterisk (*) in {\it 4*3} is a separate token signifying
 multiplication, but for the asterisk (*) in {\it sh*t}
 works as a mask for censorship and should not be segmented.
 
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=\columnwidth,trim={0 0 13cm 9cm},clip]{graphics/bilstm_tokenizer}
+	\caption{The bi-LSTM tokenizer model that segments `its gonna be' into `it s gon na be'.}\label{fig:tok-model}
+\end{figure}
 We introduce a new
 character-level bidirectional LSTM (bi-LSTM) sequence-labeling model
-\nascomment{add cite for this kind of model}
+\cite{DBLP:journals/corr/HuangXY15,ma-hovy:2016:P16-1}
 for tokenization.
 Our model takes the raw sentence and tags each character in this 
-sentence as whether it is the beginning of a word.
-\nascomment{check:} It is trained on the training portion of
-\textsc{Tweebank v2} combined with the UD\_English training dataset.
+sentence as whether it is the beginning of a word (1 as the beginning and 0 otherwise).
+Figure \ref{fig:tok-model} shows our tokenization model.
+Space is treated as an input but consistently assigned a special tag \$.
 
 \paragraph{Experimental results.}
 
@@ -791,11 +815,13 @@ sentence as whether it is the beginning of a word.
 	\caption{Tokenizer comparison on the \textsc{Tweebank v2} test set.}\label{tbl:tok-result}
 \end{table}
 
-We tested our tokenizer on the \textsc{Tweebank v2} test set. 
+We trained our tokenizer on the training portion of
+\textsc{Tweebank v2} combined with the UD\_English training dataset
+and tested on the \textsc{Tweebank v2} test set. 
 We report $F_1$ scores, combining precision and recall for token identification. Table \ref{tbl:tok-result} shows the
 tokenization results, compared to  other available tokenizers. 
-\nascomment{Check:}  The Stanford \nascomment{cite}  and Twokenizer
-\nascomment{cite} systems are rule-based systems and were not adapted
+The Stanford \cite{manning-EtAl:2014:P14-5} and Twokenizer
+\cite{ICWSM101540} systems are rule-based systems and were not adapted
 to the UD tokenization scheme.
 The UD pipe v1.2
 \cite{straka-strakova:2017:K17-3} model was re-trained on the same
@@ -806,12 +832,21 @@ in tokenization for informal texts.
 
 \subsection{Part-of-Speech Tagger}
 
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=\columnwidth,trim={0 0 13cm 3cm},clip]{graphics/bilstm_postagger}
+	\caption{The bi-LSTM postagger model that tags `it s gon na be' as {\tt PRON AUX VERB PART AUX}.}\label{fig:pos-model}
+\end{figure}
+
 Part-of-speech tagging for tweets has been extensively studied \cite{ritter-EtAl:2011:EMNLP,gimpel-EtAl:2011:ACL-HLT2011,owoputi-EtAl:2013:NAACL-HLT,gui-EtAl:2017:EMNLP20172}.
 On the annotation scheme designed in \S\ref{sec:pos-anno}, based on UD and adapted for
 Twitter, we compared several existing systems and also two bi-LSTM systems similar
-to \citet{??} \nascomment{add cite}, one using word vectors and the
-other using word and character vectors.   All systems were re-trained on
-the combination of the UD\_English and \textsc{Tweebank v2} training sets.
+to \citet{DBLP:journals/corr/HuangXY15} and \citet{lample-EtAl:2016:N16-1}, one using
+word vectors and the other using word and character vectors (see Figure \ref{fig:pos-model}).
+All systems were re-trained on the combination of the UD\_English and 
+\textsc{Tweebank v2} training sets. We use the twitter specific glove embedding released by
+\citet{pennington-socher-manning:2014:EMNLP2014} as the word embeeding in all the neural tagger
+and parser\footnote{\url{http://nlp.stanford.edu/data/glove.twitter.27B.zip}}.
 
 \nascomment{I wonder if we ought to give more detail about our biLSTM
   systems, here and under tokenization?  will reviewers want to know details?}
@@ -831,14 +866,13 @@ the combination of the UD\_English and \textsc{Tweebank v2} training sets.
 		\citealp{owoputi-EtAl:2013:NAACL-HLT} (CRF) & \bf 95.1 \\
 		\hdashline
 %		UD pipe v1.2 & 83.8 \\
-		\citealp{ma-hovy:2016:P16-1} & \\
-		our word bi-LSTM & 89.1 \\
-		our character + word bi-LSTMs & 91.4 \\
+		\citealp{ma-hovy:2016:P16-1} & 91.8 \\
+		our word bi-LSTM & 89.2 \\
+		our character + word bi-LSTMs & 91.5 \\
 		\hline
 	\end{tabular}
 	\caption{POS tagger comparison on gold-standard tokens in the
-          \textsc{Tweebank v2} test set. \label{tbl:pos-result}
-          \nascomment{to do:  fill in Ma/Hovy}}
+          \textsc{Tweebank v2} test set. \label{tbl:pos-result}}
 \end{table}
 
 \begin{table}[t]
@@ -858,30 +892,40 @@ the combination of the UD\_English and \textsc{Tweebank v2} training sets.
 We tested the POS taggers on \textsc{Tweebank v2} test set.  Results
 with gold-standard tokenization are shown in
 Table \ref{tbl:pos-result}. The careful feature engineering in the 
-POS tagger  of \citet{owoputi-EtAl:2013:NAACL-HLT} outperforms our neural network
-models.  (That tagger also makes use of \citet{Brown} clusters derived
+POS tagger of \citet{owoputi-EtAl:2013:NAACL-HLT} outperforms our neural network
+models.  (That tagger also makes use of \citet{Brown:1992:CNG:176313.176316} clusters derived
 from a large collection of unannotated tweets.  Those clusters did not
 improve the performance of our bi-LSTM models.)
 
 Results of the \citet{owoputi-EtAl:2013:NAACL-HLT}  with non-greedy
-inference \nascomment{check} on automatically tokenized data
+inference on automatically tokenized data
 are shown in  Table \ref{tbl:pos-result-vs-tok}.  We see that errors
 in tokenization do propagate, but tagging performance is above 93\%
 with our tokenizer.
 
 \subsection{Parser}
 
-%Time is a major concern on
-Social media applications teypically require processing large volumes
+Social media applications typically require processing large volumes
 of data, making speed an important criterion. We therefore 
 use the neural greedy parser introduced by \newcite{ballesteros-EtAl:2016:EMNLP2016},
 which can parse a sentence in linear time and harnesses 
 character representations, which should help mitigate the challenge of
-spelling variation. To further improve the parsing accuracy,
-we propose a new method to distill an ensemble of 20 differently
-initialized parsers into one parser.  To our knowledge, this is the
-first attempt to distill an ensemble of greedy transition-based
-parsers \nascomment{check}.
+spelling variation. We encourage the reader to refer their paper for
+more details about the model.
+
+Section \ref{sec:anno-process} shows that severe ambiguities
+exist when we create {\sc Tweebank v2}, which makes the training data
+of the parser very noisy. \citet{Frnay2014ClassificationIT} suggested
+that most of losses are shown to be not robust to 
+classification noise, including the log-likelihood loss used in
+\citet{ballesteros-dyer-smith:2015:EMNLP}. To conquer the noisy
+data and further improve the parsing accuracy, we followed the
+empirical study of \citet{Dietterich2000} and ensemble of 20 differently
+initialized parsers. To make it still parses in linear time, we
+propose a new method to distill the ensemble of 20 parsers into one parser.
+To our knowledge, this is the first attempt to distill an
+ensemble of greedy transition-based
+parsers.% \nascomment{check}.
 
 Distilling a simple and fast {\it student model} from the accurate but
 slow {\it teacher model} was explored by \newcite{DBLP:journals/corr/HintonVD15}
@@ -916,24 +960,30 @@ in the second step. We name this method \textsc{distill expert}.
 
 \paragraph{Preliminary results.}
 In our preliminary experiments, we train our parser on the combination of UD\_English
-and \textsc{Tweebank v2} training sets. \nascomment{are we using
-  gold-standard tokenization or automatic, here?} Automatic POS tags are assigned with 5-fold
+and \textsc{Tweebank v2} training sets. Gold-standard tokenization and automatic POS
+tags are used. Automatic POS tags are assigned with 5-fold
 jackknifing. Hyperparameters, including the value of $\alpha$ in Equation \ref{eq:distill},
-are tuned on the \textsc{Tweebank v2} development set. 20 parsers are trained with
-different random seeds and ensembled by averaging their output probability
-distributions over transitions. The ensemble parser achieves a LAS of 78.8, which is more 
+are tuned on the \textsc{Tweebank v2} development set. Unlabeled attachment score and
+labeled attachment score including punctuations are used to evaluate parsing performance.
+
+\citet{reimers-gurevych:2017:EMNLP2017} pointed out that the training process for neural networks are highly
+non-deterministic and largely depends on the seed value for pseduo-random number generator.
+Our preliminary experiments confirm this finding by witnessing a gap of 1 LAS on development set
+between the best (75.8) and worst (74.8) runs. To eliminate the effect of random number, for each
+hyperparameter setting, we conduct 5 runs with different seeds and report the averaged score.
+
+Our 20 parsers are ensembled by averaging their output probability
+distributions over transitions. The ensemble parser achieves a LAS of 79.4, which is more 
 than 3 points higher than the baseline single parser. Distilling from this
-parser leads to a single parser with  77.0 LAS.
+parser leads to a single parser with 78.1 LAS.
 %We first study the necessity of log-likelihood loss (the first term in Equation \ref{eq:distill}).
 
 \paragraph{Effect of $\alpha$.}
 
 \begin{figure}[t]
 	\centering
-	\includegraphics[width=\columnwidth]{graphics/alpha}
-	\caption{The effect of $\alpha$ on
-          distillation. \nascomment{to do:  please make the font in
-            the graphic readable}}\label{fig:effect-alpha}
+	\includegraphics[width=\columnwidth,trim={0.3cm 0 0 0},clip]{graphics/alpha}
+	\caption{The effect of $\alpha$ on \textsc{expert distillation}.}\label{fig:effect-alpha}
 \end{figure}
 
 We further study the effect of the interpolation hyperparameter $\alpha$ by varying it from 0 to 1.
@@ -942,13 +992,13 @@ performance, which means the model should pay more attention to learning
 from the teacher model.  Indeed, the negligible difference between the
 best performance at $\alpha = 0.9$ and $\alpha=1.0$ casts doubt on the
 necessity of including $\mathcal{L}_{NNL}$ in the training objective
-at all. \nascomment{check my rewording}
+at all.% \nascomment{check my rewording}
 
 \paragraph{Learning from exploration.} We further set $\alpha$ to 1.0,
 eliminating the oracle from the usual transition-based parser
 training algorithm.  Instead of generating
 training instances from the oracle, we generate them by random sampling
-transitions from the teacher (ensemble \nascomment{check}) model's output distribution and follow the
+transitions from the teacher (ensemble) model's output distribution and follow the
 trajectory of these transitions. We name this method \textsc{distill explore}.
 
 \paragraph{Final results.}
@@ -958,12 +1008,12 @@ trajectory of these transitions. We name this method \textsc{distill explore}.
 		\hline
 		\it System & UAS & LAS \\
 		\hline
-		\newcite{ballesteros-EtAl:2016:EMNLP2016} & 80.2 & 75.4 \\
+		\newcite{ballesteros-EtAl:2016:EMNLP2016} & 80.4 & 75.8 \\
 %		\newcite{dyer-EtAl:2015:ACL-IJCNLP} & 77.9 & 73.0 \\
-		Ensemble (20) & 83.0 & 78.8 \\
-		\textsc{distill expert} ($\alpha$=1.0) & 81.2 & 76.7 \\
-		\textsc{distill expert} ($\alpha$=0.9) & 81.4 & 77.0 \\		
-		\textsc{distill explore} & 82.2 & 77.9 \\
+		Ensemble (20) & 83.5 & 79.4 \\
+		\textsc{distill expert} ($\alpha$=1.0) & 82.2 & 78.0 \\
+		\textsc{distill expert} ($\alpha$=0.9) & 82.4 & 78.1 \\		
+		\textsc{distill explore} & 82.5 & 78.4 \\
 		\hline
 	\end{tabular}
 	\caption{Dependency parser comparison on \textsc{Tweebank v2},
