@@ -57,7 +57,8 @@ understanding and explaining the tweets. Over the new treebank,
 we build a pipeline system to parse tweets into UD. To conquer the
 annotation noise without sacrificing efficiency, we propose a new
 method to distill an ensemble of 20 parsers into a single one. Our
-method achieve an improvement of 2.3 in LAS over the baseline.
+parser achieves an improvement of 2.3 in LAS over the baseline
+and outperforms other state-of-the-art parsers.
 \end{abstract}
 
 \section{Introduction}
@@ -130,19 +131,21 @@ We show that learning from the exploration of the ensemble parser
 can be more beneficial than just learning from the gold standard
 transition sequence in the sense of training a transition-based
 distilling parser. Experimental results show an improvement of more
-than 3 points in LAS over baseline parser can be achieved with our
-distillation method.
+than 2.3 points in LAS over baseline parser can be achieved with our
+distillation method and it outperforms other state-of-the-art parsers.
 
 Contribution of this paper includes:
 \begin{itemize}
 \item We study the challenges of annotating tweets in UD (\S\ref{sec:anno})
 and create a new tweet treebank ({\sc Tweebank v2}), which includes 
 tokenization, part-of-speech tagging, and dependencies annotation.
+We also characterize the difficulties of creating such annotation.
 
 \item We built up a whole pipeline to parse the raw tweet text into
 universal dependencies (\S\ref{sec:parsing}). We propose a new distillation
-method in training the parser in our pipeline which achieve 3 points improvement
-without sacrificing efficiency.
+method in training the parser in our pipeline which achieve 2.3 points improvement
+without sacrificing efficiency and outperform other state-of-the-art parsers
+in our comparison.
 \end{itemize}
 
 We release our dataset and our system as open-source software at
@@ -150,12 +153,21 @@ We release our dataset and our system as open-source software at
 
 \nascomment{I didn't do anything significant to the intro.  for every
   example, make clear whether it's ``real'' or contrived.}
-
+\yjcomment{I've add the source of our example in the figure caption.}
 \section{Annotation}\label{sec:anno}
 
+In this section, we first review {\sc Tweebank v1} of \citet{kong-EtAl:2014:EMNLP2014},
+which is the largest twitter dependencies annotation in previous literals (\S\ref{sec:tweebank}).
+Then we introduce the difference in our part-of-speech (re)annotation with 
+\citet{gimpel-EtAl:2011:ACL-HLT2011} which {\sc Tweebank v1} was built 
+on (\S\ref{sec:pos-anno}). Then, we move to our efford of adopting the
+UD convention to cover tweets specific constructions. At last, we describ
+our process of creating new tweet treebank and characterize
+the difficulties in reaching consistent annotations.
 \nascomment{need to introduce this section and explain the structure.}
+\yjcomment{done.}
 
-\subsection{Background: \textsc{Tweebank}}
+\subsection{Background: \textsc{Tweebank}}\label{sec:tweebank}
 
 The annotation effort we describe stands in contrast to previous work
 by \newcite{kong-EtAl:2014:EMNLP2014}.  Their aim was the rapid
@@ -197,9 +209,8 @@ which adopt the universal POS tagset of \newcite{PETROV12.274}.
 %We follow the UD V2 morphology guideline and use the Universal POS tags~ to tag the tweet tokens. For twitter specific linguistic phenomena, we have set different strategies and try to align with the UD conventions and UD\textunderscore English as close as possible.\footnote{\url{https://github.com/UniversalDependencies/UD\_English}}
 
 In some cases, conflicts arose between the UD English 
-treebank conventions (UD\_English)
+treebank conventions \cite[UD\_English]{Marneffe2014UniversalSD}
 \footnote{\url{https://github.com/UniversalDependencies/UD_English}}
-\nascomment{add cite}
 and the conventions of \newcite{gimpel-EtAl:2011:ACL-HLT2011} and
 \newcite{owoputi-EtAl:2013:NAACL-HLT}.  In these cases, we always
 conformed to UD, enabling consistency (e.g., when we exploit the
@@ -362,49 +373,6 @@ truncated words & 0.00 & 0.49 \\
 \end{tabular}
 \caption{Proportion of non-syntactic tokens in the annotation.}\label{tbl:non-synt-prop}
 \end{table}
-The major characteristic that distinguishes tweets from standard texts is that
-there are large proportion of tokens that don't carry any syntactic function.
-In our annotation, there are five types of non-syntactic tokens: 
-sentiment emoticons, retweet markers, topical hashtags, referential URLs, and
-truncated words. Figure \ref{fig:non-syn-toks} illustrates examples of
-these non-syntactic tokens.  As discussed above, these are generally
-tagged with the \emph{other} (\texttt{X}) part of speech, except
-emoticons, which are tagged as \emph{symbol} (\texttt{SYM}).  In our annotation, 
-7.5\% of all tokens are non-syntactic; detailed statistics can be found in Table \ref{tbl:non-synt-prop}.
-
-It is important to note that these types may, in some
-contexts, have syntactic functions.
-For example, besides being a discourse marker, \emph{RT} can
-abbreviate the verb {\tt retweet}, and emoticons and hashtags may be
-used as content words within a sentence; see  Figure
-\ref{fig:informal-toks}.  Therefore, the criteria for annotating a
-token as non-syntactic must be context-dependent.
-%To our knowledge, this issue has not previously been addressed in UD
-%annotation efforts \nascomment{check!}\yjcomment{it's not safe to claim that.}.
-
-
-Inspired by the way UD deals with \emph{punctuation} (which is
-canonically non-syntactic), we adopt the following
-conventions:
-\begin{itemize}
-\item If a non-syntactic token is within a sentence that has a clear predicate, it will be attached to this predicate;
-\item If the whole sentence is made of a sequence of non-syntactic tokens, we attach all these tokens to the first one;
-%\item In parataxis case, when it is difficult to decide which sentence or phrase x should belong to, we always attach x to the previous predicate of the paratactic clause or phrase;
-\item non-syntactic tokens are mostly labeled as {\it discourse}, but
-  URLs are always labeled as {\it list}, following the UD\_English dataset.
-\end{itemize}
-
-
-
-% \subsubsection{Token Level}
-% \paragraph{Informal Syntactic Tokens.}
-% Informal tokens like phrase abbreviation (like {\tt mfw}: my face when, {\tt rn}: right now, and etc.) and orthographic variants (like {\tt sooo cooool}) have drawn much attention in previous literals \cite{finin-EtAl:2010:MTURK,eisenstein:2013:NAACL-HLT} \yjcomment{not sure orthographic variants is a good name, need reference.}
-% However, in the sense of syntactic functions, they work in the same way as the ordinary words, which makes them requires less specialty in designing annotation conventions.
-% %Syntactic tokens are just like normal tokens in the standard text.
-% %They always have syntactic functions in tweets.
-% %They could be orthographic variants or abbreviations that represents a phrase.
-
-% \paragraph{Non-syntactic Tokens.}
 
 \begin{figure*}[t]
 	\centering
@@ -468,8 +436,52 @@ conventions:
 		\depedge[edge unit distance=0.37em]{3}{17}{discourse}
 	\end{dependency}
 	\caption{An example tweet with informal but syntactic tokens.
-	This is an artificial tweets inspired by several tweets.}\label{fig:informal-toks}
+		This is an artificial tweets inspired by several tweets.}\label{fig:informal-toks}
 \end{figure*}
+
+The major characteristic that distinguishes tweets from standard texts is that
+there are large proportion of tokens that don't carry any syntactic function.
+In our annotation, there are five types of non-syntactic tokens: 
+sentiment emoticons, retweet markers, topical hashtags, referential URLs, and
+truncated words. Figure \ref{fig:non-syn-toks} illustrates examples of
+these non-syntactic tokens.  As discussed above, these are generally
+tagged with the \emph{other} (\texttt{X}) part of speech, except
+emoticons, which are tagged as \emph{symbol} (\texttt{SYM}).  In our annotation, 
+7.5\% of all tokens are non-syntactic; detailed statistics can be found in Table \ref{tbl:non-synt-prop}.
+
+It is important to note that these types may, in some
+contexts, have syntactic functions.
+For example, besides being a discourse marker, \emph{RT} can
+abbreviate the verb {\tt retweet}, and emoticons and hashtags may be
+used as content words within a sentence; see  Figure
+\ref{fig:informal-toks}.  Therefore, the criteria for annotating a
+token as non-syntactic must be context-dependent.
+%To our knowledge, this issue has not previously been addressed in UD
+%annotation efforts \nascomment{check!}\yjcomment{it's not safe to claim that.}.
+
+
+Inspired by the way UD deals with \emph{punctuation} (which is
+canonically non-syntactic), we adopt the following
+conventions:
+\begin{itemize}
+\item If a non-syntactic token is within a sentence that has a clear predicate, it will be attached to this predicate;
+\item If the whole sentence is made of a sequence of non-syntactic tokens, we attach all these tokens to the first one;
+%\item In parataxis case, when it is difficult to decide which sentence or phrase x should belong to, we always attach x to the previous predicate of the paratactic clause or phrase;
+\item non-syntactic tokens are mostly labeled as {\it discourse}, but
+  URLs are always labeled as {\it list}, following the UD\_English dataset.
+\end{itemize}
+
+
+
+% \subsubsection{Token Level}
+% \paragraph{Informal Syntactic Tokens.}
+% Informal tokens like phrase abbreviation (like {\tt mfw}: my face when, {\tt rn}: right now, and etc.) and orthographic variants (like {\tt sooo cooool}) have drawn much attention in previous literals \cite{finin-EtAl:2010:MTURK,eisenstein:2013:NAACL-HLT} \yjcomment{not sure orthographic variants is a good name, need reference.}
+% However, in the sense of syntactic functions, they work in the same way as the ordinary words, which makes them requires less specialty in designing annotation conventions.
+% %Syntactic tokens are just like normal tokens in the standard text.
+% %They always have syntactic functions in tweets.
+% %They could be orthographic variants or abbreviations that represents a phrase.
+
+% \paragraph{Non-syntactic Tokens.}
 
 % Besides the informal but syntactic tokens, there are a large collection of tokens that cannot be handled by the syntactic theory designed for standard text.
 % A major part of these tokens consists of meta data in tweets, like the sentiment emotion, retweet mark, topical hashtag, and referential URL shown in Figure \ref{fig:non-syn-toks}. 
@@ -650,7 +662,7 @@ different annotators during this exercise. In the second stage, a POS tagger and
 parser were trained on the annotated data from the first stage (1,041 tweets in total),
 and used to automatically analyze the sampled 2,500 tweets.  Authors 
 of this paper manually corrected the parsed data. \nascomment{this is
-  a little weird:  don't you have to do this before you parse?} Finally, an extra
+  a little weird:  don't you have to do this before you parse?}\yjcomment{we were actually correcting the auto-analyzed 2,500 tweets.} Finally, an extra
 layer of word-level normalization was manually annotated for data
 analysis purposes.
 
@@ -850,6 +862,7 @@ and parser\footnote{\url{http://nlp.stanford.edu/data/glove.twitter.27B.zip}}.
 
 \nascomment{I wonder if we ought to give more detail about our biLSTM
   systems, here and under tokenization?  will reviewers want to know details?}
+\yjcomment{I add figure to illustrat our model.}
 
 \paragraph{Experimental results.}
 
@@ -1008,8 +1021,11 @@ trajectory of these transitions. We name this method \textsc{distill explore}.
 		\hline
 		\it System & UAS & LAS \\
 		\hline
-		\newcite{ballesteros-EtAl:2016:EMNLP2016} & 80.4 & 75.8 \\
+		\citet{kong-EtAl:2014:EMNLP2014} &81.6 & 77.2 \\
+		\citet{DBLP:journals/corr/DozatM16} & 81.9 &  77.7 \\
+		\hdashline
 %		\newcite{dyer-EtAl:2015:ACL-IJCNLP} & 77.9 & 73.0 \\
+		\newcite{ballesteros-EtAl:2016:EMNLP2016} & 80.4 & 75.8 \\
 		Ensemble (20) & 83.5 & 79.4 \\
 		\textsc{distill expert} ($\alpha$=1.0) & 82.2 & 78.0 \\
 		\textsc{distill expert} ($\alpha$=0.9) & 82.4 & 78.1 \\		
@@ -1026,34 +1042,61 @@ trajectory of these transitions. We name this method \textsc{distill explore}.
 		\hline
 		\it System & UAS & LAS \\
 		\hline
-		\newcite{dyer-EtAl:2015:ACL-IJCNLP} & 93.0 & 90.9 \\
+		\newcite{kuncoro-16} & 94.3 & 92.1 \\
+		\citet{DBLP:journals/corr/DozatM16} & 95.7 & 94.1 \\
+		\hdashline
+		\newcite{dyer-EtAl:2015:ACL-IJCNLP} & 93.0 & 90.9 \\		
 		%		\newcite{dyer-EtAl:2015:ACL-IJCNLP} & 77.9 & 73.0 \\
 		Ensemble (20) & 94.5 & 92.6 \\
 		\textsc{distill expert} ($\alpha$=1.0) & 93.8 & 91.7 \\
 		\textsc{distill explore} & 94.1 & 92.0 \\
 		\hline
-		\newcite{kuncoro-16} & 94.3 & 92.1 \\
-		\hline
 	\end{tabular}
 	\caption{Dependency parser comparison on PTB test set.}\label{tbl:parse-result-PTB}
 \end{table}
 
-Our final parsing experiments are shown in Table \ref{tbl:parse-result},
-in which we can see that \textsc{distill explore} significant
-outperforms \textsc{distill expert}, gaining one more point in LAS improvement.
-Additional experiments on the Penn Treebank were performed following
+Our final parsing experiments are shown in Table \ref{tbl:parse-result}.
+We also compare our model with the {\sc TweeboParser} 
+of \citet{kong-EtAl:2014:EMNLP2014} and the state-of-the-art parser
+ \cite{DBLP:journals/corr/DozatM16} in CoNLL 2017.
+Both the compared systems are re-trained on the same data as our system.
+From Table \ref{tbl:parse-result}, our baseline system is 1.9 point behind the
+state-of-the-art parsing systems. However, through distilling, our baseline
+parser catched up and outperform that of \citet{DBLP:journals/corr/DozatM16} and 
+\textsc{distill explore} further outperforms \textsc{distill expert}, gaining 0.4
+point in LAS improvement. We attribute the improvements of \textsc{distill explore} over
+\textsc{distill expert} to the former's exploration of 
+ensemble-sanctioned parser states of different qualities.
+
+We also perform additional experiments on the Penn Treebank were performed following
 the setting of \newcite{dyer-EtAl:2015:ACL-IJCNLP};
 Table~\ref{tbl:parse-result-PTB} shows a similar trend, and we achieve
 performance close to that of the graph-based parser of \citet{kuncoro-16}.
-We attribute the improvements of \textsc{distill explore} over
-\textsc{distill expert} to the former's exploration of
-ensemble-sanctioned parser states
-of different qualities.
+However, our model is still way behind \citet{DBLP:journals/corr/DozatM16}.
+We address this to the intrastic differences between transition-based and graph-based
+parsing algorithm.
 
 \subsection{Final Evaluation}
-Finally, we evaluate our full pipeline.
+\begin{table}[t]
+	\centering
+	\begin{tabular}{rc}
+		\hline
+		\it Pipeline & F-score \\
+		\hline
+		Tokenization & 98.3 \\		
+		POS tagging & 93.7 \\
+		Dependencies & 74.1 \\
+		\hline
+	\end{tabular}
+	\caption{Evaluating our model in pipeline manner.}\label{tbl:pipline}
+\end{table}
 
-\section{Related Work}
+Finally, we evaluate the problem of parsing tweets into UD in a pipeline manner.
+The results are shown in Table \ref{tbl:pipline}. From this result, we can see
+that in the whole pipeline, every component plays an important role. Without
+gold segmentation, the parsing performance drops more than 4 points.
+
+%\section{Related Work}
 %\yjcomment{related word is not finished.}
 %\newcite{eisenstein:2013:NAACL-HLT} reviewed NLP approaches for analyzing text on social media, especially for tweets and showed that there are two major directions for NLP community to handle the tweets, including normalization and domain adaptation. He also pointed out that normalization can be problematic because precisely defining the normalization task is difficult. 
 %
@@ -1073,7 +1116,18 @@ Finally, we evaluate our full pipeline.
 %At last, it’s arguable that some of the hashtags, URLs can work as a nominal in tweets. Whether treating them as the same part-of-speech or different ones according to their context is an open question. A preliminary survey on the standard UD English data shows that URL, email address are all tagged as the foreign language (X), so we also tag them as X and leave the disambiguation of their syntactic function to the annotation of parse tree.
 
 \section{Conclusion}
-
+In this paper, we study the problem of parsing tweets into universal dependencies.
+We adopt the UD guidelines to cover 
+special constructions in tweets and create
+the {\sc Tweebank v2} which has 55,607 tokens. We characterize the disagreements
+among our annotations and show that it is challenging to deliver
+consistent annotation due to the ambiguities in ways of
+understanding and explaining the tweets. On this new treebank,
+we build a pipeline system to parse tweets into UD. We 
+propose a new method to distill an ensemble of 20 parsers into a single one
+to conquer the annotation noise without sacrificing efficiency.
+Our parser achieves an improvement of 2.3 in LAS over the baseline
+and outperforms other state-of-the-art parsers.
 
 \bibliography{shortdb}
 \bibliographystyle{acl_natbib}
