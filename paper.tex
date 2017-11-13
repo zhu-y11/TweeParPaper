@@ -27,6 +27,8 @@
 
 \newcommand{\yjcomment}[1]{\textcolor{orange}{[$_\mathrm{L}^\mathrm{Y}$#1]}}
 \newcommand{\nascomment}[1]{\textcolor{blue}{[#1 ---\textsc{nas}]}}
+\newcommand{\yicomment}[1]{\textcolor{red}{[#1 ---\textsc{nas}]}}
+
 
 \title{Parsing Tweets into Universal Dependencies}
 
@@ -49,12 +51,12 @@
 In this paper, we study the problem of analyzing tweets with
 universal dependencies \citep[UD]{NIVRE16.348}. We extend the UD guidelines to cover
 special constructions in tweets. Under such guidelines, we create
-a new tweet treebank which has 55,607 tokens and it's more than 4 times
-larger than the {\sc Tweebank v1}. We characterize the disagreements
+a new tweet treebank ({\sc Tweebank v2}), which has 55,607 tokens with labelled attachements. 
+It is more than 4 times larger than the unlabelled {\sc Tweebank v1} \citep{kong-EtAl:2014:EMNLP2014}. We characterize the disagreements
 among our annotation and show that it is challenging to deliver
 consistent annotation due to the ambiguities in ways of
 understanding and explaining the tweets. Over the new treebank,
-we build a pipeline system to parse tweets into UD. To conquer the
+we build a pipeline system to parse raw tweets into UD. To conquer the
 annotation noise without sacrificing efficiency, we propose a new
 method to distill an ensemble of 20 parsers into a single one. Our
 parser achieves an improvement of 2.3 in LAS over the baseline
@@ -443,11 +445,11 @@ The major characteristic that distinguishes tweets from standard texts is that
 there are large proportion of tokens that don't carry any syntactic function.
 In our annotation, there are five types of non-syntactic tokens: 
 sentiment emoticons, retweet markers, topical hashtags, referential URLs, and
-truncated words. Figure \ref{fig:non-syn-toks} illustrates examples of
+truncated words \footnote{Tweets we analyze have 140 character limits. Although Twitter has now doubled the tweet limit to 280 characters, we believe this type of tokens will still remain.}. Figure \ref{fig:non-syn-toks} illustrates examples of
 these non-syntactic tokens.  As discussed above, these are generally
 tagged with the \emph{other} (\texttt{X}) part of speech, except
 emoticons, which are tagged as \emph{symbol} (\texttt{SYM}).  In our annotation, 
-7.5\% of all tokens are non-syntactic; detailed statistics can be found in Table \ref{tbl:non-synt-prop}.
+7.5\% of all tokens are non-syntactic; detailed statistics can be found in Table \ref{tbl:non-synt-prop}\footnote{The statistics are obtained on 140 character limit tweets.}.
 
 It is important to note that these types may, in some
 contexts, have syntactic functions.
