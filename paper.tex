@@ -59,11 +59,11 @@ We characterize the disagreements
 among our annotation and show that it is challenging to deliver
 consistent annotation due to ambiguity in
 understanding and explaining tweets. Using the new treebank,
-we build a pipeline system to parse raw tweets into UD. To conquer the
+we build a pipeline system to parse raw tweets into UD. To overcome the
 annotation noise without sacrificing computational efficiency, we propose a new
-method to distill an ensemble of 20 parsers into a single one. Our
+method to distill an ensemble of 20 transition-based parsers into a single one. Our
 parser achieves an improvement of 2.3 in LAS over \nascomment{which
-  comparison is this?} the baseline
+  comparison is this?} the singlely trained baseline
 and outperforms parsers that are state-of-the-art on other treebanks.
 \end{abstract}
 
@@ -75,7 +75,7 @@ for training and evaluation is hard.
 Pioneering work by \citet{AAAIW113912} 
 annotated 7,630 tokens' worth of tweets according to the
 phrase-structure conventions of the Penn Treebank \citep[PTB]{Marcus93buildinga}.
-Stanford dependencies were converted afterwards \nascomment{by who?}. 
+Stanford dependencies were converted afterwards in their work  \nascomment{by who?}. 
 \citet{kong-EtAl:2014:EMNLP2014} further studied the challenges in
 annotating tweets and presented a tweet treebank ({\sc Tweebank}),
 consisting of 12,149 tokens and largely following conventions
@@ -98,8 +98,8 @@ many annotation decisions unspecified.
 
 Universal dependencies \citep[UD]{NIVRE16.348} were introduced to enable
 consistent annotation across different languages. To allow such
-consistency, UD was designed to be adaptable to different genres and languages
-\cite{guo-EtAl:2015:ACL-IJCNLP2,TACL892}. We propose that analyzing
+consistency, UD was designed to be adaptable to different genres \cite{wang-EtAl:2017:Long6} 
+and languages \cite{guo-EtAl:2015:ACL-IJCNLP2,TACL892}. We propose that analyzing
 the syntax of tweets can benefit from such adaptability. In this paper,
 we introduce a new tweet treebank of 55,607 tokens that follows the UD
 guidelines, but also contends with social media-specific challenges that were not
@@ -130,7 +130,6 @@ tagger \citep[following][]{owoputi-EtAl:2013:NAACL-HLT}, and a stack LSTM parser
 with character-based word representations
 \cite{ballesteros-dyer-smith:2015:EMNLP}, which we refer to as our
 ``baseline'' parser.
-
 To overcome the noise in our annotated data and achieve better performance
 without sacrificing computational efficiency, we 
 distill a 20-parser ensemble into a single greedy  parser 
@@ -161,7 +160,7 @@ We release our dataset and our system as open-source software at
 
 
 \section{Annotation}\label{sec:anno}
-\yicomment{Maybe we should contrast UD and kong's annotation strategy during each stage, because UD has also annotation guideline for every stage.}
+%\yicomment{Maybe we should contrast UD and kong's annotation strategy during each stage, because UD has also annotation guideline for every stage.}
 
 We first review {\sc Tweebank v1} of \citet{kong-EtAl:2014:EMNLP2014},
 which is the largest Twitter dependencies annotation
@@ -215,31 +214,29 @@ the UD guidelines.
 The regex-based tokenizer of \citet{ICWSM101540}---which was 
 originally designed for an exploratory search interface called
 TweetMotif, not for NLP---preserves most whitespace-delimited tokens, including 
-hashtags, at-mentions, emoticons,  emojis, and unicode glyphs. 
+hashtags, at-mentions, emoticons, and unicode glyphs. 
 They also treat contractions and acronyms as whole tokens and do not split them.
 UD
 tokenization,\footnote{\url{http://universaldependencies.org/u/overview/tokenization.html}}
 in order to better serve dependency annotation, treats each syntactic word as token.
-They therefore take a more aggressive strategy, including splitting
-clitics from contractions or multiword expressions (e.g., {\it
-  gonna}), and sometimes combining several orthographic tokens into a
-single syntactic word. \yicomment{does UD support normalization for
+They therefore more aggressively split
+clitics from contractions (e.g., {\it  gonna} is tokenized as {\it gon} and {\it na}; {\it its}
+is tokenized as {\it it} and {\it s} when {\it s} is a copula). But acronyms is not touched
+in the UD tokenization guidelines. Thus, we follow the UD tokenization for contractions
+and left acronyms like {\em idc} as a single token.
+\yicomment{does UD support normalization for
   acronyms? Did not see it from website, need to check. related to
   ``idc''} \nascomment{unless we make a change, I think we need to say
   here that acronyms like \emph{idc} are left as a single token}
+\yjcomment{mentioned acronymns, we don't have the problem of normalization, cause
+normalization was just annotated for data study.}
 
-In our manual tokenization, we do not modify any non-informal \nascomment{is this defined?} token in tweets and leave them as in the original tweets. 
-Then we mainly follow UD tokenization. We tokenize contractions and
-multiword expressions into their syntactic components, but do not
-combine tokens that appear as split in the original tweet.
-For example, words like {\it gonna} or {\it can't} will be tokenized
-to {\it gon na} and {\it ca n't}, and sequences like {\it Y O} and
-{\it R E T W E E T} will be not combined back into single
-words.\footnote{Such tokens only account for 0.067\%; we use the UD
-  {\it goeswith} relation to resolve these cases in the syntax.}
- 
-
-
+In the different direction of splitting tokens, UD guidelines also suggest to merge
+{\it multi-token words} (e.g. {\it 20 000}) into one single token in some special
+cases. We witnessed a small number of tweets that contain mult-token words
+(e.g. {\it Y O}, and {\it R E T W E E T}) but didn't combine them due to simplification.
+Such tokens only account for 0.067\% and we use the UD
+  {\it goeswith} relation to resolve these cases in the dependency annotations.
 
 \subsection{Part-of-Speech Annotation}\label{sec:pos-anno}
 
@@ -377,15 +374,13 @@ key questions that arose in our annotation effort, and how we resolved them.
 
 \paragraph{Acronym abbreviations.}  How should we syntactically
 analyze acronym tokens like \emph{idc}
-(abbreviating ``I don't care'') \yicomment{`idc' should be discussed in tokenization section, and actually it is already implied from POS section that it should be treated as a single word.}
+(abbreviating ``I don't care'')
  and \emph{rn} (``right now'')?  Should
 they be decomposed into their component words, and if so should those
 words be ``normalized'' into explicitly spelled out intermediate
 forms? We follow \citet{kong-EtAl:2014:EMNLP2014} and annotate their
 syntax as a single word without normalization. Their syntactic functions
-are decided according to their context.\yicomment{again we should also mention UD tokenization, so might be worth adding a tokenization section}
-
-\citet{eisenstein:2013:NAACL-HLT} studied the necessity of normalization
+are decided according to their context. \citet{eisenstein:2013:NAACL-HLT} studied the necessity of normalization
 in social media text and argued that such normalization is problematic.
 Our solution to the syntax of abbreviations follows the spirit of his argument. Because abbreviations which clearly carry
 syntactic functions only constitute 0.06\% of the tokens in our
@@ -683,7 +678,9 @@ Following the guidelines presented above, we create a new annotated Twitter tree
 \subsubsection{Data Collection}
 {\sc Tweebank v2} is built on the original data of {\sc Tweebank v1}
 (840 unique tweets, 639/201 for training/test set), along with an 
-additional 210 tweets sampled from the POS-tagged dataset of \newcite{gimpel-EtAl:2011:ACL-HLT2011} and 2,500 tweets sampled from the Twitter stream from February 2016 to July 2016.\footnote{Data downloaded from \url{https://archive.org/}.}
+additional 210 tweets sampled from the POS-tagged dataset of
+\newcite{gimpel-EtAl:2011:ACL-HLT2011} and 2,500 tweets sampled
+from the Twitter stream from February 2016 to July 2016.\footnote{Data downloaded from \url{https://archive.org/}.}
 The latter data source consists of 147.4M English tweets after being
 filtered by the {\it lang} attribute in the tweet JSON and {\it
   langid.py} toolkit.\footnote{\url{https://github.com/saffsd/langid.py}} 
@@ -842,7 +839,7 @@ works as a mask to evoke censorship and should not be segmented.
 
 \begin{figure}[t]
 	\centering
-	\includegraphics[width=\columnwidth,trim={0 0 13cm 9cm},clip]{graphics/bilstm_tokenizer}
+	\includegraphics[width=\columnwidth,trim={0 0 11cm 9cm},clip]{graphics/bilstm_tokenizer}
 	\caption{The bi-LSTM tokenizer model that segments `its gonna be' into `it s gon na be'.}\label{fig:tok-model}
 \end{figure}
 We introduce a new
@@ -860,7 +857,7 @@ Space is treated as an input but consistently assigned a special tag \$.
 	\centering
 	\begin{tabular}{lr}
 		\hline
-		\it System & $F_1$ \\
+		\it System & \it F1 \\
 		\hline
 		  Stanford CoreNLP & 96.6 \\
 		 Twokenizer & 94.4 \\
@@ -894,9 +891,9 @@ in tokenization for informal texts.
 
 \begin{figure}[t]
 	\centering
-	\includegraphics[width=\columnwidth,trim={0 0 13cm 3cm},clip]{graphics/bilstm_postagger}
+	\includegraphics[width=\columnwidth,trim={0 0 11cm 3cm},clip]{graphics/bilstm_postagger}
 	\caption{The bi-LSTM POS tagger model that tags `it s gon na be' as {\tt PRON AUX VERB PART AUX}.}\label{fig:pos-model}
-	\yicomment{i'm a little confused by the pic, need discussion}
+	%\yicomment{i'm a little confused by the pic, need discussion}
 \end{figure}
 
 Part-of-speech tagging for tweets has been extensively studied \cite{ritter-EtAl:2011:EMNLP,gimpel-EtAl:2011:ACL-HLT2011,owoputi-EtAl:2013:NAACL-HLT,gui-EtAl:2017:EMNLP20172}.
@@ -938,7 +935,7 @@ and parsers.\footnote{\url{http://nlp.stanford.edu/data/glove.twitter.27B.zip}}
 	\centering
 	\begin{tabular}{rc}
 		\hline
-		\it System & $F_1$ \\
+		\it System & \it F1 \\
 		\hline
 		Stanford CoreNLP & 92.0 \\
 		our tokenizer (\S\ref{sec:tok}) & 93.6 \\
@@ -978,6 +975,7 @@ tags are used. Automatic POS tags are assigned with 5-fold
 jackknifing. Hyperparameters %, including the value of $\alpha$ in Equation \ref{eq:distill},
 are tuned on the \textsc{Tweebank v2} development set. Unlabeled attachment score and
 labeled attachment score (including punctuation) are reported.
+All the experiments were ran on a Xeon E5-2670 2.6 GHz machine.
 
 \citet{reimers-gurevych:2017:EMNLP2017} and others have
 pointed out that neural network training is 
@@ -986,31 +984,35 @@ number generator.
 Our preliminary experiments confirm this finding, with a gap of 1 LAS on development data
 between the best (75.8) and worst (74.8) runs. To control for this
 effect, we report the average of five differently-seeded runs, for
-each model. \nascomment{please check! we did this for all systems,
-  not just ours, right?}
+each model and the compared one. %\nascomment{please check! we did this for all systems,
+%  not just ours, right?}
 
 
 %%%
 
 \begin{table}[t]
 	\centering
-	\begin{tabular}{rcc}
+	\begin{tabular}{rccc}
 		\hline
-		\it System & UAS & LAS \\
+		\it System & UAS & LAS & SP \\
 		\hline
-		\citet{kong-EtAl:2014:EMNLP2014} &81.6 & 77.2 \\
-		\citet{DBLP:journals/corr/DozatM16} & 81.9 &  77.7 \\
+		\citet{kong-EtAl:2014:EMNLP2014} &81.6 & 77.2 & 0.3 \\
+		\citet{DBLP:journals/corr/DozatM16} & 81.9 &  77.7 & 1.7 \\
 %		\newcite{dyer-EtAl:2015:ACL-IJCNLP} & 77.9 & 73.0 \\
-		\newcite{ballesteros-EtAl:2016:EMNLP2016} & 80.4 & 75.8 \\
+		\newcite{ballesteros-EtAl:2016:EMNLP2016} & 80.4 & 75.8 & 2.3 \\
 		\hdashline
-		Ensemble (20) & 83.5 & 79.4 \\
-		Distillation ($\alpha =1.0$) & 82.2 & 78.0 \\
-		Distillation ($\alpha =0.9$) & 82.4 & 78.1 \\		
-		Distillation with exploration & 82.5 & 78.4 \\
+		Ensemble (20) & 83.5 & 79.4 & 0.2 \\
+		Distillation ($\alpha =1.0$) & 82.2 & 78.0 & 2.3 \\
+		Distillation ($\alpha =0.9$) & 82.4 & 78.1 & 2.3 \\		
+		Distillation w/ exploration & 82.5 & 78.4 & 2.3 \\
 		\hline
 	\end{tabular}
 	\caption{Dependency parser comparison on \textsc{Tweebank v2},
-           with automatic POS tags. \label{tbl:parse-result}}
+           with automatic POS tags. The {\it SP} column shows
+           the parsing speed evaluated by the number of thousand tokens
+           the model processed per second. For fair comparison, we limit the
+           number of CPU used in \citet{DBLP:journals/corr/DozatM16} experiments to 1.
+            \label{tbl:parse-result}}
 \end{table}
 
 
@@ -1019,13 +1021,29 @@ the stack LSTM with {\sc TweeboParser} (the system
 of \citealp{kong-EtAl:2014:EMNLP2014}) and the state-of-the-art parser
 in the CoNLL 2017 evaluations, due to
  \citet{DBLP:journals/corr/DozatM16}, both of which are graph-based
- parsers requiring superlinear runtime. \nascomment{can we quantify
-   how much time each one takes, either in tweets parsed per second or
-   seconds per tweet?}
+ parsers requiring superlinear runtime. %\nascomment{can we quantify
+%   how much time each one takes, either in tweets parsed per second or
+%   seconds per tweet?}
 Both of the comparison systems are re-trained on the same data as our
 system.
 Our system lags behind by nearly two LAS
-points.
+points but runs faster than both of them.
+
+\begin{table*}[t]
+	\centering
+	\begin{tabular}{rrcc}
+		\hline
+		\it Pipeline & Metrics & Our & SOTA stack\\
+		\hline
+		Tokenization & \it F1 & 98.3 & \\		
+		POS tagging &  \it Precision F1 & 93.7 & \\
+		Universal dependencies & \it LAS F1 & 74.1 & \\
+		\hline
+	\end{tabular}
+	\caption{Evaluating our model in pipeline
+		manner. \nascomment{should this be ``F1''?  shouldn't the
+			last line be LAS?}\label{tbl:pipline} }
+\end{table*}
 
 \paragraph{Ensemble.}  Due both to ambiguity in the training
 data---which most loss functions are not robust to \citep{Frnay2014ClassificationIT}, including the log loss we use, following
@@ -1035,6 +1053,8 @@ consider an ensemble of twenty parsers trained using different random
 initialization.  To parse at test time, the transition probabilities of the twenty
 members of the ensemble are averaged.  The result achieves LAS of
 79.4, outperforming all three systems above (Table~\ref{tbl:parse-result}).
+However, ensembling 20 parsers also significantly slows down the parsing
+speed and leads to the slowest system in our comparison.
 
 \paragraph{Distillation.}  The shortcoming of the 20-parser ensemble is, of
 course, that it requires twenty times the runtime of a single greedy
@@ -1056,11 +1076,11 @@ pairs.
 Let $q(a \mid s)$ denote the distilled model's
 probability of an action $a$ given parser state $s$; let $p(a \mid s)$ be the probability under the
 ensemble (i.e., the average of the 20 separately-trained ensemble
-members) \nascomment{check}.
+members) \nascomment{check} \yjcomment{checked}.
 To train the distilled model, we minimize the interpolation between
 their distillation loss and the conventional log loss:
 \begin{align}
-\min_q \quad  & \alpha \sum_i \underbrace{\sum_{a} q(a \mid s_i) \cdot p(a
+{\arg\,\min}_q \quad  & \alpha \sum_i \underbrace{\sum_{a} q(a \mid s_i) \cdot p(a
   \mid s_i)}_{\text{distillation loss}} \\
 & +\ (1 - \alpha) \sum_i \underbrace{- \log q(a_i \mid
   s_i)}_{\text{log loss}} \nonumber
@@ -1073,7 +1093,6 @@ The effect of $\alpha$ is illustrated in
 Figure~\ref{fig:effect-alpha}; generally paying closer attention to
 the ensemble, rather than the conventional log loss objective, leads
 to better performance.
-
 
 \begin{figure}[t]
 	\centering
@@ -1092,55 +1111,43 @@ We find that this
 approach outperforms the  conventional distillation model, coming in
 only one point behind the ensemble (last line of Table~\ref{tbl:parse-result}).
 
+%
+%\begin{table}[t]
+%	\centering
+%	\begin{tabular}{rcc}
+%		\hline
+%		\it System & UAS & LAS \\
+%		\hline
+%		\newcite{kuncoro-16} & 94.3 & 92.1 \\
+%		\citet{DBLP:journals/corr/DozatM16} & 95.7 & 94.1 \\
+%		\hdashline
+%		\newcite{dyer-EtAl:2015:ACL-IJCNLP} & 93.0 & 90.9 \\		
+%		%		\newcite{dyer-EtAl:2015:ACL-IJCNLP} & 77.9 & 73.0 \\
+%		Ensemble (20) & 94.5 & 92.6 \\
+%		Distillation ($\alpha =1.0$) & 93.8 & 91.7 \\
+%		Distillation with exploration  & 94.1 & 92.0 \\
+%		\hline
+%	\end{tabular}
+%	\caption{Dependency parser comparison on PTB test set.}\label{tbl:parse-result-PTB}
+%\end{table}
 
-\begin{table}[t]
-	\centering
-	\begin{tabular}{rcc}
-		\hline
-		\it System & UAS & LAS \\
-		\hline
-		\newcite{kuncoro-16} & 94.3 & 92.1 \\
-		\citet{DBLP:journals/corr/DozatM16} & 95.7 & 94.1 \\
-		\hdashline
-		\newcite{dyer-EtAl:2015:ACL-IJCNLP} & 93.0 & 90.9 \\		
-		%		\newcite{dyer-EtAl:2015:ACL-IJCNLP} & 77.9 & 73.0 \\
-		Ensemble (20) & 94.5 & 92.6 \\
-		Distillation ($\alpha =1.0$) & 93.8 & 91.7 \\
-		Distillation with exploration  & 94.1 & 92.0 \\
-		\hline
-	\end{tabular}
-	\caption{Dependency parser comparison on PTB test set.}\label{tbl:parse-result-PTB}
-\end{table}
 
 
+%\nascomment{need to clarify:  is this UD?} We perform additional experiments on the Penn Treebank, following
+%the settings of \newcite{dyer-EtAl:2015:ACL-IJCNLP};
+%Table~\ref{tbl:parse-result-PTB} shows a similar trend, and we achieve
+%performance close to that of the graph-based parser of \citet{kuncoro-16}.
+%However, this greedy approach still lags behind the very strong
+%graph-based system of \citet{DBLP:journals/corr/DozatM16}.
 
-\nascomment{need to clarify:  is this UD?} We perform additional experiments on the Penn Treebank, following
-the settings of \newcite{dyer-EtAl:2015:ACL-IJCNLP};
-Table~\ref{tbl:parse-result-PTB} shows a similar trend, and we achieve
-performance close to that of the graph-based parser of \citet{kuncoro-16}.
-However, this greedy approach still lags behind the very strong
-graph-based system of \citet{DBLP:journals/corr/DozatM16}.
-
-\begin{table}[t]
-	\centering
-	\begin{tabular}{rc}
-		\hline
-		\it Pipeline & $F_1$\\
-		\hline
-		Tokenization & 98.3 \\		
-		POS tagging & 93.7 \\
-		Universal dependencies & 74.1 \\
-		\hline
-	\end{tabular}
-	\caption{Evaluating our model in pipeline
-          manner. \nascomment{should this be ``F1''?  shouldn't the
-            last line be LAS?}\label{tbl:pipline} }
-\end{table}
 
 \paragraph{Pipeline evaluation.} Finally, we report  our full
-pipeline's performance in  Table \ref{tbl:pipline}. We see the
+pipeline's performance in  Table \ref{tbl:pipline}.
+We see the
 importance of segmentation:  without gold segmentation, UD parsing
-performance drops by more than four points.
+performance drops by more than four points. We also compare
+our model with a stack of the state-of-the-art system: Stanford Tokenizer,
+ARK tagger, and \citet{DBLP:journals/corr/DozatM16}'s parser. \yjcomment{tbd}
 
 %\section{Related Work}
 %\yjcomment{related word is not finished.}
