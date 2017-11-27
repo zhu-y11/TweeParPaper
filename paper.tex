@@ -48,40 +48,42 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-In this paper, we study the problem of analyzing tweets with
-universal dependencies \citep[UD]{NIVRE16.348}. We extend the UD guidelines to cover
-special constructions in tweets. Under such guidelines, we create
-a new tweet treebank ({\sc Tweebank v2}), which has 55,607 tokens with labelled attachments.\yicomment{labelled attachments}
-It is more than 4 times larger than the unlabelled {\sc Tweebank v1} \citep{kong-EtAl:2014:EMNLP2014}. \yicomment{unlabelled attachments for the original Tweebank}
+We study the problem of analyzing tweets with
+universal dependencies \citep[UD;][]{NIVRE16.348}. We extend the UD guidelines to cover
+special constructions in tweets. Using the extended guidelines, we create
+a new tweet treebank ({\sc Tweebank v2}), which has 55,607 tokens with
+labeled attachments. 
+It is more than four times larger than the (unlabeled) {\sc Tweebank
+  v1} introduced by \citet{kong-EtAl:2014:EMNLP2014}. 
 We characterize the disagreements
 among our annotation and show that it is challenging to deliver
-consistent annotation due to the ambiguities in ways of
-understanding and explaining the tweets. Over the new treebank,
+consistent annotation due to ambiguity in
+understanding and explaining tweets. Using the new treebank,
 we build a pipeline system to parse raw tweets into UD. To conquer the
-annotation noise without sacrificing efficiency, we propose a new
+annotation noise without sacrificing computational efficiency, we propose a new
 method to distill an ensemble of 20 parsers into a single one. Our
-parser achieves an improvement of 2.3 in LAS over the baseline
-and outperforms other state-of-the-art parsers.
+parser achieves an improvement of 2.3 in LAS over \nascomment{which?} the baseline
+and outperforms parsers that are state-of-the-art on other treebanks.
 \end{abstract}
 
 \section{Introduction}
-Analyzing the syntax of tweets is challenging. The challenges not
-only come from the difficulty of adapting the parser trained on the
-standard text to the Twitter domain, but also comes from creating
-reasonable dataset for training and evaluating tweet parsers. 
-\citet{AAAIW113912} pioneered in this research direction by
-annotating Penn Treebank \citep[PTB]{Marcus93buildinga}
-constituencies to a set of tweets which contains 7,630 tokens. 
-Stanford dependencies were converted afterwards. 
+NLP for social media messages is challenging, both because domain
+adaptation is required, but also because creating annotated datasets
+(e.g., treebanks)
+for training and evaluation is hard. 
+Pioneering work by \citet{AAAIW113912} 
+annotated 7,630 tokens' worth of tweets according to the
+phrase-structure conventions of the Penn Treebank \citep[PTB]{Marcus93buildinga}.
+Stanford dependencies were converted afterwards \nascomment{by who?}. 
 \citet{kong-EtAl:2014:EMNLP2014} further studied the challenges in
-annotating tweets and presented a tweet treebank ({\sc Tweebank})
-which has 12,149 tokens and largely followed the conventions
-suggested by \citet{schneider-EtAl:2013:LAW7-ID} that are close to 
-\citet{Yamada03statisticaldependency} dependencies. 
-Both annotation efforts were highly influenced by the PTB, whose guideline
-has a good grammatical coverage on newswire. However, when it comes
-to the noisy and informal user generated text, it's questionable
-whether such good coverage holds.
+annotating tweets and presented a tweet treebank ({\sc Tweebank}),
+consisting of 12,149 tokens and largely following conventions
+suggested by \citet{schneider-EtAl:2013:LAW7-ID}, fairly close to 
+\citet{Yamada03statisticaldependency} dependencies (without labels). 
+Both annotation efforts were highly influenced by the PTB, whose guidelines
+have  good grammatical coverage on newswire. However, when it comes
+to informal, unedited, user-generated text, the guidelines may leave
+many annotation decisions unspecified.
 %Motivation notes:  explain why UD is attractive (and more attractive
 %than what previous work used, which was based on YM).  one reason is
 %that it might allow sharing of texts annotated in different genres (or
@@ -93,16 +95,16 @@ whether such good coverage holds.
 %universal dependencies and built up the whole pipeline to parse the
 %tweets from the raw text form.
 
-Universal dependencies \citep[UD]{NIVRE16.348} was created to deliver
+Universal dependencies \citep[UD]{NIVRE16.348} were introduced to enable
 consistent annotation across different languages. To allow such
-consistency, UD was designed to be adaptive to different genres and languages
-\cite{guo-EtAl:2015:ACL-IJCNLP2,TACL892}. It's promising that analyzing
+consistency, UD was designed to be adaptable to different genres and languages
+\cite{guo-EtAl:2015:ACL-IJCNLP2,TACL892}. We propose that analyzing
 the syntax of tweets can benefit from such adaptability. In this paper,
-we create a new tweet treebank of 55,607 tokens by following the UD
-guidelines but also contending the domain-specific challenges which were not
-covered by UD guidelines. Our annotation includes a whole pipeline of
-tokenization, part-of-speech (POS) tags and universal dependencies.
-We characterize the disagreement among our annotations and show that
+we introduce a new tweet treebank of 55,607 tokens that follows the UD
+guidelines, but also contends with social media-specific challenges that were not
+covered by UD guidelines. Our annotation includes 
+tokenization, part-of-speech (POS) tags, and (labeled) universal dependencies.
+We characterize the disagreement among our annotations and find that
 consistent annotation is still challenging to deliver even with
 the extended guidelines.
 
@@ -120,42 +122,46 @@ the extended guidelines.
 %  registers.  YM was not designed for cross-linguistic applicability.}
 %\end{itemize}
 
-Based on these annotations, we built up a whole pipeline to parse the
-raw tweet text into universal dependencies. Our pipeline includes: a
-bidirectional LSTM (bi-LSTM) tokenizer, a word cluster enhanced POS
-tagger \cite{owoputi-EtAl:2013:NAACL-HLT}, and stack-lstm parser
-with character representation \cite{ballesteros-dyer-smith:2015:EMNLP}.
+Based on these annotations, we designed a pipeline to parse 
+raw tweets into universal dependencies. Our pipeline includes: a
+bidirectional LSTM (bi-LSTM) tokenizer, a word cluster-enhanced POS
+tagger \citep[following][]{owoputi-EtAl:2013:NAACL-HLT}, and a stack LSTM parser
+with character-based word representations
+\cite{ballesteros-dyer-smith:2015:EMNLP}, which we refer to as our
+``baseline'' parser.
 
-To conquer the noise in our annotation and achieve better performance
-without sacrificing efficiency, we propose a new method to
+To overcome the noise in our annotated data and achieve better performance
+without sacrificing computational efficiency, we propose a new method to
 train the parser with the distillation 
-\cite{DBLP:journals/corr/HintonVD15} of 20 parsers ensemble.
+\cite{DBLP:journals/corr/HintonVD15} of a 20-parser
+ensemble. \nascomment{return to this and clarify}
 We show that learning from the exploration of the ensemble parser
 can be more beneficial than just learning from the gold standard
 transition sequence in the sense of training a transition-based
 distilling parser. Experimental results show that an improvement of more
-than 2.3 points in LAS over baseline parser can be achieved with our
+than 2.3 points in LAS over the baseline parser can be achieved with our
 distillation method and it outperforms other state-of-the-art parsers.
 
-Contribution of this paper includes:
+The contributions of this paper include:
 \begin{itemize}
-\item We studied the challenges of annotating tweets in UD (\S\ref{sec:anno})
+\item We study the challenges of annotating tweets in UD (\S\ref{sec:anno})
 and created a new tweet treebank ({\sc Tweebank v2}), which includes 
-tokenization, part-of-speech tagging, and dependencies annotation.
-We also characterized the difficulties of creating such annotation.
+tokenization, part-of-speech tagging, and labeled universal dependencies annotation.
+We also characterize the difficulties of creating such annotation.
 
-\item We built up a whole pipeline to parse the raw tweet text into
-universal dependencies (\S\ref{sec:parsing}). We proposed a new distillation
-method in training the parser in our pipeline which achieve 2.3 points improvement in LAS
+\item We introduce and evaluate a system to parse the raw tweet text into
+universal dependencies (\S\ref{sec:parsing}).  \nascomment{say it
+  performs better than existing systems?}
+\item We propose a new distillation
+method for training the parser in our pipeline,  which achieves 2.3 points improvement in LAS
 without sacrificing efficiency and outperformed other state-of-the-art parsers
-in our comparison. \yicomment{change verbs to past tense}
+in our comparison. \nascomment{clean up, remove redundancies with
+  previous paragraph}
 \end{itemize}
 
 We release our dataset and our system as open-source software at
 \url{http://anonymized}. 
 
-\nascomment{I didn't do anything significant to the intro.  for every
-  example, make clear whether it's ``real'' or contrived.}
 \yjcomment{I've add the source of our example in the figure caption.}
 \section{Annotation}\label{sec:anno}
 \yicomment{Maybe we should contrast UD and kong's annotation strategy during each stage, because UD has also annotation guideline for every stage.}
