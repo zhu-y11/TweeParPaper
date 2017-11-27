@@ -165,16 +165,18 @@ We release our dataset and our system as open-source software at
 \yjcomment{I've add the source of our example in the figure caption.}
 \section{Annotation}\label{sec:anno}
 \yicomment{Maybe we should contrast UD and kong's annotation strategy during each stage, because UD has also annotation guideline for every stage.}
-In this section, we first review {\sc Tweebank v1} of \citet{kong-EtAl:2014:EMNLP2014},
-which is the largest twitter dependencies annotation in previous literals (\S\ref{sec:tweebank}).
-Then we introduce the difference in our tokenization and part-of-speech (re)annotation with \citet{ICWSM101540} and 
-\citet{gimpel-EtAl:2011:ACL-HLT2011} on which {\sc Tweebank v1} was built (\S\ref{sec:pos-anno}). \yicomment{add tok} 
-Then, we move to our effort of adopting the
-UD conventions to cover tweet specific constructions. 
-At last, we describe our process of creating new tweet treebank and characterize
-the difficulties in reaching consistent annotations.
-\nascomment{need to introduce this section and explain the structure.}
-\yjcomment{done.}
+
+We first review {\sc Tweebank v1} of \citet{kong-EtAl:2014:EMNLP2014},
+which is the largest Twitter dependencies annotation
+(\S\ref{sec:tweebank}).
+Then we introduce the differences in our tokenization
+(\S\ref{sec:tok-anno}) and part-of-speech (\S\ref{sec:pos-anno}) (re)annotation with \citet{ICWSM101540} and 
+\citet{gimpel-EtAl:2011:ACL-HLT2011}, respectively, on which {\sc Tweebank v1} was built. 
+We describe our effort of adapting the
+UD conventions to cover tweet-specific constructions (\S\ref{sec:ud-tweet}). 
+Finally, we present our process of creating a new tweet treebank, {\sc
+  Tweebank v2}, and characterize
+the difficulties in reaching consistent annotations (\S\ref{sec:anno-process}).
 
 \subsection{Background: \textsc{Tweebank}}\label{sec:tweebank}
 
@@ -185,12 +187,12 @@ contributed a new annotated corpus, \textsc{Tweebank}, consisting of
 929 tweets.  Their annotations added dependencies to a portion of the data
 annotated with POS tags by 
 \newcite{gimpel-EtAl:2011:ACL-HLT2011} and
-\newcite{owoputi-EtAl:2013:NAACL-HLT} after tokenization \citep{ICWSM101540} \yicomment{add tok}.  
-They also contributed a system for parsing;
+\newcite{owoputi-EtAl:2013:NAACL-HLT} after rule-based tokenization \citep{ICWSM101540}.
+Kong et al.~also contributed a system for parsing;
 we defer the discussion of their parser to \S\ref{sec:parsing}.
 
-\citet{kong-EtAl:2014:EMNLP2014}'s rapid, small-scale annotation effort was heavily constrained.  It was
-carried out mostly by non-native speakers, in a very short amount of
+Kong et al.'s rapid, small-scale annotation effort was heavily constrained.  It was
+carried out mostly by nonnative speakers, in a very short amount of
 time (a day).  Driven both by the style of the text they sought to annotate
 and by exigency, some of their annotation conventions included:
 \begin{itemize}
@@ -208,23 +210,41 @@ annotation easier for non-experts, but they must be revisited in our
 effort to apply UD to tweets.
 
 \subsection{Tokenization}\label{sec:tok-anno}
-Our tokenization strategy is in the middle of the strategy of \citet{ICWSM101540} and that of UD. 
-We want to fit Twitter texts better in UD dependencies while preserving the original tweets as much as possible.
+Our tokenization strategy lies between the strategy of
+\citet{ICWSM101540} and that of UD.
+There is a significant tradeoff  between preservation of original tweet content and respecting
+the UD guidelines.
 
-\citet{ICWSM101540} preserve most of non-informal tokens including 
-the hashtags, at-mentions, emoticons \& emojis and unicode glyphs. 
+The regex-based tokenizer of \citet{ICWSM101540}---which was 
+originally designed for an exploratory search interface called
+TweetMotif, not for NLP---preserves most whitespace-delimited tokens, including 
+hashtags, at-mentions, emoticons,  emojis, and unicode glyphs. 
 They also treat contractions and acronyms as whole tokens and do not split them.
-UD tokenization\footnote{http://universaldependencies.org/u/overview/tokenization.html\yicomment{is it ok? no paper reference but webpage reference}} , in order to serve better dependency annotation, treat each syntactic word as token.
-They take more aggressive strategy, including splitting off clitics from contractions or multi-word expressions ({\it gonna}) and combine several orthographic tokens into a single syntactic word. \yicomment{does UD support normalization for acronyms? Did not see it from website, need to check. related to ``idc''}
+UD
+tokenization,\footnote{\url{http://universaldependencies.org/u/overview/tokenization.html}}
+in order to better serve dependency annotation, treats each syntactic word as token.
+They therefore take a more aggressive strategy, including splitting
+clitics from contractions or multiword expressions (e.g., {\it
+  gonna}), and sometimes combining several orthographic tokens into a
+single syntactic word. \yicomment{does UD support normalization for
+  acronyms? Did not see it from website, need to check. related to
+  ``idc''} \nascomment{unless we make a change, I think we need to say
+  here that acronyms like \emph{idc} are left as a single token}
 
-We do not touch any non-informal token in tweets and leave them as in the original tweets. 
-Then we mainly follow UD tokenization. We tokenize contractions and multi-word expressions into their syntactic components, but do not combine tokens that have been already split in the original tweets back anymore.
-For example, words like {\it gonna} or {\it can't} will be tokenized to {\it gon na} and {\it ca n't}, and parts like {\it Y O} and {\it R E T W E E T} will be not connected back to single words\footnote{Such tokens only accounts for 0.067\%, and we use {\it goeswith} relation to resolve it.}.
+In our manual tokenization, we do not modify any non-informal \nascomment{is this defined?} token in tweets and leave them as in the original tweets. 
+Then we mainly follow UD tokenization. We tokenize contractions and
+multiword expressions into their syntactic components, but do not
+combine tokens that appear as split in the original tweet.
+For example, words like {\it gonna} or {\it can't} will be tokenized
+to {\it gon na} and {\it ca n't}, and sequences like {\it Y O} and
+{\it R E T W E E T} will be not combined back into single
+words.\footnote{Such tokens only account for 0.067\%; we use the UD
+  {\it goeswith} relation to resolve these cases in the syntax.}
  
 
 
 
-\subsection{Part-of-speech Annotation}\label{sec:pos-anno}
+\subsection{Part-of-Speech Annotation}\label{sec:pos-anno}
 
 Before turning to UD annotations, we (re)annotated the data with 
 POS, for consistency with other UD efforts,
@@ -232,14 +252,12 @@ which adopt the universal POS tagset of \newcite{PETROV12.274}.
 % The POS annotation of a word in tweets is generally based on its syntactic distribution, which indicates that the POS of word changes on different context.
 % Sticking to the syntactic distribution makes it possible that a `$\heart$' symbol is tagged as a verb as shown in Figure \ref{fig:non-syn-toks}. \yjcomment{Need a better explanation.}
 %We follow the UD V2 morphology guideline and use the Universal POS tags~ to tag the tweet tokens. For twitter specific linguistic phenomena, we have set different strategies and try to align with the UD conventions and UD\textunderscore English as close as possible.\footnote{\url{https://github.com/UniversalDependencies/UD\_English}}
-
 In some cases, conflicts arose between the UD English 
-treebank conventions \cite[UD\_English]{Marneffe2014UniversalSD}
-\footnote{\url{https://github.com/UniversalDependencies/UD_English}}
+treebank conventions \cite[][UD\_English]{Marneffe2014UniversalSD}\footnote{\url{https://github.com/UniversalDependencies/UD_English}}
 and the conventions of \newcite{gimpel-EtAl:2011:ACL-HLT2011} and
 \newcite{owoputi-EtAl:2013:NAACL-HLT}.  In these cases, we always
 conformed to UD, enabling consistency (e.g., when we exploit the
-existing UD English treebank in our parser for tweets, \S\ref{sec:parsing}).  For example,  
+existing UD\_English treebank in our parser for tweets, \S\ref{sec:parsing}).  For example,  
 the nominal URL in Figure \ref{fig:informal-toks} is tagged as {\it
   other} ({\tt X}) and {\tt +} is tagged as {\it symbol} ({\tt SYM})
 rather than {\it conjunction} ({\tt CCONJ}).  
@@ -282,7 +300,7 @@ noun (for \emph{face}).  % \footnote{Such failure can be resulted by the mis-mat
 %Although there is no head word in {\tt im}, we think that the subject is usually more informative than the tense in many downstream tasks such as semantic role labelling, so we use the tag of ``I'', e.g. PROPN as the tag of {\tt im}.  
 %In Fig.~\ref{ex2}, {\tt RT} and {\tt $\heart$} would be tagged as VERB, {\tt http://url} as X, {\tt \#Awesome} as ADJ, {\tt \#NAACL}, {\tt @zypandora} and {\tt @nlpnoah} as PROPN. One exception is that we tag URLs always as X regardless whether they are syntactic tokens. The reason is that we observed, in UD\_English, that the URLs are all tagged as X and we want to conform with the UD dataset, although we think it is not appropriate and should be changed to tags such as PROPN when they are treated as syntactic tokens.
 
-Compared to coarse-grained POS tagging effort of
+Compared to the coarse-grained POS tagging effort of
 \newcite{gimpel-EtAl:2011:ACL-HLT2011}, our approach simplifies some
 matters.  For example, if a token is not considered syntactic by UD
 conventions, it gets an \emph{other} (\texttt{X}) tag (Gimpel et
@@ -298,11 +316,10 @@ Gimpel et al.~used a single part of speech for such expressions.
 % One example is that {\it idc} (I don't care) and {\it rn} (right now) carries significantly different syntactic functions and should not be treated as the same.
 % In this paper, we stick more to the syntactic distribution when handling such abbreviations and it allows them to function differently in different context.
 
-Another important difference is in tokenization.  UD calls for more
+Another important difference follows from the difference in
+tokenization.  As discussed above, UD calls for more
 aggressive tokenization than that used by
-\newcite{gimpel-EtAl:2011:ACL-HLT2011}, which followed the rule-based
-system  introduced by 
-\newcite{ICWSM101540}.  In particular, they opted out of tokenizing
+\newcite{gimpel-EtAl:2011:ACL-HLT2011}.  In particular, Gimpel et al.~opted out of tokenizing
 contractions and possessives, introducing new parts of speech
 instead.\footnote{These tags only account for 2.7\% of tokens,
   leading to concerns about data sparseness in tagging and all
@@ -325,15 +342,12 @@ universal parts of speech can be applied.
 % %Third, special tags were designed to handle twitter or online special tokens such as URLs, hashtags and emoticon in \newcite{Gimpel:2011:PTT:2002736.2002747}. However, in most cases, as long as theses tokens are non syntactic, they play the same role in tweets, hence should be tagged the same. In this paper, except for the emoticon and emoji, tagged as SYM, we tag all the other non-syntactic tokens as X.
 
 
-\subsection{Universal Dependencies Applied to Tweets}
+\subsection{Universal Dependencies Applied to Tweets} \label{sec:ud-tweet}
 
 We adopt UD version 2 guidelines to annotate the syntax of tweets.
 In applying UD annotation conventions to tweets, the choices of 
 \newcite{kong-EtAl:2014:EMNLP2014} must be revisited.  We consider the
 key questions that arose in our annotation effort, and how we resolved them.
-
-\nascomment{for each thing we talk about here, might be nice to
-  quantify it in our annotated corpus}
 
 % Linguistic phenomena
 	% word level
@@ -375,13 +389,13 @@ syntax as a single word without normalization. Their syntactic functions
 are decided according to their context.\yicomment{again we should also mention UD tokenization, so might be worth adding a tokenization section}
 
 \citet{eisenstein:2013:NAACL-HLT} studied the necessity of normalization
-in social media text and pointed that such normalization is problematic.
+in social media text and argued that such normalization is problematic.
 Our solution to the syntax of abbreviations follows the spirit of his argument. Because abbreviations which clearly carry
 syntactic functions only constitute 0.06\% of the tokens in our
 dataset, we believe that normalization is an unnecessarily complicated step.
-\nascomment{maybe we owe citations to
-  \cite{finin-EtAl:2010:MTURK,eisenstein:2013:NAACL-HLT} here?  maybe
-  better papers to cite}
+% \nascomment{maybe we owe citations to
+%   \cite{finin-EtAl:2010:MTURK,eisenstein:2013:NAACL-HLT} here?  maybe
+%   better papers to cite}
 
 
 \paragraph{Non-syntactic tokens.}  
@@ -397,7 +411,8 @@ truncated words & 0.00 & 0.49 \\
  \hline
  total & 2.08 & 7.55 \\
 \end{tabular}
-\caption{Proportion of non-syntactic tokens in the annotation.}\label{tbl:non-synt-prop}
+\caption{Proportions of non-syntactic tokens in our annotation.
+These  statistics are obtained on 140 character-limited tweets. \label{tbl:non-synt-prop}}
 \end{table}
 
 \begin{figure*}[t]
@@ -462,18 +477,21 @@ truncated words & 0.00 & 0.49 \\
 		\depedge[edge unit distance=0.37em]{3}{17}{discourse}
 	\end{dependency}
 	\caption{An example tweet with informal but syntactic tokens.
-		This is an artificial tweets inspired by several tweets.}\label{fig:informal-toks}
+		This is a contrived example inspired by several tweets.}\label{fig:informal-toks}
 \end{figure*}
 
 The major characteristic that distinguishes tweets from standard texts is that
-there are large proportion of tokens that don't carry any syntactic function.
+a large proportion of tokens don't carry any syntactic function.
 In our annotation, there are five types of non-syntactic tokens: 
 sentiment emoticons, retweet markers, topical hashtags, referential URLs, and
-truncated words \footnote{Tweets we analyze have 140 character limits. Although Twitter has now doubled the tweet limit to 280 characters, we believe this type of tokens will still remain.}. Figure \ref{fig:non-syn-toks} illustrates examples of
+truncated words.\footnote{The tweets we analyze have at most 140
+  characters. Although Twitter has doubled the tweet length limit to
+  280 characters since our analysis, we believe this type of token
+  will still remain.}  Figure \ref{fig:non-syn-toks} illustrates examples of
 these non-syntactic tokens.  As discussed above, these are generally
 tagged with the \emph{other} (\texttt{X}) part of speech, except
 emoticons, which are tagged as \emph{symbol} (\texttt{SYM}).  In our annotation, 
-7.5\% of all tokens are non-syntactic; detailed statistics can be found in Table \ref{tbl:non-synt-prop}\footnote{The statistics are obtained on 140 character limit tweets.}.
+7.5\% of all tokens are non-syntactic; detailed statistics can be found in Table \ref{tbl:non-synt-prop}.
 
 It is important to note that these types may, in some
 contexts, have syntactic functions.
@@ -493,7 +511,7 @@ conventions:
 \item If a non-syntactic token is within a sentence that has a clear predicate, it will be attached to this predicate;
 \item If the whole sentence is made of a sequence of non-syntactic tokens, we attach all these tokens to the first one;
 %\item In parataxis case, when it is difficult to decide which sentence or phrase x should belong to, we always attach x to the previous predicate of the paratactic clause or phrase;
-\item non-syntactic tokens are mostly labeled as {\it discourse}, but
+\item Non-syntactic tokens are mostly labeled as {\it discourse}, but
   URLs are always labeled as {\it list}, following the UD\_English dataset.
 \end{itemize}
 
@@ -533,7 +551,7 @@ tokens and exclude them from the final dependencies annotation.
 %  e.g., for defining features of the input for parsing}
 In order to keep our annotation conventions in line with UD norms,
 we include non-syntactic tokens in our annotation following the
-convention above. Compared with \citet{kong-EtAl:2014:EMNLP2014},
+conventions above. Compared with \citet{kong-EtAl:2014:EMNLP2014},
 we also gave a clear definition of non-syntactic tokens, which helped
 us avoid confusion during annotation.
 
@@ -663,12 +681,15 @@ following predicate with the label \emph{vocative} (see Figure \ref{fig:informal
 %\nascomment{I didn't touch anything below here}
 
 \subsection{\sc Tweebank v2}\label{sec:anno-process}
-\yicomment{I think it should move to another section, just as in Kong's paper.}
-Following the guidelines mentioned above, we create a new annotated Twitter treebank, which we call {\sc Tweebank v2}.
+Following the guidelines presented above, we create a new annotated Twitter treebank, which we call {\sc Tweebank v2}.
 
 \subsubsection{Data Collection}
-{\sc Tweebank v2} is built on the original data of {\sc Tweebank v1} (840 unique tweets, 639/201 for training/test set), along with additional 210\yicomment{changed to 210} tweets sampled from \newcite{gimpel-EtAl:2011:ACL-HLT2011} and 2,500 tweets sampled from the Twitter stream from February 2016 to July 2016\footnote{Data downloaded from \url{https://archive.org/}}.
-The latter data source consists of 147.4M English tweets after being filtered by {\it lang} attribute in the tweet JSON and {\it langid.py}\footnote{\url{https://github.com/saffsd/langid.py}} toolkit.
+{\sc Tweebank v2} is built on the original data of {\sc Tweebank v1}
+(840 unique tweets, 639/201 for training/test set), along with an 
+additional 210 tweets sampled from the POS-tagged dataset of \newcite{gimpel-EtAl:2011:ACL-HLT2011} and 2,500 tweets sampled from the Twitter stream from February 2016 to July 2016.\footnote{Data downloaded from \url{https://archive.org/}.}
+The latter data source consists of 147.4M English tweets after being
+filtered by the {\it lang} attribute in the tweet JSON and {\it
+  langid.py} toolkit.\footnote{\url{https://github.com/saffsd/langid.py}} 
 
 %The tweet source of Tweebank V2 consists of three parts. 
 %The first is the original Tweebank created by~\cite{kong-EtAl:2014:EMNLP2014}, denoted as Tweebank V1.  There are 639 unique tweets in the training data of Tweebank V1, and 201 unique tweets in the data set. All of the unique tweets in Tweebank V1 are included in Tweebank V2.
@@ -683,14 +704,13 @@ In the first stage, 18 researchers worked on the {\sc Tweebank v1}
 proportion and created the initial annotations in one day.
 Before annotating, they were given a tutorial overview of the UD
 annotation conventions and our guidelines.
-Both the guidelines and annotation
+Both the guidelines and annotations
 were further refined by the authors of this paper to increase
-the coverage of our guideline and solve inconsistency between
+the coverage of our guidelines and solve inconsistencies between
 different annotators during this exercise. In the second stage, a POS tagger and
 parser were trained on the annotated data from the first stage (1,041 tweets in total),
 and used to automatically analyze the sampled 2,500 tweets.  Authors 
-of this paper manually corrected the parsed data. \nascomment{this is
-  a little weird:  don't you have to do this before you parse?}\yjcomment{we were actually correcting the auto-analyzed 2,500 tweets.} Finally, an extra
+of this paper manually corrected the parsed data. Finally, an extra
 layer of word-level normalization was manually annotated for data
 analysis purposes.
 
@@ -730,7 +750,7 @@ be understood as a verbal phrase but also as the name of the Coldplay's
 single and tagged as proper noun. An example of a disagreement on
 dependencies is shown in Figure \ref{fig:disagree}.  Depending on
 whether this is an example of an empty auxiliary verb, or a clause-modified
-noun, both annotations are reasonable. 
+noun, either annotation is plausible.
 
 %\subsubsection{Statistics}
 %\yjcomment{this part is not finished}
