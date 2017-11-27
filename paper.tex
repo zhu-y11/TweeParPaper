@@ -62,7 +62,8 @@ understanding and explaining tweets. Using the new treebank,
 we build a pipeline system to parse raw tweets into UD. To conquer the
 annotation noise without sacrificing computational efficiency, we propose a new
 method to distill an ensemble of 20 parsers into a single one. Our
-parser achieves an improvement of 2.3 in LAS over \nascomment{which?} the baseline
+parser achieves an improvement of 2.3 in LAS over \nascomment{which
+  comparison is this?} the baseline
 and outperforms parsers that are state-of-the-art on other treebanks.
 \end{abstract}
 
@@ -131,16 +132,14 @@ with character-based word representations
 ``baseline'' parser.
 
 To overcome the noise in our annotated data and achieve better performance
-without sacrificing computational efficiency, we propose a new method to
-train the parser with the distillation 
-\cite{DBLP:journals/corr/HintonVD15} of a 20-parser
-ensemble. \nascomment{return to this and clarify}
-We show that learning from the exploration of the ensemble parser
-can be more beneficial than just learning from the gold standard
-transition sequence in the sense of training a transition-based
-distilling parser. Experimental results show that an improvement of more
-than 2.3 points in LAS over the baseline parser can be achieved with our
-distillation method and it outperforms other state-of-the-art parsers.
+without sacrificing computational efficiency, we 
+distill a 20-parser ensemble into a single greedy  parser 
+\cite{DBLP:journals/corr/HintonVD15}.
+We show further  that learning directly from the exploration of the ensemble parser
+is more beneficial than learning from the gold standard ``oracle''
+transition sequence. Experimental results show that an improvement of more
+than 2.3 points \nascomment{again, not sure what this is quoting} in LAS over the baseline parser can be achieved with our
+distillation method and that it outperforms other state-of-the-art parsers.
 
 The contributions of this paper include:
 \begin{itemize}
@@ -153,16 +152,14 @@ We also characterize the difficulties of creating such annotation.
 universal dependencies (\S\ref{sec:parsing}).  \nascomment{say it
   performs better than existing systems?}
 \item We propose a new distillation
-method for training the parser in our pipeline,  which achieves 2.3 points improvement in LAS
-without sacrificing efficiency and outperformed other state-of-the-art parsers
-in our comparison. \nascomment{clean up, remove redundancies with
-  previous paragraph}
+method for training a greedy parser, leading to better performance
+than existing methods and without efficiency sacrifices.
 \end{itemize}
 
 We release our dataset and our system as open-source software at
 \url{http://anonymized}. 
 
-\yjcomment{I've add the source of our example in the figure caption.}
+
 \section{Annotation}\label{sec:anno}
 \yicomment{Maybe we should contrast UD and kong's annotation strategy during each stage, because UD has also annotation guideline for every stage.}
 
@@ -839,9 +836,9 @@ Tokenization, as the initial step of many NLP tasks, is non-trivial for
 informal tweets, which include hashtags, at-mentions, and emoticons
 \cite{ICWSM101540}.  Context is often required for tokenization
 decisions; for example,
-the asterisk (*) in {\it 4*3} is a separate token signifying
-multiplication, but for the asterisk (*) in {\it sh*t}
-works as a mask for censorship and should not be segmented.
+the asterisk in {\it 4*3} is a separate token signifying
+multiplication, but for the asterisk in {\it sh*t}
+works as a mask to evoke censorship and should not be segmented.
 
 \begin{figure}[t]
 	\centering
@@ -861,15 +858,15 @@ Space is treated as an input but consistently assigned a special tag \$.
 
 \begin{table}[t]
 	\centering
-	\begin{tabular}{rc}
+	\begin{tabular}{lr}
 		\hline
 		\it System & $F_1$ \\
 		\hline
-		Stanford CoreNLP & 96.6 \\
-		Twokenizer & 94.4 \\
+		  Stanford CoreNLP & 96.6 \\
+		 Twokenizer & 94.4 \\
 % 		UD pipe v1.2 & 94.7 \\
-		UD pipe v1.2 (same training data) & 97.3 \\
-		Our bi-LSTM tokenizer & \bf 98.3 \\
+		UD pipe v1.2 & 97.3 \\
+	 	our bi-LSTM tokenizer & \bf 98.3 \\
 		\hline
 	\end{tabular}
 	\caption{Tokenizer comparison on the \textsc{Tweebank v2} test set.}\label{tbl:tok-result}
@@ -880,12 +877,15 @@ We trained our tokenizer on the training portion of
 and tested on the \textsc{Tweebank v2} test set. 
 We report $F_1$ scores, combining precision and recall for token identification. Table \ref{tbl:tok-result} shows the
 tokenization results, compared to  other available tokenizers. 
-The Stanford \cite{manning-EtAl:2014:P14-5} and Twokenizer
+ Stanford CoreNLP \cite{manning-EtAl:2014:P14-5} and Twokenizer
 \cite{ICWSM101540} systems are rule-based systems and were not adapted
 to the UD tokenization scheme.
 The UD pipe v1.2
 \cite{straka-strakova:2017:K17-3} model was re-trained on the same
-data as our system.
+data as our system. \nascomment{we need to say what their model was;
+  why does ours work better?  from their paper, it seems that they
+  used a GRU instead of an LSTM ... is that all?  do we win because of
+better tuning, or what?}
 Our bi-LSTM tokenizer achieves the best accuracy among all these
 tokenizers.  These results indicate the value of statistical modeling
 in tokenization for informal texts.
@@ -905,13 +905,10 @@ Twitter, we compared several existing systems and also two bi-LSTM systems simil
 to \citet{DBLP:journals/corr/HuangXY15} and \citet{lample-EtAl:2016:N16-1}, one using
 word vectors and the other using word and character vectors (see Figure \ref{fig:pos-model}).
 All systems were re-trained on the combination of the UD\_English and 
-\textsc{Tweebank v2} training sets. We use the twitter specific glove embedding released by
-\citet{pennington-socher-manning:2014:EMNLP2014} as the word embeeding in all the neural tagger
-and parser\footnote{\url{http://nlp.stanford.edu/data/glove.twitter.27B.zip}}.
+\textsc{Tweebank v2} training sets. We use Twitter-specific glove embeddings released by
+\citet{pennington-socher-manning:2014:EMNLP2014} in all neural taggers
+and parsers.\footnote{\url{http://nlp.stanford.edu/data/glove.twitter.27B.zip}}
 
-\nascomment{I wonder if we ought to give more detail about our biLSTM
-  systems, here and under tokenization?  will reviewers want to know details?}
-\yjcomment{I add figure to illustrat our model.}
 
 \paragraph{Experimental results.}
 
@@ -951,7 +948,7 @@ and parser\footnote{\url{http://nlp.stanford.edu/data/glove.twitter.27B.zip}}.
           the \textsc{Tweebank v2} test set. \label{tbl:pos-result-vs-tok}}
 \end{table}
 
-We tested the POS taggers on \textsc{Tweebank v2} test set.  Results
+We tested the POS taggers on the \textsc{Tweebank v2} test set.  Results
 with gold-standard tokenization are shown in
 Table \ref{tbl:pos-result}. The careful feature engineering in the 
 POS tagger of \citet{owoputi-EtAl:2013:NAACL-HLT} outperforms our neural network
@@ -968,102 +965,33 @@ with our tokenizer.
 \subsection{Parser}
 
 Social media applications typically require processing large volumes
-of data, making speed an important criterion. We therefore 
-use the neural greedy parser introduced by \newcite{ballesteros-EtAl:2016:EMNLP2016},
+of data, making speed an important desideratum. We therefore 
+begin with the neural greedy stack LSTM parser introduced by \newcite{ballesteros-EtAl:2016:EMNLP2016},
 which can parse a sentence in linear time and harnesses 
 character representations, which should help mitigate the challenge of
 spelling variation. We encourage the reader to refer their paper for
 more details about the model.
 
-Section \ref{sec:anno-process} shows that severe ambiguities
-exist when we create {\sc Tweebank v2}, which makes the training data
-of the parser very noisy. \citet{Frnay2014ClassificationIT} suggested
-that most of losses are shown to be not robust to 
-classification noise, including the log-likelihood loss used in
-\citet{ballesteros-dyer-smith:2015:EMNLP}. To conquer the noisy
-data and further improve the parsing accuracy, we followed the
-empirical study of \citet{Dietterich2000} and ensemble of 20 differently
-initialized parsers. To make it still parses in linear time, we
-propose a new method to distill the ensemble of 20 parsers into one parser.
-To our knowledge, this is the first attempt to distill an
-ensemble of greedy transition-based
-parsers.% \nascomment{check}.
-
-Distilling a simple and fast {\it student model} from the accurate but
-slow {\it teacher model} was explored by \newcite{DBLP:journals/corr/HintonVD15}
-and \newcite{kim-rush:2016:EMNLP2016}. In their works, the predicted
-distribution from the teacher model serves as a soft target for
-training the student model by minimizing
-\begin{equation}
-\mathcal{L}_{\mathit{KD}} = \sum_k q(y=k\mid x) p(y=k\mid x)
-\end{equation} where $q(y=k\mid x)$ is the probability distribution
-predicted by the teacher model. Training the parameters of the student model ($p$) is
-accomplished by interpolating between two losses:
-\begin{equation}\label{eq:distill}
-\mathcal{L}=(1-\alpha)\mathcal{L}_{\mathit{NNL}} + \alpha\mathcal{L}_{\mathit{KD}}
-\end{equation}
-where $\mathcal{L}_{\mathit{NNL}}$ is the negative log-likelihood loss.
-
-\newcite{kuncoro-16} were inspired by the distillation idea and
-proposed to incorporate the knowledge from an ensemble of 20 greedy transition-based
-parsers into one single \emph{graph-based} parser by adapting the soft
-target into a structured loss. However, as \newcite{kuncoro-16}
-pointed out, it is not straightforward to incorporate the structure
-loss into a \emph{transition-based} parser. Considering the efficiency
-advantage of greedy transition-based parsers over their graph-based counterparts,
-it is worth considering distillation of an ensemble into a greedy parser.
-
-The generic algorithm for training a transition-based greedy parser
-usually includes 1) generating a sequence of transitions from the 
-training data, called the ``oracle'' and 2) learning the classifier from
-the oracle transitions. One natural adaptation of the distillation will be interpolating
-$\mathcal{L}_{\mathit{NLL}}$ with the distillation objective (Equation \ref{eq:distill})
-in the second step. We name this method \textsc{distill expert}. 
-
-\paragraph{Preliminary results.}
 In our preliminary experiments, we train our parser on the combination of UD\_English
 and \textsc{Tweebank v2} training sets. Gold-standard tokenization and automatic POS
 tags are used. Automatic POS tags are assigned with 5-fold
-jackknifing. Hyperparameters, including the value of $\alpha$ in Equation \ref{eq:distill},
+jackknifing. Hyperparameters %, including the value of $\alpha$ in Equation \ref{eq:distill},
 are tuned on the \textsc{Tweebank v2} development set. Unlabeled attachment score and
-labeled attachment score including punctuations are used to evaluate parsing performance.
+labeled attachment score (including punctuation) are reported.
 
-\citet{reimers-gurevych:2017:EMNLP2017} pointed out that the training process for neural networks are highly
-non-deterministic and largely depends on the seed value for pseduo-random number generator.
-Our preliminary experiments confirm this finding by witnessing a gap of 1 LAS on development set
-between the best (75.8) and worst (74.8) runs. To eliminate the effect of random number, for each
-hyperparameter setting, we conduct 5 runs with different seeds and report the averaged score.
+\citet{reimers-gurevych:2017:EMNLP2017} and others have
+pointed out that neural network training is 
+nondeterministic and depends on the seed for the random
+number generator.
+Our preliminary experiments confirm this finding, with a gap of 1 LAS on development data
+between the best (75.8) and worst (74.8) runs. To control for this
+effect, we report the average of five differently-seeded runs, for
+each model. \nascomment{please check! we did this for all systems,
+  not just ours, right?}
 
-Our 20 parsers are ensembled by averaging their output probability
-distributions over transitions. The ensemble parser achieves a LAS of 79.4, which is more 
-than 3 points higher than the baseline single parser. Distilling from this
-parser leads to a single parser with 78.1 LAS.
-%We first study the necessity of log-likelihood loss (the first term in Equation \ref{eq:distill}).
 
-\paragraph{Effect of $\alpha$.}
+%%%
 
-\begin{figure}[t]
-	\centering
-	\includegraphics[width=\columnwidth,trim={0.3cm 0 0 0},clip]{graphics/alpha}
-	\caption{The effect of $\alpha$ on \textsc{expert distillation}.}\label{fig:effect-alpha}
-\end{figure}
-
-We further study the effect of the interpolation hyperparameter $\alpha$ by varying it from 0 to 1.
-The results are shown in Figure \ref{fig:effect-alpha}. We can see that distilling parsers with larger $\alpha$ achieves better
-performance, which means the model should pay more attention to learning
-from the teacher model.  Indeed, the negligible difference between the
-best performance at $\alpha = 0.9$ and $\alpha=1.0$ casts doubt on the
-necessity of including $\mathcal{L}_{NNL}$ in the training objective
-at all.% \nascomment{check my rewording}
-
-\paragraph{Learning from exploration.} We further set $\alpha$ to 1.0,
-eliminating the oracle from the usual transition-based parser
-training algorithm.  Instead of generating
-training instances from the oracle, we generate them by random sampling
-transitions from the teacher (ensemble) model's output distribution and follow the
-trajectory of these transitions. We name this method \textsc{distill explore}.
-
-\paragraph{Final results.}
 \begin{table}[t]
 	\centering
 	\begin{tabular}{rcc}
@@ -1072,18 +1000,98 @@ trajectory of these transitions. We name this method \textsc{distill explore}.
 		\hline
 		\citet{kong-EtAl:2014:EMNLP2014} &81.6 & 77.2 \\
 		\citet{DBLP:journals/corr/DozatM16} & 81.9 &  77.7 \\
-		\hdashline
 %		\newcite{dyer-EtAl:2015:ACL-IJCNLP} & 77.9 & 73.0 \\
 		\newcite{ballesteros-EtAl:2016:EMNLP2016} & 80.4 & 75.8 \\
+		\hdashline
 		Ensemble (20) & 83.5 & 79.4 \\
-		\textsc{distill expert} ($\alpha$=1.0) & 82.2 & 78.0 \\
-		\textsc{distill expert} ($\alpha$=0.9) & 82.4 & 78.1 \\		
-		\textsc{distill explore} & 82.5 & 78.4 \\
+		Distillation ($\alpha =1.0$) & 82.2 & 78.0 \\
+		Distillation ($\alpha =0.9$) & 82.4 & 78.1 \\		
+		Distillation with exploration & 82.5 & 78.4 \\
 		\hline
 	\end{tabular}
 	\caption{Dependency parser comparison on \textsc{Tweebank v2},
            with automatic POS tags. \label{tbl:parse-result}}
 \end{table}
+
+
+\paragraph{Initial results.}  The first section of Table~\ref{tbl:parse-result} compares
+the stack LSTM with {\sc TweeboParser} (the system 
+of \citealp{kong-EtAl:2014:EMNLP2014}) and the state-of-the-art parser
+in the CoNLL 2017 evaluations, due to
+ \citet{DBLP:journals/corr/DozatM16}, both of which are graph-based
+ parsers requiring superlinear runtime. \nascomment{can we quantify
+   how much time each one takes, either in tweets parsed per second or
+   seconds per tweet?}
+Both of the comparison systems are re-trained on the same data as our
+system.
+Our system lags behind by nearly two LAS
+points.
+
+\paragraph{Ensemble.}  Due both to ambiguity in the training
+data---which most loss functions are not robust to \citep{Frnay2014ClassificationIT}, including the log loss we use, following
+\citet{ballesteros-dyer-smith:2015:EMNLP}---and due to the instability
+of neural network training, we follow \citet{Dietterich2000} and
+consider an ensemble of twenty parsers trained using different random
+initialization.  To parse at test time, the transition probabilities of the twenty
+members of the ensemble are averaged.  The result achieves LAS of
+79.4, outperforming all three systems above (Table~\ref{tbl:parse-result}).
+
+\paragraph{Distillation.}  The shortcoming of the 20-parser ensemble is, of
+course, that it requires twenty times the runtime of a single greedy
+parser.  \newcite{kuncoro-16} proposed the distillation of 20
+greedy transition-based parser into a single \emph{graph-based}
+parser; they transformed the votes of the ensemble into a structured
+loss function.  However, as Kuncoro et al.~pointed out, 
+it is not straightforward to use a structured
+loss in a \emph{transition-based} parsing algorithm.  Because fast
+runtime is so important for NLP on social media, we
+introduce a new way to distill our greedy ensemble into a single
+transition-based parser (the first such attempt, to our knowledge).  
+
+Our approach follows \newcite{DBLP:journals/corr/HintonVD15}
+and \newcite{kim-rush:2016:EMNLP2016}.  
+Note that training a transition-based parser typically involves the
+transformation of the training data into a sequence of ``oracle'' state-action
+pairs.
+Let $q(a \mid s)$ denote the distilled model's
+probability of an action $a$ given parser state $s$; let $p(a \mid s)$ be the probability under the
+ensemble (i.e., the average of the 20 separately-trained ensemble
+members) \nascomment{check}.
+To train the distilled model, we minimize the interpolation between
+their distillation loss and the conventional log loss:
+\begin{align}
+\min_q \quad  & \alpha \sum_i \underbrace{\sum_{a} q(a \mid s_i) \cdot p(a
+  \mid s_i)}_{\text{distillation loss}} \\
+& +\ (1 - \alpha) \sum_i \underbrace{- \log q(a_i \mid
+  s_i)}_{\text{log loss}} \nonumber
+\end{align}
+
+Distilling from this 
+parser leads to a single greedy transition-based parser with 78.1
+LAS---better than past systems but worse than our more expensive ensemble.
+The effect of $\alpha$ is illustrated in
+Figure~\ref{fig:effect-alpha}; generally paying closer attention to
+the ensemble, rather than the conventional log loss objective, leads
+to better performance.
+
+
+\begin{figure}[t]
+	\centering
+	\includegraphics[width=\columnwidth,trim={0.3cm 0 0 0},clip]{graphics/alpha}
+	\caption{The effect of $\alpha$ on distillation. \label{fig:effect-alpha}}
+\end{figure}
+
+
+\paragraph{Learning from exploration.} When we set $\alpha =1$, we
+eliminate the oracle from the estimation procedure (for the distilled
+model).  This presents an opportunity to learn with \emph{exploration}, by
+randomly sampling transitions from the ensemble, found useful
+in recent methods for training greedy models that use dynamic oracles
+\citep{ballesteros-EtAl:2016:EMNLP2016}.  
+We find that this
+approach outperforms the  conventional distillation model, coming in
+only one point behind the ensemble (last line of Table~\ref{tbl:parse-result}).
+
 
 \begin{table}[t]
 	\centering
@@ -1097,53 +1105,42 @@ trajectory of these transitions. We name this method \textsc{distill explore}.
 		\newcite{dyer-EtAl:2015:ACL-IJCNLP} & 93.0 & 90.9 \\		
 		%		\newcite{dyer-EtAl:2015:ACL-IJCNLP} & 77.9 & 73.0 \\
 		Ensemble (20) & 94.5 & 92.6 \\
-		\textsc{distill expert} ($\alpha$=1.0) & 93.8 & 91.7 \\
-		\textsc{distill explore} & 94.1 & 92.0 \\
+		Distillation ($\alpha =1.0$) & 93.8 & 91.7 \\
+		Distillation with exploration  & 94.1 & 92.0 \\
 		\hline
 	\end{tabular}
 	\caption{Dependency parser comparison on PTB test set.}\label{tbl:parse-result-PTB}
 \end{table}
 
-Our final parsing experiments are shown in Table \ref{tbl:parse-result}.
-We also compare our model with the {\sc TweeboParser} 
-of \citet{kong-EtAl:2014:EMNLP2014} and the state-of-the-art parser
- \cite{DBLP:journals/corr/DozatM16} in CoNLL 2017.
-Both the compared systems are re-trained on the same data as our system.
-From Table \ref{tbl:parse-result}, our baseline system is 1.9 point behind the
-state-of-the-art parsing systems. However, through distilling, our baseline
-parser catched up and outperform that of \citet{DBLP:journals/corr/DozatM16} and 
-\textsc{distill explore} further outperforms \textsc{distill expert}, gaining 0.4
-point in LAS improvement. We attribute the improvements of \textsc{distill explore} over
-\textsc{distill expert} to the former's exploration of 
-ensemble-sanctioned parser states of different qualities.
 
-We also perform additional experiments on the Penn Treebank were performed following
-the setting of \newcite{dyer-EtAl:2015:ACL-IJCNLP};
+
+\nascomment{need to clarify:  is this UD?} We perform additional experiments on the Penn Treebank, following
+the settings of \newcite{dyer-EtAl:2015:ACL-IJCNLP};
 Table~\ref{tbl:parse-result-PTB} shows a similar trend, and we achieve
 performance close to that of the graph-based parser of \citet{kuncoro-16}.
-However, our model is still way behind \citet{DBLP:journals/corr/DozatM16}.
-We address this to the intrastic differences between transition-based and graph-based
-parsing algorithm.
+However, this greedy approach still lags behind the very strong
+graph-based system of \citet{DBLP:journals/corr/DozatM16}.
 
-\subsection{Final Evaluation}
 \begin{table}[t]
 	\centering
 	\begin{tabular}{rc}
 		\hline
-		\it Pipeline & F-score \\
+		\it Pipeline & $F_1$\\
 		\hline
 		Tokenization & 98.3 \\		
 		POS tagging & 93.7 \\
-		Dependencies & 74.1 \\
+		Universal dependencies & 74.1 \\
 		\hline
 	\end{tabular}
-	\caption{Evaluating our model in pipeline manner.}\label{tbl:pipline}
+	\caption{Evaluating our model in pipeline
+          manner. \nascomment{should this be ``F1''?  shouldn't the
+            last line be LAS?}\label{tbl:pipline} }
 \end{table}
 
-Finally, we evaluate the problem of parsing tweets into UD in a pipeline manner.
-The results are shown in Table \ref{tbl:pipline}. From this result, we can see
-that in the whole pipeline, every component plays an important role. Without
-gold segmentation, the parsing performance drops more than 4 points.
+\paragraph{Pipeline evaluation.} Finally, we report  our full
+pipeline's performance in  Table \ref{tbl:pipline}. We see the
+importance of segmentation:  without gold segmentation, UD parsing
+performance drops by more than four points.
 
 %\section{Related Work}
 %\yjcomment{related word is not finished.}
@@ -1165,17 +1162,18 @@ gold segmentation, the parsing performance drops more than 4 points.
 %At last, it’s arguable that some of the hashtags, URLs can work as a nominal in tweets. Whether treating them as the same part-of-speech or different ones according to their context is an open question. A preliminary survey on the standard UD English data shows that URL, email address are all tagged as the foreign language (X), so we also tag them as X and leave the disambiguation of their syntactic function to the annotation of parse tree.
 
 \section{Conclusion}
-In this paper, we study the problem of parsing tweets into universal dependencies.
-We adopt the UD guidelines to cover 
+We study the problem of parsing tweets into universal dependencies.
+We adapt the UD guidelines to cover 
 special constructions in tweets and create
-the {\sc Tweebank v2} which has 55,607 tokens. We characterize the disagreements
-among our annotations and show that it is challenging to deliver
-consistent annotation due to the ambiguities in ways of
-understanding and explaining the tweets. On this new treebank,
-we build a pipeline system to parse tweets into UD. We 
-propose a new method to distill an ensemble of 20 parsers into a single one
-to conquer the annotation noise without sacrificing efficiency.
-Our parser achieves an improvement of 2.3 in LAS over the baseline
+the {\sc Tweebank v2}, which has 55,607 tokens. We characterize the disagreements
+among our annotations and argue that inherent ambiguity in this genre
+makes
+consistent annotaiton a challenge.  Using this new treebank,
+we build a pipeline system to parse tweets into UD. We also 
+propose a new method to distill an ensemble of 20 greedy parsers into a single one
+to overcome annotation noise without sacrificing efficiency.
+Our parser achieves an improvement of 2.3  \nascomment{which
+  comparison are you quoting here?} in LAS over a strong baseline
 and outperforms other state-of-the-art parsers.
 
 \bibliography{shortdb}
