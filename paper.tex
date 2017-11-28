@@ -28,6 +28,9 @@
 \newcommand{\yjcomment}[1]{\textcolor{orange}{[$_\mathrm{L}^\mathrm{Y}$#1]}}
 \newcommand{\nascomment}[1]{\textcolor{blue}{[#1 ---\textsc{nas}]}}
 \newcommand{\yicomment}[1]{\textcolor{green}{[#1 ---\textsc{Yi}]}}
+%\newcommand{\yjcomment}[1]{}
+%\newcommand{\nascomment}[1]{}
+%\newcommand{\yicomment}[1]{}
 
 
 \title{Parsing Tweets into Universal Dependencies}
@@ -62,9 +65,9 @@ understanding and explaining tweets. Using the new treebank,
 we build a pipeline system to parse raw tweets into UD. To overcome the
 annotation noise without sacrificing computational efficiency, we propose a new
 method to distill an ensemble of 20 transition-based parsers into a single one. Our
-parser achieves an improvement of 2.3 in LAS over \nascomment{which
-  comparison is this?} the singlely trained baseline
-and outperforms parsers that are state-of-the-art on other treebanks.
+parser achieves an improvement of 2.6 in LAS over \nascomment{which
+  comparison is this?}\yjcomment{my bad, it was fixed.} the baseline
+and outperforms parsers that are state-of-the-art on other treebanks in both accuracy and speed.
 \end{abstract}
 
 \section{Introduction}
@@ -75,7 +78,7 @@ for training and evaluation is hard.
 Pioneering work by \citet{AAAIW113912} 
 annotated 7,630 tokens' worth of tweets according to the
 phrase-structure conventions of the Penn Treebank \citep[PTB]{Marcus93buildinga}.
-Stanford dependencies were converted afterwards in their work  \nascomment{by who?}. 
+Stanford dependencies were converted afterwards in their work  \nascomment{by who?}\yjcomment{by themselves}. 
 \citet{kong-EtAl:2014:EMNLP2014} further studied the challenges in
 annotating tweets and presented a tweet treebank ({\sc Tweebank}),
 consisting of 12,149 tokens and largely following conventions
@@ -137,8 +140,9 @@ distill a 20-parser ensemble into a single greedy  parser
 We show further  that learning directly from the exploration of the ensemble parser
 is more beneficial than learning from the gold standard ``oracle''
 transition sequence. Experimental results show that an improvement of more
-than 2.3 points \nascomment{again, not sure what this is quoting} in LAS over the baseline parser can be achieved with our
-distillation method and that it outperforms other state-of-the-art parsers.
+than 2.6 points \nascomment{again, not sure what this is quoting}\yjcomment{fixed} in LAS over the
+baseline parser can be achieved with our distillation method and that it outperforms
+other state-of-the-art parsers in both accuracy and running speed.
 
 The contributions of this paper include:
 \begin{itemize}
@@ -148,8 +152,11 @@ tokenization, part-of-speech tagging, and labeled universal dependencies annotat
 We also characterize the difficulties of creating such annotation.
 
 \item We introduce and evaluate a system to parse the raw tweet text into
-universal dependencies (\S\ref{sec:parsing}).  \nascomment{say it
-  performs better than existing systems?}
+universal dependencies (\S\ref{sec:parsing}).  Experimental results show
+it performs better than a stack of the state-of-the-art alternatives.
+\nascomment{say it
+  performs better than existing systems?}\yjcomment{added.}
+
 \item We propose a new distillation
 method for training a greedy parser, leading to better performance
 than existing methods and without efficiency sacrifices.
@@ -735,10 +742,10 @@ analysis purposes.
 \end{figure}
 
 We report the inter-annotator agreement between the annotators
-in the second stage. The agreement on POS is 96.61\%, the unlabeled
-dependency agreement is 88.75\% and the labeled dependency agreement
-is 84.31\%. Further analysis shows the major disagreements on POS
-involve entity names (30.57\%) and topical hashtags (18.11\%).
+in the second stage. The agreement on POS is 96.6\%, the unlabeled
+dependency agreement is 88.8\% and the labeled dependency agreement
+is 84.3\%. Further analysis shows the major disagreements on POS
+involve entity names (30.6\%) and topical hashtags (18.1\%).
 Taking the example in Figure \ref{fig:non-syn-toks}, ``Fix you'' can
 be understood as a verbal phrase but also as the name of the Coldplay's
 single and tagged as proper noun. An example of a disagreement on
@@ -855,7 +862,7 @@ Space is treated as an input but consistently assigned a special tag \$.
 
 \begin{table}[t]
 	\centering
-	\begin{tabular}{lr}
+	\begin{tabular}{rc}
 		\hline
 		\it System & \it F1 \\
 		\hline
@@ -879,10 +886,12 @@ tokenization results, compared to  other available tokenizers.
 to the UD tokenization scheme.
 The UD pipe v1.2
 \cite{straka-strakova:2017:K17-3} model was re-trained on the same
-data as our system. \nascomment{we need to say what their model was;
+data as our system. Compared with the UD pipe, we use LSTM
+instead of GRU in our model and we also use a larger size of hidden units (64 against 20),
+which has stronger representation power. \nascomment{we need to say what their model was;
   why does ours work better?  from their paper, it seems that they
   used a GRU instead of an LSTM ... is that all?  do we win because of
-better tuning, or what?}
+better tuning, or what?}\yjcomment{done.}
 Our bi-LSTM tokenizer achieves the best accuracy among all these
 tokenizers.  These results indicate the value of statistical modeling
 in tokenization for informal texts.
@@ -937,8 +946,8 @@ and parsers.\footnote{\url{http://nlp.stanford.edu/data/glove.twitter.27B.zip}}
 		\hline
 		\it System & \it F1 \\
 		\hline
-		Stanford CoreNLP & 92.0 \\
-		our tokenizer (\S\ref{sec:tok}) & 93.6 \\
+		Stanford CoreNLP & 92.1 \\
+		our bi-LSTM tokenizer (\S\ref{sec:tok}) & 93.6 \\
 		\hline
 	\end{tabular}
 	\caption{\citet{owoputi-EtAl:2013:NAACL-HLT} POS tagging performance with automatic tokenization on
@@ -984,11 +993,8 @@ number generator.
 Our preliminary experiments confirm this finding, with a gap of 1 LAS on development data
 between the best (75.8) and worst (74.8) runs. To control for this
 effect, we report the average of five differently-seeded runs, for
-each model and the compared one. %\nascomment{please check! we did this for all systems,
-%  not just ours, right?}
-
-
-%%%
+each of our models and the compared ones. \nascomment{please check! we did this for all systems,
+  not just ours, right?}\yjcomment{yes. added}
 
 \begin{table}[t]
 	\centering
@@ -1021,9 +1027,9 @@ the stack LSTM with {\sc TweeboParser} (the system
 of \citealp{kong-EtAl:2014:EMNLP2014}) and the state-of-the-art parser
 in the CoNLL 2017 evaluations, due to
  \citet{DBLP:journals/corr/DozatM16}, both of which are graph-based
- parsers requiring superlinear runtime. %\nascomment{can we quantify
-%   how much time each one takes, either in tweets parsed per second or
-%   seconds per tweet?}
+ parsers requiring superlinear runtime. \nascomment{can we quantify
+   how much time each one takes, either in tweets parsed per second or
+   seconds per tweet?}\yjcomment{done.}
 Both of the comparison systems are re-trained on the same data as our
 system.
 Our system lags behind by nearly two LAS
@@ -1033,16 +1039,16 @@ points but runs faster than both of them.
 	\centering
 	\begin{tabular}{rrcc}
 		\hline
-		\it Pipeline & Metrics & Our & SOTA stack\\
+		\it Pipeline & Metrics & ours & SOTA stack\\
 		\hline
-		Tokenization & \it F1 & 98.3 & \\		
-		POS tagging &  \it Precision F1 & 93.7 & \\
-		Universal dependencies & \it LAS F1 & 74.1 & \\
+		Tokenization & \it F1 & 98.3 & 96.6 \\		
+		POS tagging &  \it Precision F1 & 93.7 & 92.1 \\
+		Universal dependencies & \it LAS F1 & 74.1 & 70.3 \\
 		\hline
 	\end{tabular}
 	\caption{Evaluating our model in pipeline
 		manner. \nascomment{should this be ``F1''?  shouldn't the
-			last line be LAS?}\label{tbl:pipline} }
+			last line be LAS?}\yjcomment{added metrics column}\label{tbl:pipline} }
 \end{table*}
 
 \paragraph{Ensemble.}  Due both to ambiguity in the training
@@ -1142,12 +1148,16 @@ only one point behind the ensemble (last line of Table~\ref{tbl:parse-result}).
 
 
 \paragraph{Pipeline evaluation.} Finally, we report  our full
-pipeline's performance in  Table \ref{tbl:pipline}.
-We see the
+pipeline's performance in  Table \ref{tbl:pipline}. We also compare
+our model with a stack of the state-of-the-art systems (named as the {\it SOTA stack}):
+Stanford CoreNLP tokenizer,
+\citet{owoputi-EtAl:2013:NAACL-HLT}'s tagger, and \citet{DBLP:journals/corr/DozatM16}'s parser.
+Our system differs with the SOTA stack in the tokenization and parser components.
+From Table \ref{tbl:pipline}, our system outperforms the SOTA stack when
+evaluated in pipeline manner.
+The results also emphasize the
 importance of segmentation:  without gold segmentation, UD parsing
-performance drops by more than four points. We also compare
-our model with a stack of the state-of-the-art system: Stanford Tokenizer,
-ARK tagger, and \citet{DBLP:journals/corr/DozatM16}'s parser. \yjcomment{tbd}
+performance drops by more than four points.
 
 %\section{Related Work}
 %\yjcomment{related word is not finished.}
@@ -1179,9 +1189,9 @@ consistent annotaiton a challenge.  Using this new treebank,
 we build a pipeline system to parse tweets into UD. We also 
 propose a new method to distill an ensemble of 20 greedy parsers into a single one
 to overcome annotation noise without sacrificing efficiency.
-Our parser achieves an improvement of 2.3  \nascomment{which
-  comparison are you quoting here?} in LAS over a strong baseline
-and outperforms other state-of-the-art parsers.
+Our parser achieves an improvement of 2.6  \nascomment{which
+  comparison are you quoting here?}\yjcomment{fixed} in LAS over a strong baseline
+and outperforms other state-of-the-art parsers in both accuracy and speed.
 
 \bibliography{shortdb}
 \bibliographystyle{acl_natbib}
