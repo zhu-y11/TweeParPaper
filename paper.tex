@@ -20,6 +20,7 @@
 \usepackage{subcaption}
 \usepackage{arydshln}
 \newcommand\BibTeX{B{\sc ib}\TeX}
+\DeclareMathOperator*{\argmin}{argmin}
 
 %%%%%%%
 \usepackage{graphicx}
@@ -1086,8 +1087,8 @@ members) \nascomment{check} \yjcomment{checked}.
 To train the distilled model, we minimize the interpolation between
 their distillation loss and the conventional log loss:
 \begin{align}
-{\arg\,\min}_q \quad  & \alpha \sum_i \underbrace{\sum_{a} q(a \mid s_i) \cdot p(a
-  \mid s_i)}_{\text{distillation loss}} \\
+{\argmin}_q \quad  & \alpha \sum_i \underbrace{\sum_{a} -p(a
+	\mid s_i) \cdot \log q(a \mid s_i)}_{\text{distillation loss}} \\
 & +\ (1 - \alpha) \sum_i \underbrace{- \log q(a_i \mid
   s_i)}_{\text{log loss}} \nonumber
 \end{align}
@@ -1149,7 +1150,7 @@ only one point behind the ensemble (last line of Table~\ref{tbl:parse-result}).
 
 \paragraph{Pipeline evaluation.} Finally, we report  our full
 pipeline's performance in  Table \ref{tbl:pipline}. We also compare
-our model with a stack of the state-of-the-art systems (named as the {\it SOTA stack}):
+our model with a stack of the state-of-the-art systems (namely, the {\it SOTA stack}):
 Stanford CoreNLP tokenizer,
 \citet{owoputi-EtAl:2013:NAACL-HLT}'s tagger, and \citet{DBLP:journals/corr/DozatM16}'s parser.
 Our system differs with the SOTA stack in the tokenization and parser components.
