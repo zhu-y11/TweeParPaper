@@ -383,13 +383,14 @@ analyze acronym tokens like \emph{idc}
  and \emph{rn} (``right now'')?  Should
 they be decomposed into their component words, and if so should those
 words be ``normalized'' into explicitly spelled out intermediate
-forms? We follow \citet{kong-EtAl:2014:EMNLP2014} and annotate their
+forms? \yicomment{this sentence should be deleted} \yicomment{As we already know from previous sections, \emph{idc} is not tokenized and tagged as verb, we follow ...}
+We follow \citet{kong-EtAl:2014:EMNLP2014} and annotate their
 syntax as a single word without normalization. Their syntactic functions
 are decided according to their context. \citet{eisenstein:2013:NAACL-HLT} studied the necessity of normalization
 in social media text and argued that such normalization is problematic.
 Our solution to the syntax of abbreviations follows the spirit of his argument. Because abbreviations which clearly carry
 syntactic functions only constitute 0.06\% of the tokens in our
-dataset, we believe that normalization is an unnecessarily complicated step.
+dataset, we believe that normalization is an unnecessarily complicated step.\yicomment{this should be moved to tokenization section, but we can mention again here for emphasizing.}
 % \nascomment{maybe we owe citations to
 %   \cite{finin-EtAl:2010:MTURK,eisenstein:2013:NAACL-HLT} here?  maybe
 %   better papers to cite}
@@ -408,8 +409,8 @@ truncated words & 0.00 & 0.49 \\
  \hline
  total & 2.08 & 7.55 \\
 \end{tabular}
-\caption{Proportions of non-syntactic tokens in our annotation.
-These  statistics are obtained on 140 character-limited tweets. \label{tbl:non-synt-prop}}
+\caption{Proportions of non-syntactic tokens in our annotation. \yicomment{should add also retweet at-mentions}
+These statistics are obtained on 140 character-limited tweets. \label{tbl:non-synt-prop}}
 \end{table}
 
 \begin{figure*}[t]
@@ -479,23 +480,23 @@ These  statistics are obtained on 140 character-limited tweets. \label{tbl:non-s
 
 The major characteristic that distinguishes tweets from standard texts is that
 a large proportion of tokens don't carry any syntactic function.
-In our annotation, there are five types of non-syntactic tokens: 
+In our annotation, there are five \yicomment{six} types of non-syntactic tokens: 
 sentiment emoticons, retweet markers, topical hashtags, referential URLs, and
-truncated words.\footnote{The tweets we analyze have at most 140
+truncated words \yicomment{and retweet at-mentions}.\footnote{The tweets we analyze have at most 140
   characters. Although Twitter has doubled the tweet length limit to
   280 characters since our analysis, we believe this type of token
   will still remain.}  Figure \ref{fig:non-syn-toks} illustrates examples of
 these non-syntactic tokens.  As discussed above, these are generally
 tagged with the \emph{other} (\texttt{X}) part of speech, except
 emoticons, which are tagged as \emph{symbol} (\texttt{SYM}).  In our annotation, 
-7.5\% of all tokens are non-syntactic; detailed statistics can be found in Table \ref{tbl:non-synt-prop}.
+7.5\% \yicomment{should change according to tab1} of all tokens are non-syntactic; detailed statistics can be found in Table \ref{tbl:non-synt-prop}.
 
 It is important to note that these types may, in some
 contexts, have syntactic functions.
 For example, besides being a discourse marker, \emph{RT} can
 abbreviate the verb {\tt retweet}, and emoticons and hashtags may be
-used as content words within a sentence; see  Figure
-\ref{fig:informal-toks}.  Therefore, the criteria for annotating a
+used as content words within a sentence\yicomment{at-mentions can be a normal vocative proper noun}; see Figure
+\ref{fig:informal-toks}.  Therefore, the criteria for \yicomment{whether} annotating a
 token as non-syntactic must be context-dependent.
 %To our knowledge, this issue has not previously been addressed in UD
 %annotation efforts \nascomment{check!}\yjcomment{it's not safe to claim that.}.
@@ -503,13 +504,14 @@ token as non-syntactic must be context-dependent.
 
 Inspired by the way UD deals with \emph{punctuation} (which is
 canonically non-syntactic), we adopt the following
-conventions:
+conventions:\yicomment{shall we mention how we segment sentences? Seems relevant here}
 \begin{itemize}
 \item If a non-syntactic token is within a sentence that has a clear predicate, it will be attached to this predicate;
 \item If the whole sentence is made of a sequence of non-syntactic tokens, we attach all these tokens to the first one;
 %\item In parataxis case, when it is difficult to decide which sentence or phrase x should belong to, we always attach x to the previous predicate of the paratactic clause or phrase;
 \item Non-syntactic tokens are mostly labeled as {\it discourse}, but
   URLs are always labeled as {\it list}, following the UD\_English dataset.
+\\ \yicomment{For retweet at-mention case, we attach the retweet at-mentions to the RT sign, so that the retweet action and the people whose tweet is being retweeted could be connected.\footnote{We can also follow the first convention to attach the retweet at-mention to its predicate, but we think it is better for downstream tasks.}}
 \end{itemize}
 
 
@@ -546,10 +548,10 @@ tokens and exclude them from the final dependencies annotation.
 %  just labeled as non-syntactic and then excluded from the tree?  I
 %  think they were not actually removed, and were still available,
 %  e.g., for defining features of the input for parsing}
-In order to keep our annotation conventions in line with UD norms,
+In order to keep our annotation conventions in line with UD norms \yicomment{and preserve the original tweets as much as possible},
 we include non-syntactic tokens in our annotation following the
 conventions above. Compared with \citet{kong-EtAl:2014:EMNLP2014},
-we also gave a clear definition of non-syntactic tokens, which helped
+we also gave a clear\yicomment{much clearer} definition of non-syntactic tokens, which helped
 us avoid confusion during annotation.
 
 %In the sense of dealing with the non-syntactic tokens, \newcite{kong-EtAl:2014:EMNLP2014} proposed an preprocessing step named {\it token selection} to remove non-syntactic tokens from the original tweets.
@@ -596,7 +598,7 @@ expression as non-syntactic, including assigning the \emph{other}
 (\texttt{X}) part of speech to both \emph{RT} and \emph{@coldplay},
 attaching the at-mention to \emph{RT} with the \emph{discourse}
 label and the colon to \emph{RT} with the \emph{punct}(uation) label,
-and attaching \emph{RT} to the predicate of the following sentence. 
+and attaching \emph{RT} to the predicate of the following sentence\yicomment{since we have introduced retweet at-mentions in the non-syntactic tokens, here we can just briefly justify our choice.}. 
 
 % \nascomment{smooth this in: } Considering the twitter specific constructions, we will treat the retweet construction as a whole non-syntactic phrase, and the inner structure will always be attaching {\tt at-mention} to {\tt RT} with {\tt discourse}, {\tt :} to {\tt RT} with {\tt punct}.
 % The whole construction headed on the {\tt RT} marker modifies the predicate of following sentence.
@@ -605,7 +607,7 @@ and attaching \emph{RT} to the predicate of the following sentence.
 
 \paragraph{Constructions handled by UD.}  A number of constructions
 that are especially common in tweets are well handled by UD
-conventions:  ellipsis, irregular word orders, and paratactic sentences
+conventions: ellipsis, irregular word orders, and paratactic sentences \yicomment{or phrases/component}
 not explicitly delineated by punctuation.
 	
 % \subsubsection{Structure Level}
@@ -620,10 +622,10 @@ not explicitly delineated by punctuation.
 
 \paragraph{Vocative at-mentions.}  Another idiomatic construction on
 Twitter is an at-mention %(followed by a colon \nascomment{?})
-as a sign that a tweet is a reply to a tweet by the mentioned user.  We
+as a sign that a tweet is a reply to a tweet by the mentioned user\yicomment{not necessary, can be just mentioning somebody. should be careful to say it. We can say this construction include 1. reply;  2. mention sb. Both cases are similar to general vocative proper noun case in standard texts}.  We
 treat these at-mentions as vocative expressions, labeling them as
-\emph{proper noun} (\texttt{PROPN}) and attaching them to the
-following predicate with the label \emph{vocative} (see Figure \ref{fig:informal-toks} for an example).  
+\emph{proper noun} (\texttt{PROPN})[YI COMMENT: here is confusing that PROPN could be a label in dependencies. We can say in POS sections that the decisions on some twitter specific tokens can be made only analyzing syntax together.] and attaching them to the
+following predicate with the label \emph{vocative} (see Figure \ref{fig:informal-toks} for an example) \yicomment{just as UD guidelines}.  
 
 % \paragraph{At-mention.} At-mention in the beginning of a tweet is the format of indicating the `reply' action.
 % In this paper, we treat the at-mentions as vocative expressions for their connections with the traditional vocative words, rather than treat them as non-syntactic metadata, which increase the complexity for analyzing a tweet.
