@@ -54,7 +54,7 @@
 \begin{abstract}
 We study the problem of analyzing tweets with
 universal dependencies \citep[UD;][]{NIVRE16.348}. We extend the UD guidelines to cover
-special constructions in tweets. Using the extended guidelines, we create
+special constructions in tweets. Using the extended guidelines \yicomment{including tokenization, POS tagging and parsing? (need to mention the annotation process/pipeline system not only consists parsing in abstract)}, we create
 a new tweet treebank ({\sc Tweebank v2}), which has 55,607 tokens with
 labeled attachments. 
 It is more than four times larger than the (unlabeled) {\sc Tweebank
@@ -72,8 +72,8 @@ and outperforms parsers that are state-of-the-art on other treebanks in both acc
 \end{abstract}
 
 \section{Introduction}
-NLP for social media messages is challenging, both because domain
-adaptation is required, but also because creating annotated datasets
+NLP for social media messages \yicomment{texts?} is challenging, both \yicomment{not only} because domain
+adaptation is required, but also because \yicomment{delete `because' ?} creating annotated datasets
 (e.g., treebanks)
 for training and evaluation is hard. 
 Pioneering work by \citet{AAAIW113912} 
@@ -86,7 +86,7 @@ consisting of 12,149 tokens and largely following conventions
 suggested by \citet{schneider-EtAl:2013:LAW7-ID}, fairly close to 
 \citet{Yamada03statisticaldependency} dependencies (without labels). 
 Both annotation efforts were highly influenced by the PTB, whose guidelines
-have  good grammatical coverage on newswire. However, when it comes
+have good grammatical coverage on newswire. However, when it comes
 to informal, unedited, user-generated text, the guidelines may leave
 many annotation decisions unspecified.
 %Motivation notes:  explain why UD is attractive (and more attractive
@@ -103,14 +103,14 @@ many annotation decisions unspecified.
 Universal dependencies \citep[UD]{NIVRE16.348} were introduced to enable
 consistent annotation across different languages. To allow such
 consistency, UD was designed to be adaptable to different genres \cite{wang-EtAl:2017:Long6} 
-and languages \cite{guo-EtAl:2015:ACL-IJCNLP2,TACL892}. We propose that analyzing
+and languages \cite{guo-EtAl:2015:ACL-IJCNLP2,TACL892}. We propose \yicomment{believe?} that analyzing
 the syntax of tweets can benefit from such adaptability. In this paper,
 we introduce a new tweet treebank of 55,607 tokens that follows the UD
 guidelines, but also contends with social media-specific challenges that were not
 covered by UD guidelines. Our annotation includes 
-tokenization, part-of-speech (POS) tags, and (labeled) universal dependencies.
-We characterize the disagreement among our annotations and find that
-consistent annotation is still challenging to deliver even with
+tokenization, part-of-speech (POS) tags, and (labeled) \yicomment{no need for parenthesis} universal dependencies.
+We characterize the disagreement among our annotations \yicomment{annotation(s) and disagreement(s). check abstract, same sentence, different singularity/plurality. I think should be `disagreement' and `annotations'} and find that
+consistent annotation \yicomment{again, it needs to be the same all the time at least for me.} is still challenging to deliver even with
 the extended guidelines.
 
 %\nascomment{Points that were in older text that I want to keep around:}
@@ -129,8 +129,8 @@ the extended guidelines.
 
 Based on these annotations, we designed a pipeline to parse 
 raw tweets into universal dependencies. Our pipeline includes: a
-bidirectional LSTM (bi-LSTM) tokenizer, a word cluster-enhanced POS
-tagger \citep[following][]{owoputi-EtAl:2013:NAACL-HLT}, and a stack LSTM parser
+bidirectional LSTM (bi-LSTM)\yicomment{need cite lstm/bi-lstm here?} tokenizer, a word cluster-enhanced POS
+tagger \citep[following][]{owoputi-EtAl:2013:NAACL-HLT} \yicomment{no need for parenthesis?}, and a stack LSTM parser
 with character-based word representations
 \cite{ballesteros-dyer-smith:2015:EMNLP}, which we refer to as our
 ``baseline'' parser.
@@ -142,17 +142,17 @@ We show further  that learning directly from the exploration of the ensemble par
 is more beneficial than learning from the gold standard ``oracle''
 transition sequence. Experimental results show that an improvement of more
 than 2.6 points \nascomment{again, not sure what this is quoting}\yjcomment{fixed} in LAS over the
-baseline parser can be achieved with our distillation method and that it outperforms
+baseline parser can be achieved with our distillation method and that \yicomment{delete `that'?} it outperforms
 other state-of-the-art parsers in both accuracy and running speed.
 
 The contributions of this paper include:
 \begin{itemize}
 \item We study the challenges of annotating tweets in UD (\S\ref{sec:anno})
 and created a new tweet treebank ({\sc Tweebank v2}), which includes 
-tokenization, part-of-speech tagging, and labeled universal dependencies annotation.
+tokenization, part-of-speech \yicomment{POS} tagging, and labeled universal dependencies annotation.
 We also characterize the difficulties of creating such annotation.
 
-\item We introduce and evaluate a system to parse the raw tweet text into
+\item We introduce and evaluate a \yicomment{pipeline} system to parse the raw tweet text into
 universal dependencies (\S\ref{sec:parsing}).  Experimental results show
 it performs better than a stack of the state-of-the-art alternatives.
 \nascomment{say it
@@ -163,7 +163,7 @@ method for training a greedy parser, leading to better performance
 than existing methods and without efficiency sacrifices.
 \end{itemize}
 
-We release our dataset and our system as open-source software at
+We release our dataset and our \yicomment{delete `our'} system as open-source software \yicomment{delete `as open-source software'?} at
 \url{http://anonymized}. 
 
 
@@ -171,7 +171,7 @@ We release our dataset and our system as open-source software at
 %\yicomment{Maybe we should contrast UD and kong's annotation strategy during each stage, because UD has also annotation guideline for every stage.}
 
 We first review {\sc Tweebank v1} of \citet{kong-EtAl:2014:EMNLP2014},
-which is the largest Twitter dependencies annotation
+which is \yicomment{was} the largest \yicomment{unlabelled} Twitter dependencies annotation
 (\S\ref{sec:tweebank}).
 Then we introduce the differences in our tokenization
 (\S\ref{sec:tok-anno}) and part-of-speech (\S\ref{sec:pos-anno}) (re)annotation with \citet{ICWSM101540} and 
@@ -184,11 +184,11 @@ the difficulties in reaching consistent annotations (\S\ref{sec:anno-process}).
 
 \subsection{Background: \textsc{Tweebank}}\label{sec:tweebank}
 
-The annotation effort we describe stands in contrast to previous work
+The annotation effort we describe stands in contrast to \yicomment{the?} previous work
 by \newcite{kong-EtAl:2014:EMNLP2014}.  Their aim was the rapid
 development of a dependency parser for tweets, and to that end they
 contributed a new annotated corpus, \textsc{Tweebank}, consisting of
-929 tweets.  Their annotations added dependencies to a portion of the data
+929 tweets.  Their annotations added \yicomment{unlabelled} dependencies to a portion of the data
 annotated with POS tags by 
 \newcite{gimpel-EtAl:2011:ACL-HLT2011} and
 \newcite{owoputi-EtAl:2013:NAACL-HLT} after rule-based tokenization \citep{ICWSM101540}.
@@ -196,13 +196,13 @@ Kong et al.~also contributed a system for parsing;
 we defer the discussion of their parser to \S\ref{sec:parsing}.
 
 Kong et al.'s rapid, small-scale annotation effort was heavily constrained.  It was
-carried out mostly by nonnative speakers, in a very short amount of
+carried out mostly by nonnative speakers \yicomment{should not emphasize non-native speakers (v2 also built by non-native speakers), but emphasize annotators with only cursory training, no clear annotation guidelines, no consensus/agreement on controversial cases, allow annotators to underspecify part of the tree and allow multiple different trees for the same tweets}, in a very short amount of
 time (a day).  Driven both by the style of the text they sought to annotate
 and by exigency, some of their annotation conventions included:
 \begin{itemize}
 \item Allowing an annotator to exclude tokens from the dependency
   tree.  A clear criterion for exclusion was not given, but many
-  tokens were excluded because they were deemed ``non-syntactic.''
+  tokens were excluded because they were deemed ``non-syntactic''\yicomment{(e.g. retweet sign, topical hashtags, ...)}.
 \item Allowing an annotator to merge a multiword expression into a
   single node in the dependency tree, with no internal structure.
   Annotators were allowed to take the same step with noun phrases.
@@ -216,7 +216,7 @@ effort to apply UD to tweets.
 \subsection{Tokenization}\label{sec:tok-anno}
 Our tokenization strategy lies between the strategy of
 \citet{ICWSM101540} and that of UD.
-There is a significant tradeoff  between preservation of original tweet content and respecting
+There is a significant \yicomment{significant? not really} tradeoff between preservation of original tweet content and respecting
 the UD guidelines.
 
 The regex-based tokenizer of \citet{ICWSM101540}---which was 
@@ -226,20 +226,17 @@ hashtags, at-mentions, emoticons, and unicode glyphs.
 They also treat contractions and acronyms as whole tokens and do not split them.
 UD
 tokenization,\footnote{\url{http://universaldependencies.org/u/overview/tokenization.html}}
-in order to better serve dependency annotation, treats each syntactic word as token.
+in order to better serve dependency annotation, treats each syntactic word as a token.
 They therefore more aggressively split
 clitics from contractions (e.g., {\it  gonna} is tokenized as {\it gon} and {\it na}; {\it its}
-is tokenized as {\it it} and {\it s} when {\it s} is a copula). But acronyms is not touched
+is tokenized as {\it it} and {\it s} when {\it s} is a copula)\yicomment{I think the examples are not contractions (can't), is there a name for such words?}. But acronyms are not touched
 in the UD tokenization guidelines. Thus, we follow the UD tokenization for contractions
-and left acronyms like {\em idc} as a single token.
-\yicomment{does UD support normalization for
-  acronyms? Did not see it from website, need to check. related to
-  ``idc''} \nascomment{unless we make a change, I think we need to say
+and left acronyms like {\em idc} as a single token. \nascomment{unless we make a change, I think we need to say
   here that acronyms like \emph{idc} are left as a single token}
 \yjcomment{mentioned acronymns, we don't have the problem of normalization, cause
 normalization was just annotated for data study.}
 
-In the different direction of splitting tokens, UD guidelines also suggest to merge
+In the different direction of splitting tokens, UD guidelines also suggest to merge \yicomment{suggest merging?}
 {\it multi-token words} (e.g. {\it 20 000}) into one single token in some special
 cases. We witnessed a small number of tweets that contain mult-token words
 (e.g. {\it Y O}, and {\it R E T W E E T}) but didn't combine them due to simplification.
@@ -248,8 +245,8 @@ Such tokens only account for 0.067\% and we use the UD
 
 \subsection{Part-of-Speech Annotation}\label{sec:pos-anno}
 
-Before turning to UD annotations, we (re)annotated the data with 
-POS, for consistency with other UD efforts,
+Before turning to UD \yicomment{dependencies} annotations, we (re)annotated the data with 
+POS \yicomment{tags}, for consistency with other UD efforts,
 which adopt the universal POS tagset of \newcite{PETROV12.274}.
 % The POS annotation of a word in tweets is generally based on its syntactic distribution, which indicates that the POS of word changes on different context.
 % Sticking to the syntactic distribution makes it possible that a `$\heart$' symbol is tagged as a verb as shown in Figure \ref{fig:non-syn-toks}. \yjcomment{Need a better explanation.}
@@ -257,7 +254,7 @@ which adopt the universal POS tagset of \newcite{PETROV12.274}.
 In some cases, conflicts arose between the UD English 
 treebank conventions \cite[][UD\_English]{Marneffe2014UniversalSD}\footnote{\url{https://github.com/UniversalDependencies/UD_English}}
 and the conventions of \newcite{gimpel-EtAl:2011:ACL-HLT2011} and
-\newcite{owoputi-EtAl:2013:NAACL-HLT}.  In these cases, we always
+\newcite{owoputi-EtAl:2013:NAACL-HLT}.  \yicomment{The conflicts should refer to a {\bf noncorresponding tag} from that of gimpel to UDEnglish, cuz they dont have the same tagset.} In these cases, we always
 conformed to UD, enabling consistency (e.g., when we exploit the
 existing UD\_English treebank in our parser for tweets, \S\ref{sec:parsing}).  For example,  
 the nominal URL in Figure \ref{fig:informal-toks} is tagged as {\it
@@ -302,7 +299,7 @@ noun (for \emph{face}).  % \footnote{Such failure can be resulted by the mis-mat
 %Although there is no head word in {\tt im}, we think that the subject is usually more informative than the tense in many downstream tasks such as semantic role labelling, so we use the tag of ``I'', e.g. PROPN as the tag of {\tt im}.  
 %In Fig.~\ref{ex2}, {\tt RT} and {\tt $\heart$} would be tagged as VERB, {\tt http://url} as X, {\tt \#Awesome} as ADJ, {\tt \#NAACL}, {\tt @zypandora} and {\tt @nlpnoah} as PROPN. One exception is that we tag URLs always as X regardless whether they are syntactic tokens. The reason is that we observed, in UD\_English, that the URLs are all tagged as X and we want to conform with the UD dataset, although we think it is not appropriate and should be changed to tags such as PROPN when they are treated as syntactic tokens.
 
-Compared to the coarse-grained POS tagging effort of
+Compared to the coarse-grained \yicomment{fine-grained?}POS tagging effort of
 \newcite{gimpel-EtAl:2011:ACL-HLT2011}, our approach simplifies some
 matters.  For example, if a token is not considered syntactic by UD
 conventions, it gets an \emph{other} (\texttt{X}) tag (Gimpel et
@@ -319,9 +316,9 @@ Gimpel et al.~used a single part of speech for such expressions.
 % In this paper, we stick more to the syntactic distribution when handling such abbreviations and it allows them to function differently in different context.
 
 Another important difference follows from the difference in
-tokenization.  As discussed above, UD calls for more
-aggressive tokenization than that used by
-\newcite{gimpel-EtAl:2011:ACL-HLT2011}.  In particular, Gimpel et al.~opted out of tokenizing
+tokenization.  As discussed in \S\ref{sec:tok-anno}, UD calls for more
+aggressive tokenization than that used by 
+\newcite{gimpel-EtAl:2011:ACL-HLT2011} [YICOMMENT: should be OCONNOR's paper? TOKENIZATION?]. In particular, Gimpel et al.~[YICOMMENT: SAME HERE] opted out of tokenizing
 contractions and possessives, introducing new parts of speech
 instead.\footnote{These tags only account for 2.7\% of tokens,
   leading to concerns about data sparseness in tagging and all
