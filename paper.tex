@@ -624,7 +624,7 @@ not explicitly delineated by punctuation.
 Twitter is an at-mention %(followed by a colon \nascomment{?})
 as a sign that a tweet is a reply to a tweet by the mentioned user\yicomment{not necessary, can be just mentioning somebody. should be careful to say it. We can say this construction include 1. reply;  2. mention sb. Both cases are similar to general vocative proper noun case in standard texts}.  We
 treat these at-mentions as vocative expressions, labeling them as
-\emph{proper noun} (\texttt{PROPN})[YI COMMENT: here is confusing that PROPN could be a label in dependencies. We can say in POS sections that the decisions on some twitter specific tokens can be made only analyzing syntax together.] and attaching them to the
+\emph{proper noun} (\texttt{PROPN})\yicomment{here is confusing that PROPN could be a label in dependencies. We can say in POS sections that the decisions on some twitter specific tokens can be made only analyzing syntax together.} and attaching them to the
 following predicate with the label \emph{vocative} (see Figure \ref{fig:informal-toks} for an example) \yicomment{just as UD guidelines}.  
 
 % \paragraph{At-mention.} At-mention in the beginning of a tweet is the format of indicating the `reply' action.
@@ -680,7 +680,7 @@ following predicate with the label \emph{vocative} (see Figure \ref{fig:informal
 %\nascomment{I didn't touch anything below here}
 
 \subsection{\sc Tweebank v2}\label{sec:anno-process}
-Following the guidelines presented above, we create a new annotated Twitter treebank, which we call {\sc Tweebank v2}.
+Following the guidelines presented above, we create a new annotated\yicomment{del?} Twitter \yicomment{Twitter dependency} treebank, which we call {\sc Tweebank v2}.
 
 \subsubsection{Data Collection}
 {\sc Tweebank v2} is built on the original data of {\sc Tweebank v1}
@@ -703,17 +703,17 @@ filtered by the {\it lang} attribute in the tweet JSON and {\it
 Our annotation process was conducted in three stages.
 In the first stage, 18 researchers worked on the {\sc Tweebank v1}
 proportion and created the initial annotations in one day.
-Before annotating, they were given a tutorial overview of the UD
-annotation conventions and our guidelines.
+Before annotating, they were given a tutorial overview of the \yicomment{general} UD
+annotation conventions and our guidelines \yicomment{specifically for annotating tweets}.
 Both the guidelines and annotations
 were further refined by the authors of this paper to increase
 the coverage of our guidelines and solve inconsistencies between
 different annotators during this exercise. In the second stage, a POS tagger and
-parser were trained on the annotated data from the first stage (1,041 tweets in total),
-and used to automatically analyze the sampled 2,500 tweets.  Authors 
+parser were trained on the annotated data from the first stage (1,050\yicomment{changed to 1050} tweets in total),
+and \yicomment{were?}used to automatically analyze the sampled 2,500 tweets.  Authors 
 of this paper manually corrected the parsed data. Finally, an extra
-layer of word-level normalization was manually annotated for data
-analysis purposes.
+layer of word-level normalization\yicomment{see 10 th col of conllu data, also mention we could recover the original tweets also from this col (tokenization)} was manually annotated for data
+analysis purposes.\yicomment{should mention tokenization process, say we tokenize V1 and train tokenizer for V2 data, then manually correct them. Good story :)}
 
 \begin{figure}
 \centering
@@ -742,13 +742,13 @@ analysis purposes.
 \end{figure}
 
 We report the inter-annotator agreement between the annotators
-in the second stage. The agreement on POS is 96.6\%, the unlabeled
+in the second stage\yicomment{tokenization is easier, did not do inter-annotator agreement}. The agreement on POS is 96.6\%, the unlabeled
 dependency agreement is 88.8\% and the labeled dependency agreement
 is 84.3\%. Further analysis shows the major disagreements on POS
-involve entity names (30.6\%) and topical hashtags (18.1\%).
-Taking the example in Figure \ref{fig:non-syn-toks}, ``Fix you'' can
+involve entity names (30.6\%) \yicomment{noun phrases or proper noun phrases, do we need example here?} and topical hashtags (18.1\%).
+Taking the example in Figure \ref{fig:non-syn-toks}, ``Fix you'' \yicomment{need to relate to previous error analysis, entity names maybe?}can
 be understood as a verbal phrase but also as the name of the Coldplay's
-single and tagged as proper noun. An example of a disagreement on
+single and tagged as proper noun. \yicomment{need to say the reason why dependency inter-annotator agreement is low? 1. POS disagreement lead to big difference in understanding the semantics. 2. Some special constructions like ellipsis lead to different view of tweets. Fig3 is an example of 2.}An example of a disagreement on
 dependencies is shown in Figure \ref{fig:disagree}.  Depending on
 whether this is an example of an empty auxiliary verb, or a clause-modified
 noun, either annotation is plausible.
