@@ -28,7 +28,7 @@
 
 \newcommand{\yjcomment}[1]{\textcolor{orange}{[$_\mathrm{L}^\mathrm{Y}$#1]}}
 \newcommand{\nascomment}[1]{\textcolor{blue}{[#1 ---\textsc{nas}]}}
-\newcommand{\yicomment}[1]{\textcolor{green}{[#1 ---\textsc{Yi}]}}
+\newcommand{\yicomment}[1]{\textcolor{gray}{[#1 ---\textsc{Yi}]}}
 %\newcommand{\yjcomment}[1]{}
 %\newcommand{\nascomment}[1]{}
 %\newcommand{\yicomment}[1]{}
@@ -59,8 +59,8 @@ a new tweet treebank ({\sc Tweebank v2}), which has 55,607 tokens with
 labeled attachments. 
 It is more than four times larger than the (unlabeled) {\sc Tweebank
   v1} introduced by \citet{kong-EtAl:2014:EMNLP2014}. 
-We characterize the disagreements
-among our annotation and show that it is challenging to deliver
+We characterize the disagreement
+among our annotations and show that it is challenging to deliver
 consistent annotation due to ambiguity in
 understanding and explaining tweets. Using the new treebank,
 we build a pipeline system to parse raw tweets into UD. To overcome the
@@ -129,8 +129,8 @@ the extended guidelines.
 
 Based on these annotations, we designed a pipeline to parse 
 raw tweets into universal dependencies. Our pipeline includes: a
-bidirectional LSTM (bi-LSTM)\yicomment{need cite lstm/bi-lstm here?} tokenizer, a word cluster-enhanced POS
-tagger \citep[following][]{owoputi-EtAl:2013:NAACL-HLT} \yicomment{no need for parenthesis?}, and a stack LSTM parser
+bidirectional LSTM (bi-LSTM) tokenizer, a word cluster-enhanced POS
+tagger \citep[following][]{owoputi-EtAl:2013:NAACL-HLT}, and a stack LSTM parser
 with character-based word representations
 \cite{ballesteros-dyer-smith:2015:EMNLP}, which we refer to as our
 ``baseline'' parser.
@@ -142,14 +142,14 @@ We show further  that learning directly from the exploration of the ensemble par
 is more beneficial than learning from the gold standard ``oracle''
 transition sequence. Experimental results show that an improvement of more
 than 2.6 points \nascomment{again, not sure what this is quoting}\yjcomment{fixed} in LAS over the
-baseline parser can be achieved with our distillation method and that \yicomment{delete `that'?} it outperforms
+baseline parser can be achieved with our distillation method and it outperforms
 other state-of-the-art parsers in both accuracy and running speed.
 
 The contributions of this paper include:
 \begin{itemize}
 \item We study the challenges of annotating tweets in UD (\S\ref{sec:anno})
 and created a new tweet treebank ({\sc Tweebank v2}), which includes 
-tokenization, part-of-speech \yicomment{POS} tagging, and labeled universal dependencies annotation.
+tokenization, part-of-speech tagging, and labeled universal dependencies annotation.
 We also characterize the difficulties of creating such annotation.
 
 \item We introduce and evaluate a \yicomment{pipeline} system to parse the raw tweet text into
@@ -202,7 +202,7 @@ and by exigency, some of their annotation conventions included:
 \begin{itemize}
 \item Allowing an annotator to exclude tokens from the dependency
   tree.  A clear criterion for exclusion was not given, but many
-  tokens were excluded because they were deemed ``non-syntactic''\yicomment{(e.g. retweet sign, topical hashtags, ...)}.
+  tokens were excluded because they were deemed ``non-syntactic''.
 \item Allowing an annotator to merge a multiword expression into a
   single node in the dependency tree, with no internal structure.
   Annotators were allowed to take the same step with noun phrases.
@@ -295,11 +295,11 @@ noun (for \emph{face}).  % \footnote{Such failure can be resulted by the mis-mat
 %In Fig.~\ref{ex1}, {\tt RT} {\tt @yijialiu}, {\tt \#ACL2017}, {\tt http://url} and {\tt th} are all tagged as X and {\tt :)} is tagged as SYM. 
 %{\tt rn} is tagged as ADV.
 %We should note that multiple tokens are actually included in a phrasal abbreviation, and we use one of their tags as the tag of the whole abbreviation according to their dependency relation or semantic priority.
-%If there is a hierarchy in the abbreviation, we use the tag of the head word. In UD, ``Right'' is the dependent of ``now '' in the dependency of {\tt rn}, so we tag {\tt rn} as ADV. 
+%aIf there is a hierarchy in the abbreviation, we use the tag of the head word. In UD, ``Right'' is the dependent of ``now '' in the dependency of {\tt rn}, so we tag {\tt rn} as ADV. 
 %Although there is no head word in {\tt im}, we think that the subject is usually more informative than the tense in many downstream tasks such as semantic role labelling, so we use the tag of ``I'', e.g. PROPN as the tag of {\tt im}.  
 %In Fig.~\ref{ex2}, {\tt RT} and {\tt $\heart$} would be tagged as VERB, {\tt http://url} as X, {\tt \#Awesome} as ADJ, {\tt \#NAACL}, {\tt @zypandora} and {\tt @nlpnoah} as PROPN. One exception is that we tag URLs always as X regardless whether they are syntactic tokens. The reason is that we observed, in UD\_English, that the URLs are all tagged as X and we want to conform with the UD dataset, although we think it is not appropriate and should be changed to tags such as PROPN when they are treated as syntactic tokens.
 
-Compared to the coarse-grained \yicomment{fine-grained?}POS tagging effort of
+Compared to the effort of
 \newcite{gimpel-EtAl:2011:ACL-HLT2011}, our approach simplifies some
 matters.  For example, if a token is not considered syntactic by UD
 conventions, it gets an \emph{other} (\texttt{X}) tag (Gimpel et
@@ -317,9 +317,10 @@ Gimpel et al.~used a single part of speech for such expressions.
 
 Another important difference follows from the difference in
 tokenization.  As discussed in \S\ref{sec:tok-anno}, UD calls for more
-aggressive tokenization than that used by 
-\newcite{gimpel-EtAl:2011:ACL-HLT2011} \yicomment{YICOMMENT: should be OCONNOR's paper? TOKENIZATION?}. In particular, Gimpel et al.~\yicomment{SAME HERE} opted out of tokenizing
-contractions and possessives, introducing new parts of speech
+aggressive tokenization than that of \citet{ICWSM101540} which opted
+out of tokenizing contractions and possessives and it was used by 
+\citet{gimpel-EtAl:2011:ACL-HLT2011}. As a consequence, 
+Gimpel et al. introduced new parts of speech for these cases
 instead.\footnote{These tags only account for 2.7\% of tokens,
   leading to concerns about data sparseness in tagging and all
   downstream analyses.}  For us, these tokens must be split, but
@@ -409,7 +410,7 @@ truncated words & 0.00 & 0.49 \\
  \hline
  total & 2.08 & 7.55 \\
 \end{tabular}
-\caption{Proportions of non-syntactic tokens in our annotation. \yicomment{should add also retweet at-mentions}
+\caption{Proportions of non-syntactic tokens in our annotation. %\yicomment{should add also retweet at-mentions}
 These statistics are obtained on 140 character-limited tweets. \label{tbl:non-synt-prop}}
 \end{table}
 
@@ -418,7 +419,7 @@ These statistics are obtained on 140 character-limited tweets. \label{tbl:non-sy
 	\small
 	\begin{dependency}[edge slant=2, text only label, label style=above]
 		\begin{deptext}
-			Perfect \& \textcolor{red}{\bf $\heart$} \& \textcolor{orange}{\bf RT} \& \textcolor{green}{\bf @coldplay} \& : \& Fix \& You \& from \& the \& back \& \textcolor{gray}{\bf \#ColdplayMinneapolis} \& \textcolor{blue}{\bf http://bit.ly/2dj2WCl} \& Nice \& \textcolor{cyan}{\bf p} \& ...\\
+			Perfect \& \textcolor{red}{\bf $\heart$} \& \textcolor{orange}{\bf RT} \& \textcolor{orange}{\bf @coldplay} \& : \& Fix \& You \& from \& the \& back \& \textcolor{gray}{\bf \#ColdplayMinneapolis} \& \textcolor{blue}{\bf http://bit.ly/2dj2WCl} \& Nice \& \textcolor{cyan}{\bf p} \& ...\\
 			\tiny ADJ \&\tiny SYM \&\tiny X \&\tiny X \&\tiny PUNCT \&\tiny VERB \&\tiny NOUN \&\tiny ADP \&\tiny DET \&\tiny NOUN \&\tiny X \&\tiny X \& \tiny ADJ \& \tiny X \& \tiny PUNCT \\
 		\end{deptext}
 		\deproot{1}{root}
@@ -439,8 +440,7 @@ These statistics are obtained on 140 character-limited tweets. \label{tbl:non-sy
 	\end{dependency}
 	\caption{An example tweet that contains non-syntactic tokens:
 		\textcolor{red}{sentiment emoticon},
-		\textcolor{orange}{retweet marker},
-		\textcolor{green}{retweet at-mention},
+		\textcolor{orange}{retweet marker and its following at-mention},
 		\textcolor{gray}{topical hashtag},
 		\textcolor{blue}{referential URL}, and
 		\textcolor{cyan}{truncated word}.
@@ -480,16 +480,17 @@ These statistics are obtained on 140 character-limited tweets. \label{tbl:non-sy
 
 The major characteristic that distinguishes tweets from standard texts is that
 a large proportion of tokens don't carry any syntactic function.
-In our annotation, there are five \yicomment{six} types of non-syntactic tokens: 
-sentiment emoticons, retweet markers, topical hashtags, referential URLs, and
-truncated words \yicomment{and retweet at-mentions}.\footnote{The tweets we analyze have at most 140
+In our annotation, there are five types of non-syntactic tokens: 
+sentiment emoticons, retweet markers and their following at-mentions, topical hashtags, referential URLs, and
+truncated words.\footnote{The tweets we analyze have at most 140
   characters. Although Twitter has doubled the tweet length limit to
   280 characters since our analysis, we believe this type of token
   will still remain.}  Figure \ref{fig:non-syn-toks} illustrates examples of
 these non-syntactic tokens.  As discussed above, these are generally
 tagged with the \emph{other} (\texttt{X}) part of speech, except
 emoticons, which are tagged as \emph{symbol} (\texttt{SYM}).  In our annotation, 
-7.5\% \yicomment{should change according to tab1} of all tokens are non-syntactic; detailed statistics can be found in Table \ref{tbl:non-synt-prop}.
+7.55\% of all tokens are non-syntactic; detailed statistics can be found in Table \ref{tbl:non-synt-prop}.
+\yjcomment{I've merged retweet marker and retweet at-mention into one.}
 
 It is important to note that these types may, in some
 contexts, have syntactic functions.
@@ -505,13 +506,14 @@ token as non-syntactic must be context-dependent.
 Inspired by the way UD deals with \emph{punctuation} (which is
 canonically non-syntactic), we adopt the following
 conventions:\yicomment{shall we mention how we segment sentences? Seems relevant here}
+
 \begin{itemize}
-\item If a non-syntactic token is within a sentence that has a clear predicate, it will be attached to this predicate;
-\item If the whole sentence is made of a sequence of non-syntactic tokens, we attach all these tokens to the first one;
+\item For the at-mentions in retweet constructions, we attach them to their retweet markers. We will discuss our choice in the following paragraph;
+\item For the rest non-syntactic tokens, if one token is within a sentence that has a clear predicate, it will be attached to this predicate. If the whole sentence is made of a sequence of non-syntactic tokens, we attach all these tokens to the first one;
 %\item In parataxis case, when it is difficult to decide which sentence or phrase x should belong to, we always attach x to the previous predicate of the paratactic clause or phrase;
 \item Non-syntactic tokens are mostly labeled as {\it discourse}, but
   URLs are always labeled as {\it list}, following the UD\_English dataset.
-\\ \yicomment{For retweet at-mention case, we attach the retweet at-mentions to the RT sign, so that the retweet action and the people whose tweet is being retweeted could be connected.\footnote{We can also follow the first convention to attach the retweet at-mention to its predicate, but we think it is better for downstream tasks.}}
+%\\ \yicomment{For retweet at-mention case, we attach the retweet at-mentions to the RT sign, so that the retweet action and the people whose tweet is being retweeted could be connected.\footnote{We can also follow the first convention to attach the retweet at-mention to its predicate, but we think it is better for downstream tasks.}}
 \end{itemize}
 
 
@@ -551,7 +553,8 @@ tokens and exclude them from the final dependencies annotation.
 In order to keep our annotation conventions in line with UD norms \yicomment{and preserve the original tweets as much as possible},
 we include non-syntactic tokens in our annotation following the
 conventions above. Compared with \citet{kong-EtAl:2014:EMNLP2014},
-we also gave a clear\yicomment{much clearer} definition of non-syntactic tokens, which helped
+we also gave a clear %\yicomment{much clearer}
+definition of non-syntactic tokens, which helped
 us avoid confusion during annotation.
 
 %In the sense of dealing with the non-syntactic tokens, \newcite{kong-EtAl:2014:EMNLP2014} proposed an preprocessing step named {\it token selection} to remove non-syntactic tokens from the original tweets.
@@ -708,12 +711,14 @@ annotation conventions and our guidelines \yicomment{specifically for annotating
 Both the guidelines and annotations
 were further refined by the authors of this paper to increase
 the coverage of our guidelines and solve inconsistencies between
-different annotators during this exercise. In the second stage, a POS tagger and
-parser were trained on the annotated data from the first stage (1,050\yicomment{changed to 1050} tweets in total),
-and \yicomment{were?}used to automatically analyze the sampled 2,500 tweets.  Authors 
+different annotators during this exercise. In the second stage, a tokenizer, a POS tagger, and
+parser were trained on the annotated data from the first stage (1,050 tweets in total),
+and used to automatically analyze the sampled 2,500 tweets.  Authors 
 of this paper manually corrected the parsed data. Finally, an extra
 layer of word-level normalization\yicomment{see 10 th col of conllu data, also mention we could recover the original tweets also from this col (tokenization)} was manually annotated for data
-analysis purposes.\yicomment{should mention tokenization process, say we tokenize V1 and train tokenizer for V2 data, then manually correct them. Good story :)}
+analysis purposes. For example, ``idc'' is annotated as
+`I\_don't\_care' and `4 my FAM' is as `for my familiy'.
+Such normalization doesn't change our tokenization annotation. \yicomment{should mention tokenization process, say we tokenize V1 and train tokenizer for V2 data, then manually correct them. Good story :)}\yjcomment{add ``a tokenizer''}
 
 \begin{figure}
 \centering
@@ -742,10 +747,11 @@ analysis purposes.\yicomment{should mention tokenization process, say we tokeniz
 \end{figure}
 
 We report the inter-annotator agreement between the annotators
-in the second stage\yicomment{tokenization is easier, did not do inter-annotator agreement}. The agreement on POS is 96.6\%, the unlabeled
+in the second stage. There is few disagreement on the tokenization annotation.
+The agreement on POS is 96.6\%, the unlabeled
 dependency agreement is 88.8\% and the labeled dependency agreement
 is 84.3\%. Further analysis shows the major disagreements on POS
-involve entity names (30.6\%) \yicomment{noun phrases or proper noun phrases, do we need example here?} and topical hashtags (18.1\%).
+involve entity names (30.6\%) \yicomment{noun phrases or proper noun phrases, do we need example here?}\yjcomment{i wasn't counting PROPN and NOUN confusion, but any type of confusion related with PROPN} and topical hashtags (18.1\%).
 Taking the example in Figure \ref{fig:non-syn-toks}, ``Fix you'' \yicomment{need to relate to previous error analysis, entity names maybe?}can
 be understood as a verbal phrase but also as the name of the Coldplay's
 single and tagged as proper noun. \yicomment{need to say the reason why dependency inter-annotator agreement is low? 1. POS disagreement lead to big difference in understanding the semantics. 2. Some special constructions like ellipsis lead to different view of tweets. Fig3 is an example of 2.}An example of a disagreement on
