@@ -392,16 +392,14 @@ key questions that arose in our annotation effort, and how we resolved them.
 % they be decomposed into their component words, and if so should those
 % words be ``normalized'' into explicitly spelled out intermediate
 % forms? \yicomment{this sentence should be deleted or moved to tokenization?} \yicomment{As we already know from previous sections, \emph{idc} is not tokenized and tagged as verb, we follow ...} \yicomment{Normalization is discussed in the 2.5.2 Annotation Process. Actually we did do normalization, but just as auxiliary info, didn't use it for any model.}\yjcomment{i think acronym is a different story to tokenization.}
-\nascomment{removed redundant stuff here, please check}
 We follow \citet{kong-EtAl:2014:EMNLP2014} and annotate the
 syntax of an acronym as a single word without normalization. Their syntactic functions
 are decided according to their context. \citet{eisenstein:2013:NAACL-HLT} studied the necessity of normalization
 in social media text and argued that such normalization is problematic.
 Our solution to the syntax of abbreviations follows the spirit of his argument. Because abbreviations which clearly carry
 syntactic functions only constitute 0.06\% of the tokens in our
-dataset, we believe that normalization is an unnecessarily complicated
-step.\yicomment{Again we did normalization!} \nascomment{maybe just
-  add ``for acronyms'' to the end of that last sentence?}
+dataset, we believe that normalization for acronyms is an unnecessarily complicated
+step.
 % \nascomment{maybe we owe citations to
 %   \cite{finin-EtAl:2010:MTURK,eisenstein:2013:NAACL-HLT} here?  maybe
 %   better papers to cite}
@@ -411,6 +409,7 @@ step.\yicomment{Again we did normalization!} \nascomment{maybe just
 \begin{table}
 \centering
 \begin{tabular}{lrr}
+\hline
 \multicolumn{2}{r}{syntactic (\%)} & non-syntactic (\%)\\ \hline
 emoticons & 0.25 & 0.95 \\
 RT & 0.14 & 2.49\\
@@ -419,6 +418,7 @@ URL & 0.67 & 2.38 \\
 truncated words & 0.00 & 0.49 \\
  \hline
  total & 2.08 & 7.55 \\
+ \hline
 \end{tabular}
 \caption{Proportions of non-syntactic tokens in our annotation. %\yicomment{should add also retweet at-mentions}
 These statistics are obtained on 140 character-limited tweets. \label{tbl:non-synt-prop}}
@@ -463,7 +463,7 @@ These statistics are obtained on 140 character-limited tweets. \label{tbl:non-sy
 	\small
 	\begin{dependency}[edge slant=2, text only label, label style=above]
 		\begin{deptext}
-			@username \& its \& \#awesome \& u \& gonna \& $\heart$ \& it \& Chk \& out \& our \& cooool \& project \& on \& http:// \& + \& RT \& pls\\
+			@username \& its \& \#awesome \& u \& gonna \& $\heart$ \& it \& Chk \& out \& our \& cooool \& project \& on \& http://project\_link \& + \& RT \& pls\\
 			\tiny PROPN \& \tiny PRON \& \tiny ADJ \& \tiny PRON \& \tiny VERB \& \tiny VERB \& \tiny PRON \& \tiny VERB \& \tiny ADP \& \tiny PRON \& \tiny ADJ \& \tiny NOUN \& \tiny ADP \& \tiny X \& \tiny SYM \& \tiny VERB\& \tiny INTJ\\
 		\end{deptext}
 		\deproot{3}{root}
@@ -505,7 +505,7 @@ emoticons, which are tagged as \emph{symbol} (\texttt{SYM}).  In our annotation,
 It is important to note that these types may, in some
 contexts, have syntactic functions.
 For example, besides being a discourse marker, \emph{RT} can
-abbreviate the verb {\tt retweet}, and emoticons and hashtags may be
+abbreviate the verb {\it retweet}, and emoticons and hashtags may be
 used as content words within a sentence, and at-mentions can be normal vocative proper nouns; see Figure
 \ref{fig:informal-toks}.  Therefore, the criteria for annotating a
 token as non-syntactic must be context-dependent.
@@ -741,7 +741,7 @@ The second row shows the number of new tweets compared to
 {\sc Tweebank v1}.\label{tbl:data-stat}
 }
 \end{table}
-Our annotation process was conducted in three stages.
+Our annotation process was conducted in two stages.
 In the first stage, 18 researchers worked on the {\sc Tweebank v1}
 proportion and created the initial annotations in one day.
 Before annotating, they were given a tutorial overview of the general UD
@@ -752,27 +752,32 @@ the coverage of our guidelines and solve inconsistencies between
 different annotators during this exercise. In the second stage, a tokenizer, a POS tagger, and
 parser were trained on the annotated data from the first stage (1,050 tweets in total),
 and used to automatically analyze the sampled 2,500 tweets.  Authors 
-of this paper manually corrected the parsed data. Finally, an extra
-layer of word-level normalization\yicomment{see 10 th col of conllu
-  data, also mention we could recover the original tweets also from
-  this col (tokenization)}\yjcomment{didn't get your point. if
-  mentioning the normalization here introduce too much confusions, we
-  would better remove these.} \nascomment{I don't quite follow; maybe
-  return to extra annotation done for data analysis later, when we get
-to data analysis?} was manually annotated for data
-analysis purposes. For example, {\em idc} is annotated as
-`I\_don't\_care' and {\em 4 my FAM} is as `for my familiy'.
-Such normalization doesn't change our tokenization annotation. \yicomment{should mention tokenization process, say we tokenize V1 and train tokenizer for V2 data, then manually correct them.}\yjcomment{add ``a tokenizer''}
-\yicomment{add final data split}\yjcomment{it's better to use table
-  \ref{tbl:data-stat}. what's more, i don't think we benefit from
-  re-stating our data source.} We obtained 3,550 labelled annotated
-tweets, split into train/development/test set with /(639 $+$
-1000)/(210 $+$ 500)/(201 $+$ 1000) tweets, where each set consists of
-both old tweets from \citet{gimpel-EtAl:2011:ACL-HLT2011} and new
-tweets from the Twitter stream. \nascomment{I agree that counts and
-  such should go in tables} \yicomment{should also mention main
-  annotators (authors) are non-native English speakers?}
-\nascomment{I'm torn about that.  has it been brought up in other datasets?}
+of this paper manually corrected the parsed data and finally achieved 3,550 labeled tweets.
+Newly created annotations are splitted into train, development, and test set and appended
+to the original split of {\sc Twebank v1}. Statistics of our annotations and data split are shown
+in Table \ref{tbl:data-stat}.
+
+%Finally, an extra
+%layer of word-level normalization\yicomment{see 10 th col of conllu
+%  data, also mention we could recover the original tweets also from
+%  this col (tokenization)}\yjcomment{didn't get your point. if
+%  mentioning the normalization here introduce too much confusions, we
+%  would better remove these.} \nascomment{I don't quite follow; maybe
+%  return to extra annotation done for data analysis later, when we get
+%to data analysis?} was manually annotated for data
+%analysis purposes. For example, {\em idc} is annotated as
+%`I\_don't\_care' and {\em 4 my FAM} is as `for my familiy'.
+%Such normalization doesn't change our tokenization annotation. \yicomment{should mention tokenization process, say we tokenize V1 and train tokenizer for V2 data, then manually correct them.}\yjcomment{add ``a tokenizer''}
+%\yicomment{add final data split}\yjcomment{it's better to use table
+%  \ref{tbl:data-stat}. what's more, i don't think we benefit from
+%  re-stating our data source.}
+%We obtained 3,550 labeled tweets, splitted them into train/development/test set.
+%1000)/(210 $+$ 500)/(201 $+$ 1000) tweets, where each set consists of
+%both old tweets from \citet{gimpel-EtAl:2011:ACL-HLT2011} and new
+%tweets from the Twitter stream. \nascomment{I agree that counts and
+%  such should go in tables} \yicomment{should also mention main
+%  annotators (authors) are non-native English speakers?}
+%\nascomment{I'm torn about that.  has it been brought up in other datasets?}
 
 
 \begin{figure}
@@ -803,7 +808,7 @@ tweets from the Twitter stream. \nascomment{I agree that counts and
 
 We report the inter-annotator agreement between the annotators
 in the second stage. There is very little disagreement on the
-tokenization annotation \nascomment{still better to quantify}.
+tokenization annotation. % \nascomment{still better to quantify}.
 The agreement on POS is 96.6\%, the unlabeled
 dependency agreement is 88.8\% and the labeled dependency agreement
 is 84.3\%. Further analysis shows the major disagreements on POS
@@ -924,7 +929,7 @@ works as a mask to evoke censorship and should not be segmented.
 \begin{figure}[t]
 	\centering
 	\includegraphics[width=\columnwidth,trim={0 0 11cm 9cm},clip]{graphics/bilstm_tokenizer}
-	\caption{The bi-LSTM tokenizer model that segments `its gonna be' into `it s gon na be'.}\label{fig:tok-model}
+	\caption{The bi-LSTM tokenizer that segments `{\it its gonna be}' into `{\it it s gon na be}'.}\label{fig:tok-model}
 \end{figure}
 We introduce a new
 character-level bidirectional LSTM (bi-LSTM) sequence-labeling model
@@ -941,20 +946,21 @@ Space is treated as an input but consistently assigned a special tag \$.
 	\centering
 	\begin{tabular}{rc}
 		\hline
-		\it System & \it F1 \\
+		\it System & F1 \\
 		\hline
 		  Stanford CoreNLP & 96.6 \\
-		 Twokenizer & 94.4 \\
+		 Twokenizer & 94.4 \\		 
 % 		UD pipe v1.2 & 94.7 \\
+		\hdashline
 		UD pipe v1.2 & 97.3 \\
-	 	our bi-LSTM tokenizer & \bf 98.3 \\
+	 	our bi-LSTM tokenizer & 98.3 \\
 		\hline
 	\end{tabular}
 	\caption{Tokenizer comparison on the \textsc{Tweebank v2} test set.}\label{tbl:tok-result}
 \end{table}
 
-We trained our tokenizer on the training portion\yicomment{set?} of
-\textsc{Tweebank v2} combined with the UD\_English training dataset
+We trained our tokenizer on the training portion of
+\textsc{Tweebank v2} combined with the UD\_English training set
 and tested on the \textsc{Tweebank v2} test set. 
 We report $F_1$ scores, combining precision and recall for token identification. Table \ref{tbl:tok-result} shows the
 tokenization results, compared to  other available tokenizers. 
@@ -972,18 +978,22 @@ in tokenization for informal texts.
 
 \subsection{Part-of-Speech Tagger}
 
-\begin{figure}[t]
-	\centering
-	\includegraphics[width=\columnwidth,trim={0 0 11cm 3cm},clip]{graphics/bilstm_postagger}
-	\caption{The bi-LSTM POS tagger model that tags `it s gon na be' as {\tt PRON AUX VERB PART AUX}.}\label{fig:pos-model}
-	%\yicomment{i'm a little confused by the pic, need discussion}
-\end{figure}
+%\begin{figure}[t]
+%	\centering
+%	\includegraphics[width=\columnwidth,trim={0 0 11cm 3cm},clip]{graphics/bilstm_postagger}
+%	\caption{The bi-LSTM POS tagger model that tags `it s gon na be' as {\tt PRON AUX VERB PART AUX}.}\label{fig:pos-model}
+%	%\yicomment{i'm a little confused by the pic, need discussion}
+%\end{figure}
 
-Part-of-speech tagging for tweets has been extensively studied \cite{ritter-EtAl:2011:EMNLP,gimpel-EtAl:2011:ACL-HLT2011,owoputi-EtAl:2013:NAACL-HLT,gui-EtAl:2017:EMNLP20172}.
+Part-of-speech tagging for tweets has been extensively studied \cite{ritter-EtAl:2011:EMNLP,gimpel-EtAl:2011:ACL-HLT2011,derczynski-EtAl:2013:RANLP-2013,owoputi-EtAl:2013:NAACL-HLT,gui-EtAl:2017:EMNLP20172}.
 On the annotation scheme designed in \S\ref{sec:pos-anno}, based on UD and adapted for
-Twitter, we compared several existing systems and also two bi-LSTM systems similar
-to \citet{DBLP:journals/corr/HuangXY15} and \citet{lample-EtAl:2016:N16-1}, one using
-word vectors and the other using word and character vectors (see Figure \ref{fig:pos-model}).
+Twitter, we compared several existing systems which include the Stanford CoreNLP tagger, 
+\citet{owoputi-EtAl:2013:NAACL-HLT}'s word cluster enhanced tagger (both in greedy and CRF), and 
+also \citet{ma-hovy:2016:P16-1}'s neural network POS tagger 
+which has the state-of-the-art performance  on Penn Treebank data.
+ %and also two bi-LSTM systems similar
+%to \citet{DBLP:journals/corr/HuangXY15} and \citet{lample-EtAl:2016:N16-1}, one using
+%word vectors and the other using word and character vectors (see Figure \ref{fig:pos-model}).
 All systems were re-trained on the combination of the UD\_English and 
 \textsc{Tweebank v2} training sets. We use Twitter-specific glove embeddings released by
 \citet{pennington-socher-manning:2014:EMNLP2014} in all neural taggers
@@ -996,18 +1006,18 @@ and parsers.\footnote{\url{http://nlp.stanford.edu/data/glove.twitter.27B.zip}}
 	\centering
 	\begin{tabular}{rc}
 		\hline
-		\it System & \it Precision \\
+		\it System & Precision \\
 		\hline
 %		Stanford Postagger & 65.6 \\
 		Stanford CoreNLP & 90.4 \\
 %		UD pipe v1.2 & 78.7 \\
 		\citealp{owoputi-EtAl:2013:NAACL-HLT} (greedy) & 94.2 \\
-		\citealp{owoputi-EtAl:2013:NAACL-HLT} (CRF) & \bf 95.1 \\
+		\citealp{owoputi-EtAl:2013:NAACL-HLT} (CRF) & 95.1 \\
 		\hdashline
 %		UD pipe v1.2 & 83.8 \\
 		\citealp{ma-hovy:2016:P16-1} & 91.8 \\
-		our word bi-LSTM & 89.2 \\
-		our character + word bi-LSTMs & 91.5 \\
+%		our word bi-LSTM & 89.2 \\
+%		our character + word bi-LSTMs & 91.5 \\
 		\hline
 	\end{tabular}
 	\caption{POS tagger comparison on gold-standard tokens in the
@@ -1018,7 +1028,7 @@ and parsers.\footnote{\url{http://nlp.stanford.edu/data/glove.twitter.27B.zip}}
 	\centering
 	\begin{tabular}{rc}
 		\hline
-		\it System & \it F1 \\
+		\it System & F1 \\
 		\hline
 		Stanford CoreNLP & 92.1 \\
 		our bi-LSTM tokenizer (\S\ref{sec:tok}) & 93.6 \\
@@ -1030,11 +1040,14 @@ and parsers.\footnote{\url{http://nlp.stanford.edu/data/glove.twitter.27B.zip}}
 
 We tested the POS taggers on the \textsc{Tweebank v2} test set.  Results
 with gold-standard tokenization are shown in
-Table \ref{tbl:pos-result}. The careful feature engineering in the 
-POS tagger of \citet{owoputi-EtAl:2013:NAACL-HLT} outperforms our neural network
-models.  (That tagger also makes use of \citet{Brown:1992:CNG:176313.176316} clusters derived
-from a large collection of unannotated tweets.  Those clusters did not
-improve the performance of our bi-LSTM models.)
+Table \ref{tbl:pos-result}. The careful feature engineering and making use of
+\citet{Brown:1992:CNG:176313.176316} clusters in the 
+POS tagger of \citet{owoputi-EtAl:2013:NAACL-HLT} outperforms \citet{ma-hovy:2016:P16-1}'s neural network
+model. 
+%tagger
+%also makes use of clusters derived
+%from a large collection of unannotated tweets. % Those clusters did not
+%improve the performance of our bi-LSTM models.)
 
 Results of the \citet{owoputi-EtAl:2013:NAACL-HLT}  tagger with non-greedy
 inference on automatically tokenized data
@@ -1106,20 +1119,6 @@ system.
 Our baseline lags behind by nearly two LAS
 points but runs faster than both of them.
 
-\begin{table}[t]
-	\centering
-	\begin{tabular}{rrcc}
-		\hline
-		 Pipeline stage & Score & Ours & SOTA \\
-		\hline
-		Tokenization  & \it $F_1$ & 98.3 & 96.6 \\		
-		POS tagging &  \it Precision $F_1$ & 93.7 & 92.1 \\
-		UD parsing & \it LAS $F_1$ & 74.1 & 70.3 \\
-		\hline
-	\end{tabular}
-	\caption{Evaluating our pipeline against a state-of-the-art pipeline. \nascomment{what is ``precision $F_1$?}\label{tbl:pipline} }
-\end{table}
-
 \paragraph{Ensemble.}  Due to ambiguity in the training
 data---which most loss functions are not robust to \citep{Frnay2014ClassificationIT}, including the log loss we use, following
 \citet{ballesteros-dyer-smith:2015:EMNLP}---and due to the instability
@@ -1151,7 +1150,7 @@ pairs.
 Let $q(a \mid s)$ denote the distilled model's
 probability of an action $a$ given parser state $s$; let $p(a\mid s)$ be the probability under the
 ensemble (i.e., the average of the 20 separately-trained ensemble
-members) \nascomment{check} \yjcomment{checked}.
+members).
 To train the distilled model, we minimize the interpolation between
 their distillation loss and the conventional log loss:
 \begin{align}
@@ -1174,7 +1173,6 @@ to better performance.
 	\includegraphics[width=\columnwidth,trim={0.3cm 0 0 0},clip]{graphics/alpha}
 	\caption{The effect of $\alpha$ on distillation. \label{fig:effect-alpha}}
 \end{figure}
-
 
 \paragraph{Learning from exploration.} When we set $\alpha =1$, we
 eliminate the oracle from the estimation procedure (for the distilled
@@ -1215,18 +1213,32 @@ only one point behind the ensemble (last line of Table~\ref{tbl:parse-result}).
 %However, this greedy approach still lags behind the very strong
 %graph-based system of \citet{DBLP:journals/corr/DozatM16}.
 
+\begin{table}[t]
+	\centering
+	\begin{tabular}{rrcc}
+		\hline
+		\it Pipeline stage & Score & Ours & SOTA \\
+		\hline
+		Tokenization  & \it $F_1$ & 98.3 & 96.6 \\		
+		POS tagging &  \it  $F_1$ & 93.7 & 92.1 \\
+		UD parsing & \it LAS $F_1$ & 74.1 & 70.3 \\
+		\hline
+	\end{tabular}
+	\caption{Evaluating our pipeline against a state-of-the-art pipeline. \label{tbl:pipline} }
+\end{table}
 
 \paragraph{Pipeline evaluation.} Finally, we report  our full
 pipeline's performance in  Table \ref{tbl:pipline}. We also compare
 our model with a pipeline of the state-of-the-art systems (labeled  ``SOTA''):
-Stanford CoreNLP tokenizer\yicomment{why not compare with UD pipe?}\yjcomment{i was thinking stanford tokenizer is more suitable, but i will get the udpipe result},
+Stanford CoreNLP tokenizer, %\yicomment{why not compare with UD pipe?}\yjcomment{i was thinking stanford tokenizer is more suitable, but i will get the udpipe result},
 \citet{owoputi-EtAl:2013:NAACL-HLT}'s tagger, and \citet{DBLP:journals/corr/DozatM16}'s parser.
 Our system differs from the SOTA pipeline in the tokenization and parser components.
 From Table \ref{tbl:pipline}, our pipeline outperforms the SOTA when
 evaluated in pipeline manner.
 The results also emphasize the
 importance of tokenization:  without gold tokenization
-\nascomment{changed ``segmentation'' to ``tokenization'' here, twice}, UD parsing
+%\nascomment{changed ``segmentation'' to ``tokenization'' here, twice},
+UD parsing
 performance drops by more than four points.
 
 %\section{Related Work}
