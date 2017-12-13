@@ -70,7 +70,7 @@ and outperforms parsers that are state-of-the-art on other treebanks in both acc
 \end{abstract}
 
 \section{Introduction}
-NLP for social media messages is challenging, both because domain
+NLP for social media messages is challenging, both\yicomment{not only? `both' is still strange to me} because domain
 adaptation is required, but also because creating annotated datasets
 (e.g., treebanks)
 for training and evaluation is hard. 
@@ -233,7 +233,7 @@ is tokenized as {\it it} and {\it s} when {\it s} is a copula).
 %another term?}. \nascomment{yes}
 But acronyms are not touched
 in the UD tokenization guidelines. Thus, we follow the UD tokenization for contractions
-and leave acronyms like {\em idc} as a single token. 
+and leave acronyms like {\em idc} (``I don't care'') as a single token. 
 %\nascomment{unless we make a change, I think we need to say
 %  here that acronyms like \emph{idc} are left as a single token}
 %\yjcomment{mentioned acronymns, we don't have the problem of normalization, cause
@@ -287,8 +287,7 @@ length in the next section) were usually annotated as \emph{other}
 %In structure level phenomena, we think {\tt RT @user} in retweet structure have no contribution to the tweet syntax and tag both of them as X.
 %We tag usernames in at-mentioned structure as PROPN as they present the vocative case.
 
-Tokens that abbreviate multiple words, such as \emph{idc} (``I don't
-care'') are resolved to the POS of the syntactic head of the
+Tokens that abbreviate multiple words, such as \emph{idc} are resolved to the POS of the syntactic head of the
 expression, following UD conventions (in this example, the head \emph{care} is
 a verb, so \emph{idc} is tagged as a verb).
 % The informal syntactic tokens can generally be handled by their distribution.
@@ -463,8 +462,8 @@ These statistics are obtained on 140 character-limited tweets. \label{tbl:non-sy
 	\small
 	\begin{dependency}[edge slant=2, text only label, label style=above]
 		\begin{deptext}
-			@username \& its \& \#awesome \& u \& gonna \& $\heart$ \& it \& Chk \& out \& our \& cooool \& project \& on \& http://project\_link \& + \& RT \& pls\\
-			\tiny PROPN \& \tiny PRON \& \tiny ADJ \& \tiny PRON \& \tiny VERB \& \tiny VERB \& \tiny PRON \& \tiny VERB \& \tiny ADP \& \tiny PRON \& \tiny ADJ \& \tiny NOUN \& \tiny ADP \& \tiny X \& \tiny SYM \& \tiny VERB\& \tiny INTJ\\
+			@username \& its \& \#awesome \& u \& gonna \& $\heart$ \& it \& Chk \& out \& our \& cooool \& project \& on \& http://project\_link \& + \& RT \& it\\
+			\tiny PROPN \& \tiny PRON \& \tiny ADJ \& \tiny PRON \& \tiny VERB \& \tiny VERB \& \tiny PRON \& \tiny VERB \& \tiny ADP \& \tiny PRON \& \tiny ADJ \& \tiny NOUN \& \tiny ADP \& \tiny X \& \tiny SYM \& \tiny VERB\& \tiny PRON\\
 		\end{deptext}
 		\deproot{3}{root}
 		\depedge[edge unit distance=1em]{3}{1}{vocative}
@@ -482,7 +481,7 @@ These statistics are obtained on 140 character-limited tweets. \label{tbl:non-sy
 		\depedge[edge unit distance=1em]{14}{13}{case}
 		\depedge[edge unit distance=0.55em]{8}{16}{conj}
 		\depedge[edge unit distance=1em]{16}{15}{cc}
-		\depedge[edge unit distance=0.37em]{3}{17}{discourse}
+		\depedge[edge unit distance=0.37em]{16}{17}{obj}
 	\end{dependency}
 	\caption{An example tweet with informal but syntactic tokens.
 		This is a contrived example inspired by several tweets.}\label{fig:informal-toks}
@@ -522,7 +521,7 @@ conventions:
 
 \begin{itemize}
 %\item For the at-mentions in retweet constructions, we attach them to their retweet markers. We will discuss our choice in the following paragraph;
-\item If one syntactic token is within a sentence that has a clear predicate, it will be attached to this predicate. Retweet construction is a special case and we will discuss our choice in the following paragraph;
+\item If a non-syntactic token is within a sentence that has a clear predicate, it will be attached to this predicate. Retweet construction is a special case and we will discuss our choice in the following paragraph;
 \item If the whole sentence is made of a sequence of non-syntactic tokens, we attach all these tokens to the first one;
 %\item In parataxis case, when it is difficult to decide which sentence or phrase x should belong to, we always attach x to the previous predicate of the paratactic clause or phrase;
 \item Non-syntactic tokens are mostly labeled as {\it discourse}, but
@@ -985,7 +984,7 @@ in tokenization for informal texts.
 %	%\yicomment{i'm a little confused by the pic, need discussion}
 %\end{figure}
 
-Part-of-speech tagging for tweets has been extensively studied \cite{ritter-EtAl:2011:EMNLP,gimpel-EtAl:2011:ACL-HLT2011,derczynski-EtAl:2013:RANLP-2013,owoputi-EtAl:2013:NAACL-HLT,gui-EtAl:2017:EMNLP20172}.
+Part-of-speech tagging for tweets has been extensively studied \cite{ritter-EtAl:2011:EMNLP,gimpel-EtAl:2011:ACL-HLT2011,derczynski-EtAl:2013:RANLP-2013,owoputi-EtAl:2013:NAACL-HLT,gui-EtAl:2017:EMNLP20172}. We therefore opt for the existing POS taggers for tweets instead of developing our own's.
 On the annotation scheme designed in \S\ref{sec:pos-anno}, based on UD and adapted for
 Twitter, we compared several existing systems which include the Stanford CoreNLP tagger, 
 \citet{owoputi-EtAl:2013:NAACL-HLT}'s word cluster enhanced tagger (both in greedy and CRF), and 
@@ -1230,7 +1229,7 @@ only one point behind the ensemble (last line of Table~\ref{tbl:parse-result}).
 \paragraph{Pipeline evaluation.} Finally, we report  our full
 pipeline's performance in  Table \ref{tbl:pipline}. We also compare
 our model with a pipeline of the state-of-the-art systems (labeled  ``SOTA''):
-Stanford CoreNLP tokenizer, %\yicomment{why not compare with UD pipe?}\yjcomment{i was thinking stanford tokenizer is more suitable, but i will get the udpipe result},
+Stanford CoreNLP tokenizer\footnote{We choose Stanford CoreNLP tokenizer in the spirit of comparing rule-based and statistical model-based method.}, %\yicomment{why not compare with UD pipe?}\yjcomment{i was thinking stanford tokenizer is more suitable, but i will get the udpipe result},
 \citet{owoputi-EtAl:2013:NAACL-HLT}'s tagger, and \citet{DBLP:journals/corr/DozatM16}'s parser.
 Our system differs from the SOTA pipeline in the tokenization and parser components.
 From Table \ref{tbl:pipline}, our pipeline outperforms the SOTA when
