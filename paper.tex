@@ -70,8 +70,8 @@ and outperforms parsers that are state-of-the-art on other treebanks in both acc
 \end{abstract}
 
 \section{Introduction}
-NLP for social media messages is challenging, both because domain
-adaptation is required, but also because creating annotated datasets
+NLP for social media messages is challenging, because domain
+adaptation is required, and also because creating annotated datasets
 (e.g., treebanks)
 for training and evaluation is hard. 
 Pioneering work by \citet{AAAIW113912} 
@@ -140,14 +140,14 @@ We show further  that learning directly from the exploration of the ensemble par
 is more beneficial than learning from the gold standard ``oracle''
 transition sequence. Experimental results show that an improvement of more
 than 2.6 points in LAS over the
-baseline parser can be achieved with our distillation method and it outperforms
+baseline parser can be achieved with our distillation method.  It outperforms
 other state-of-the-art parsers in both accuracy and speed.
 
 The contributions of this paper include:
 \begin{itemize}
 \item We study the challenges of annotating tweets in UD (\S\ref{sec:anno})
-and created a new tweet treebank ({\sc Tweebank v2}), which includes 
-tokenization, part-of-speech tagging, and labeled universal dependencies annotation.
+and create a new tweet treebank ({\sc Tweebank v2}), which includes 
+tokenization, part-of-speech tagging, and labeled universal dependencies.
 We also characterize the difficulties of creating such annotation.
 
 \item We introduce and evaluate a pipeline system to parse the raw tweet text into
@@ -167,7 +167,7 @@ We release our dataset and our system as open-source software at
 %\yicomment{Maybe we should contrast UD and kong's annotation strategy during each stage, because UD has also annotation guideline for every stage.}
 
 We first review {\sc Tweebank v1} of \citet{kong-EtAl:2014:EMNLP2014},
-the largest Twitter dependency annotation effort to-date
+the previous largest Twitter dependency annotation effort 
 (\S\ref{sec:tweebank}).
 Then we introduce the differences in our tokenization
 (\S\ref{sec:tok-anno}) and part-of-speech (\S\ref{sec:pos-anno}) (re)annotation with \citet{ICWSM101540} and 
@@ -240,9 +240,9 @@ and leave acronyms like {\em idc} (``I don't care'') as a single token.
 % normalization was just annotated for data study.}
 
 In the different direction of splitting tokens, UD guidelines also suggest to merge
-{\it multi-token words} (e.g. {\it 20 000}) into one single token in some special
+{\it multi-token words} (e.g., {\it 20 000}) into one single token in some special
 cases. We witnessed a small number of tweets that contain multi-token words
-(e.g. {\it Y O}, and {\it R E T W E E T}) but didn't combine them for simplification.
+(e.g., {\it Y O}, and {\it R E T W E E T}) but didn't combine them for simplification.
 Such tokens only account for 0.067\% and we use the UD
   {\it goeswith} relation to resolve these cases in the dependency annotations.
 
@@ -326,7 +326,7 @@ Another important difference follows from the difference in
 tokenization.  As discussed in \S\ref{sec:tok-anno}, UD calls for more
 aggressive tokenization than that of \citet{ICWSM101540} which opted
 out of splitting contractions and possessives. As a consequence of adopting \citet{ICWSM101540}'s tokenization, 
-Gimpel et al. introduced new parts of speech for these cases
+Gimpel et al.~introduced new parts of speech for these cases
 instead.\footnote{These tags only account for 2.7\% of tokens,
   leading to concerns about data sparseness in tagging and all
   downstream analyses.}  For us, these tokens must be split, but
@@ -937,7 +937,8 @@ for tokenization.
 Our model takes the raw sentence and tags each character in this 
 sentence as whether it is the beginning of a word (1 as the beginning and 0 otherwise).
 Figure \ref{fig:tok-model} shows our tokenization model.
-Space is treated as an input but consistently assigned a special tag \$.
+Space is treated as an input but deterministically \nascomment{check
+  here}  assigned a special tag \$.
 
 \paragraph{Experimental results.}
 
@@ -945,7 +946,7 @@ Space is treated as an input but consistently assigned a special tag \$.
 	\centering
 	\begin{tabular}{rc}
 		\hline
-		\it System & F1 \\
+		\it System & $F_1$ \\
 		\hline
 		  Stanford CoreNLP & 96.6 \\
 		 Twokenizer & 94.4 \\		 
@@ -984,17 +985,18 @@ in tokenization for informal texts.
 %	%\yicomment{i'm a little confused by the pic, need discussion}
 %\end{figure}
 
-Part-of-speech tagging for tweets has been extensively studied \cite{ritter-EtAl:2011:EMNLP,gimpel-EtAl:2011:ACL-HLT2011,derczynski-EtAl:2013:RANLP-2013,owoputi-EtAl:2013:NAACL-HLT,gui-EtAl:2017:EMNLP20172}. We therefore opt for the existing POS taggers for tweets instead of developing our own's.
+Part-of-speech tagging for tweets has been extensively studied \cite{ritter-EtAl:2011:EMNLP,gimpel-EtAl:2011:ACL-HLT2011,derczynski-EtAl:2013:RANLP-2013,owoputi-EtAl:2013:NAACL-HLT,gui-EtAl:2017:EMNLP20172}. We therefore consider existing POS taggers for tweets instead of developing our own.
 On the annotation scheme designed in \S\ref{sec:pos-anno}, based on UD and adapted for
-Twitter, we compared several existing systems which include the Stanford CoreNLP tagger, 
-\citet{owoputi-EtAl:2013:NAACL-HLT}'s word cluster enhanced tagger (both in greedy and CRF), and 
-also \citet{ma-hovy:2016:P16-1}'s neural network POS tagger 
+Twitter, we compared several existing systems: the Stanford CoreNLP tagger, 
+\citet{owoputi-EtAl:2013:NAACL-HLT}'s word cluster enhanced tagger
+(both greedy and CRF variants), and 
+\citet{ma-hovy:2016:P16-1}'s neural network POS tagger 
 which has the state-of-the-art performance  on Penn Treebank data.
  %and also two bi-LSTM systems similar
 %to \citet{DBLP:journals/corr/HuangXY15} and \citet{lample-EtAl:2016:N16-1}, one using
 %word vectors and the other using word and character vectors (see Figure \ref{fig:pos-model}).
 All systems were re-trained on the combination of the UD\_English and 
-\textsc{Tweebank v2} training sets. We use Twitter-specific glove embeddings released by
+\textsc{Tweebank v2} training sets. We use Twitter-specific Glove embeddings released by
 \citet{pennington-socher-manning:2014:EMNLP2014} in all neural taggers
 and parsers.\footnote{\url{http://nlp.stanford.edu/data/glove.twitter.27B.zip}}
 
@@ -1027,7 +1029,7 @@ and parsers.\footnote{\url{http://nlp.stanford.edu/data/glove.twitter.27B.zip}}
 	\centering
 	\begin{tabular}{rc}
 		\hline
-		\it System & F1 \\
+		\it Tokenization System & $F_1$ \\
 		\hline
 		Stanford CoreNLP & 92.1 \\
 		our bi-LSTM tokenizer (\S\ref{sec:tok}) & 93.6 \\
@@ -1060,7 +1062,7 @@ Social media applications typically require processing large volumes
 of data, making speed an important consideration. We therefore 
 begin with the neural greedy stack LSTM parser introduced by \newcite{ballesteros-EtAl:2016:EMNLP2016},
 which can parse a sentence in linear time and harnesses 
-character representations, which should help mitigate the challenge of
+character representations to construct word vectors, which should help mitigate the challenge of
 spelling variation. We encourage the reader to refer their paper for
 more details about the model.
 
@@ -1126,12 +1128,10 @@ consider an ensemble of twenty parsers trained using different random
 initialization.  To parse at test time, the transition probabilities of the twenty
 members of the ensemble are averaged.  The result achieves LAS of
 79.4, outperforming all three systems above (Table~\ref{tbl:parse-result}).
-However, ensembling 20 parsers also significantly slows down the parsing
-speed and leads to the slowest system in our comparison.
 
 \paragraph{Distillation.}  The shortcoming of the 20-parser ensemble is, of
 course, that it requires twenty times the runtime of a single greedy
-parser.  \newcite{kuncoro-16} proposed the distillation of 20
+parser, making it the slowest system in our comparison.  \newcite{kuncoro-16} proposed the distillation of 20
 greedy transition-based parser into a single \emph{graph-based}
 parser; they transformed the votes of the ensemble into a structured
 loss function.  However, as Kuncoro et al.~pointed out, 
