@@ -481,7 +481,7 @@ These statistics are obtained on 140 character-limited tweets. \label{tbl:non-sy
 		\depedge[edge unit distance=1em]{14}{13}{case}
 		\depedge[edge unit distance=0.55em]{8}{16}{conj}
 		\depedge[edge unit distance=1em]{16}{15}{cc}
-		\depedge[edge unit distance=0.37em]{16}{17}{obj}
+		\depedge[edge unit distance=1em]{16}{17}{obj}
 	\end{dependency}
 	\caption{An example tweet with informal but syntactic tokens.
 		This is a contrived example inspired by several tweets.}\label{fig:informal-toks}
@@ -958,11 +958,12 @@ Space is treated as an input but deterministically  assigned a special tag \$.
 	\end{tabular}
 	\caption{Tokenizer comparison on the \textsc{Tweebank v2} test set.}\label{tbl:tok-result}
 \end{table}
-\citet{wang-EtAl:2017:Long6} shows that combining Singlish\footnote{a dialect of English} treebank with UD\_English
-can achieve parsing performance on Singlish parsing.
+\citet{wang-EtAl:2017:Long6} shows that the parser trained 
+on the combination of UD\_English and English dialect (Singlish) treebank
+outperfrom the one only on the dialect treebank.
 We followed their work and trained our tokenizer on the training portion of
 \textsc{Tweebank v2} combined with the UD\_English training set
-and tested on the \textsc{Tweebank v2} test set. \yicomment{should mention that combination of corpora improves the results, otherwise we should answer why we didn't try training ONLY on Tweebank v2}
+and tested on the \textsc{Tweebank v2} test set. \yicomment{should mention that combination of corpora improves the results, otherwise we should answer why we didn't try training ONLY on Tweebank v2}\yjcomment{add discussion}
 We report $F_1$ scores, combining precision and recall for token identification. Table \ref{tbl:tok-result} shows the
 tokenization results, compared to  other available tokenizers. 
  Stanford CoreNLP \cite{manning-EtAl:2014:P14-5} and Twokenizer
@@ -1107,8 +1108,7 @@ each of our models and the compared ones.
 	\caption{Dependency parser comparison on \textsc{Tweebank v2} test set,
            with automatic POS tags. The ``Kt/s'' column shows
            the parsing speed evaluated by thousands of tokens
-           the model processed per second. For fair comparison, we limit the
-           number of CPUs used in \citet{dozat-qi-manning:2017:K17-3} experiments to 1.
+           the model processed per second.
             \label{tbl:parse-result}}
 \end{table}
 
