@@ -55,7 +55,7 @@
 We study the problem of analyzing tweets with
 universal dependencies \citep[UD;][]{NIVRE16.348}. We extend the UD guidelines to cover
 special constructions in tweets that affect tokenization,
-part-of-speech tagging, and dependencies. Using the extended guidelines, we create
+part-of-speech tagging, and labeled dependencies. Using the extended guidelines, we create
 a new tweet treebank ({\sc Tweebank v2}) that is four times larger than the (unlabeled) {\sc Tweebank
   v1} introduced by \citet{kong-EtAl:2014:EMNLP2014}. 
 We characterize the disagreements between our annotators
@@ -152,7 +152,7 @@ We also characterize the difficulties of creating such annotation.
 
 \item We introduce and evaluate a pipeline system to parse the raw tweet text into
 universal dependencies (\S\ref{sec:parsing}).  Experimental results show
-it performs better than a pipeline of the state-of-the-art alternatives.
+that it performs better than a pipeline of the state-of-the-art alternatives.
 
 \item We propose a new distillation
 method for training a greedy parser, leading to better performance
@@ -447,13 +447,13 @@ These statistics are obtained on 140 character-limited tweets. \label{tbl:non-sy
 		\depedge[edge unit distance=0.8em]{13}{14}{discourse}
 		\depedge[edge unit distance=0.8em]{13}{15}{punct}
 	\end{dependency}
-	\caption{An example tweet that contains non-syntactic tokens:
+	\caption{An example to illustrate non-syntactic tokens:
 		\textcolor{red}{sentiment emoticon},
 		\textcolor{orange}{retweet marker and its following at-mention},
 		\textcolor{gray}{topical hashtag},
 		\textcolor{blue}{referential URL}, and
 		\textcolor{cyan}{truncated word}.
-		This example tweet is a concatenation of three real tweets.
+		This is a concatenation of three real tweets.
 	}\label{fig:non-syn-toks}
 \end{figure*}
 
@@ -483,7 +483,7 @@ These statistics are obtained on 140 character-limited tweets. \label{tbl:non-sy
 		\depedge[edge unit distance=1em]{16}{15}{cc}
 		\depedge[edge unit distance=1em]{16}{17}{obj}
 	\end{dependency}
-	\caption{An example tweet with informal but syntactic tokens.
+	\caption{An example to illustrate informal but syntactic tokens.
 		This is a contrived example inspired by several tweets.}\label{fig:informal-toks}
 \end{figure*}
 
@@ -522,8 +522,8 @@ conventions%\yicomment{this applies to all non-syntactic tokens including punctu
 
 \begin{itemize}
 %\item For the at-mentions in retweet constructions, we attach them to their retweet markers. We will discuss our choice in the following paragraph;
-\item If a non-syntactic token is within a sentence that has a clear predicate, it will be attached to this predicate. Retweet construction is a special case and we will discuss our choice in the following paragraph;
-\item If the whole sentence is made of a sequence of non-syntactic tokens, we attach all these tokens to the first one;
+\item If a non-syntactic token is within a sentence that has a clear predicate, it will be attached to this predicate. Retweet construction is a special case and we will discuss our choice in the following paragraph.
+\item If the whole sentence is made of a sequence of non-syntactic tokens, we attach all these tokens to the first one.
 %\item In parataxis case, when it is difficult to decide which sentence or phrase x should belong to, we always attach x to the previous predicate of the paratactic clause or phrase;
 \item Non-syntactic tokens are mostly labeled as {\it discourse}, but
   URLs are always labeled as {\it list}, following the UD\_English dataset.% \yicomment{need to add punct for punctuations?}
@@ -607,7 +607,10 @@ us avoid confusion during annotation.
 \paragraph{Retweet construction.} Figure \ref{fig:non-syn-toks} shows
 an example of the retweet construction (\emph{RT @coldplay :}).  This
 might be treated as a verb phrase, with \emph{RT} as a verb and the
-at-mention as its object\yicomment{@coldplay seems not to be an object, could be some modifier like vocative, or some prepositional case (the tweets on/about coldplay)}\yjcomment{i am okey with current version}.
+at-mention as an argument \yicomment{@coldplay seems not to be an
+  object, could be some modifier like vocative, or some prepositional
+  case (the tweets on/about coldplay)}\yjcomment{i am okey with
+  current version} \nascomment{changed ``object'' to ``argument'' - better?}.
 % \yicomment{or might be treated as 2 non-syntactic tokens and a punctuation, which should all attach to the predicate of the following retweeted tweet.}
 %\yjcomment{i wouldn't like the readers to think in this direction.}.
   This solution would lead to an uninformative root
@@ -958,12 +961,13 @@ Space is treated as an input but deterministically  assigned a special tag \$.
 	\end{tabular}
 	\caption{Tokenizer comparison on the \textsc{Tweebank v2} test set.}\label{tbl:tok-result}
 \end{table}
-\citet{wang-EtAl:2017:Long6} shows that the parser trained 
+\citet{wang-EtAl:2017:Long6} show that the parser trained 
 on the combination of UD\_English and English dialect (Singlish) treebank
-outperfrom the one only on the dialect treebank.
-We followed their work and trained our tokenizer on the training portion of
+outperform the one only on the dialect treebank.  Preliminary results
+showed the same in our case \nascomment{added to address an open issue}, so 
+we follow their work and trained our tokenizer on the training portion of
 \textsc{Tweebank v2} combined with the UD\_English training set
-and tested on the \textsc{Tweebank v2} test set. \yicomment{should mention that combination of corpora improves the results, otherwise we should answer why we didn't try training ONLY on Tweebank v2}\yjcomment{add discussion}
+and tested on the \textsc{Tweebank v2} test set.% \yicomment{should mention that combination of corpora improves the results, otherwise we should answer why we didn't try training ONLY on Tweebank v2}\yjcomment{add discussion}
 We report $F_1$ scores, combining precision and recall for token identification. Table \ref{tbl:tok-result} shows the
 tokenization results, compared to  other available tokenizers. 
  Stanford CoreNLP \cite{manning-EtAl:2014:P14-5} and Twokenizer
@@ -994,8 +998,11 @@ Twitter, we compared several existing systems: the Stanford CoreNLP tagger,
 (both greedy and CRF variants), and 
 \citet{ma-hovy:2016:P16-1}'s neural network tagger 
 which achieves the state-of-the-art performance on PTB.
-\citet{gui-EtAl:2017:EMNLP20172} presented the state-of-the-art neural tagger for Twitter,
-but their code didn't work beyond PTB tag set. Thus, we didn't include their tagger in our comparison.\yjcomment{i put some words on \cite{gui-EtAl:2017:EMNLP20172} in case the reviewer challenge our neural/non-neural comparsion.}
+\citet{gui-EtAl:2017:EMNLP20172} presented a state-of-the-art neural tagger for Twitter,
+but their implementation works only with the PTB tagset
+\nascomment{check here -- seems surprising to me, hopefully that's
+  enough for reviewers}, so we exclude
+it. % Thus, we didn't include their tagger in our comparison.\yjcomment{i put some words on \cite{gui-EtAl:2017:EMNLP20172} in case the reviewer challenge our neural/non-neural comparsion.}
  %and also two bi-LSTM systems similar
 %to \citet{DBLP:journals/corr/HuangXY15} and \citet{lample-EtAl:2016:N16-1}, one using
 %word vectors and the other using word and character vectors (see Figure \ref{fig:pos-model}).
