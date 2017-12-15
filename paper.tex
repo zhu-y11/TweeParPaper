@@ -201,7 +201,7 @@ and by exigency, some of their annotation conventions included:
 \begin{itemize}
 \item Allowing an annotator to exclude tokens from the dependency
   tree.  A clear criterion for exclusion was not given, but many
-  tokens were excluded because they were deemed ``non-syntactic.'' \yicomment{including some Twitter specific tokens, which we will refine the definition in Section 2.3 and 2.4?}
+  tokens were excluded because they were deemed ``non-syntactic.''% \yicomment{including some Twitter specific tokens, which we will refine the definition in Section 2.3 and 2.4?}
 \item Allowing an annotator to merge a multiword expression into a
   single node in the dependency tree, with no internal structure.
   Annotators were allowed to take the same step with noun phrases.
@@ -489,8 +489,7 @@ These statistics are obtained on 140 character-limited tweets. \label{tbl:non-sy
 
 The major characteristic that distinguishes tweets from standard texts is that
 a large proportion of tokens don't carry any syntactic function. 
-Apart from conventional non-syntactic tokens appearing in both types of texts, such as punctuations and exclamations,
-in our annotation, there are still five types of non-syntactic tokens tweets have\yicomment{need to say it explicitly that here we only refer to Twitter/web specific tokens, not including exclamations or punctuations or other stuffs. Or we can say punctuations and exclamations are canonically non-syntacitc}: 
+In our annotation, there are five types of non-syntactic tokens commonly seen in tweets: %\yicomment{need to say it explicitly that here we only refer to Twitter/web specific tokens, not including exclamations or punctuations or other stuffs. Or we can say punctuations and exclamations are canonically non-syntacitc}: 
 sentiment emoticons, retweet markers and their following at-mentions, topical hashtags, referential URLs, and
 truncated words.\footnote{The tweets we analyze have at most 140
   characters. Although Twitter has doubled the tweet length limit to
@@ -515,7 +514,8 @@ token as non-syntactic must be context-dependent.
 
 Inspired by the way UD deals with \emph{punctuation} (which is
 canonically non-syntactic), we adopt the following
-conventions\yicomment{this applies to all non-syntactic tokens including punctuations and excalamations}:
+conventions%\yicomment{this applies to all non-syntactic tokens including punctuations and excalamations}
+:
 %\yicomment{shall we mention how we segment sentences? Seems relevant
 %here}\yjcomment{i don't want to touch sentence segmentation, it will
 %makes the paper more messy.}\nascomment{agree with Yijia}
@@ -526,7 +526,7 @@ conventions\yicomment{this applies to all non-syntactic tokens including punctua
 \item If the whole sentence is made of a sequence of non-syntactic tokens, we attach all these tokens to the first one;
 %\item In parataxis case, when it is difficult to decide which sentence or phrase x should belong to, we always attach x to the previous predicate of the paratactic clause or phrase;
 \item Non-syntactic tokens are mostly labeled as {\it discourse}, but
-  URLs are always labeled as {\it list}, following the UD\_English dataset. \yicomment{need to add punct for punctuations?}
+  URLs are always labeled as {\it list}, following the UD\_English dataset.% \yicomment{need to add punct for punctuations?}
 %\\ \yicomment{For retweet at-mention case, we attach the retweet at-mentions to the RT sign, so that the retweet action and the people whose tweet is being retweeted could be connected.\footnote{We can also follow the first convention to attach the retweet at-mention to its predicate, but we think it is better for downstream tasks.}}
 \end{itemize}
 
@@ -607,7 +607,7 @@ us avoid confusion during annotation.
 \paragraph{Retweet construction.} Figure \ref{fig:non-syn-toks} shows
 an example of the retweet construction (\emph{RT @coldplay :}).  This
 might be treated as a verb phrase, with \emph{RT} as a verb and the
-at-mention as its object\yicomment{@coldplay seems not to be an object, could be some modifier like vocative, or some prepositional case (the tweets on/about coldplay)}.
+at-mention as its object\yicomment{@coldplay seems not to be an object, could be some modifier like vocative, or some prepositional case (the tweets on/about coldplay)}\yjcomment{i am okey with current version}.
 % \yicomment{or might be treated as 2 non-syntactic tokens and a punctuation, which should all attach to the predicate of the following retweeted tweet.}
 %\yjcomment{i wouldn't like the readers to think in this direction.}.
   This solution would lead to an uninformative root
@@ -649,7 +649,7 @@ We
 treat these at-mentions as vocative expressions, labeling them with
 POS tag
 \emph{proper noun} (\texttt{PROPN}) and attaching them to the
-following predicate\yicomment{not necessarily following, better to be `the predicate of the sentence it belongs to'} with the label \emph{vocative} as in UD guidelines (see Figure \ref{fig:informal-toks} for an example).
+main predicate of the sentence it is within with the label \emph{vocative} as in UD guidelines (see Figure \ref{fig:informal-toks} for an example).\yjcomment{as Yi suggested, change ``following predicate'' to ``main ... within''}
 
 % \paragraph{At-mention.} At-mention in the beginning of a tweet is the format of indicating the `reply' action.
 % In this paper, we treat the at-mentions as vocative expressions for their connections with the traditional vocative words, rather than treat them as non-syntactic metadata, which increase the complexity for analyzing a tweet.
@@ -743,7 +743,7 @@ The second row shows the number of new tweets compared to
 \end{table}
 Our annotation process was conducted in two stages.
 In the first stage, 18 researchers worked on the {\sc Tweebank v1}
-proportion\yicomment{and the additional 210 tweets} and created the initial annotations in one day.
+proportion and the additional 210 tweets and created the initial annotations in one day.
 Before annotating, they were given a tutorial overview of the general UD
 annotation conventions and our guidelines specifically for annotating tweets.
 Both the guidelines and annotations
@@ -958,10 +958,11 @@ Space is treated as an input but deterministically  assigned a special tag \$.
 	\end{tabular}
 	\caption{Tokenizer comparison on the \textsc{Tweebank v2} test set.}\label{tbl:tok-result}
 \end{table}
-
-We trained our tokenizer on the training portion of
+\citet{wang-EtAl:2017:Long6} shows that combining Singlish\footnote{a dialect of English} treebank with UD\_English
+can achieve parsing performance on Singlish parsing.
+We followed their work and trained our tokenizer on the training portion of
 \textsc{Tweebank v2} combined with the UD\_English training set
-and tested on the \textsc{Tweebank v2} test set. 
+and tested on the \textsc{Tweebank v2} test set. \yicomment{should mention that combination of corpora improves the results, otherwise we should answer why we didn't try training ONLY on Tweebank v2}
 We report $F_1$ scores, combining precision and recall for token identification. Table \ref{tbl:tok-result} shows the
 tokenization results, compared to  other available tokenizers. 
  Stanford CoreNLP \cite{manning-EtAl:2014:P14-5} and Twokenizer
@@ -998,7 +999,7 @@ but their code didn't work beyond PTB tag set. Thus, we didn't include their tag
 %to \citet{DBLP:journals/corr/HuangXY15} and \citet{lample-EtAl:2016:N16-1}, one using
 %word vectors and the other using word and character vectors (see Figure \ref{fig:pos-model}).
 All compared systems were re-trained on the combination of the UD\_English and 
-\textsc{Tweebank v2} training sets\yicomment{should mention that combination of corpora improves the results, otherwise we should answer why we didn't try training ONLY on Tweebank v2}. We use Twitter-specific GloVe embeddings released by
+\textsc{Tweebank v2} training sets. We use Twitter-specific GloVe embeddings released by
 \citet{pennington-socher-manning:2014:EMNLP2014} in all neural taggers
 and parsers.\footnote{\url{http://nlp.stanford.edu/data/glove.twitter.27B.zip}}
 
@@ -1081,7 +1082,8 @@ pointed out that neural network training is
 nondeterministic and depends on the seed for the random
 number generator.
 Our preliminary experiments confirm this finding, with a gap of 1 LAS on development data
-between the best (75.8)\yicomment{is this for char stacklstm parser? in table 6 it shows the same number. If it's average, then number in tab 6 should $< 75.8$?} and worst (74.8) runs. To control for this
+between the best (75.8)
+ and worst (74.8) runs. To control for this
 effect, we report the average of five differently-seeded runs, for
 each of our models and the compared ones.
 
@@ -1102,7 +1104,7 @@ each of our models and the compared ones.
 		Distillation w/ exploration & 82.5 & 78.4 & 2.3 \\
 		\hline
 	\end{tabular}
-	\caption{Dependency parser comparison on \textsc{Tweebank v2},
+	\caption{Dependency parser comparison on \textsc{Tweebank v2} test set,
            with automatic POS tags. The ``Kt/s'' column shows
            the parsing speed evaluated by thousands of tokens
            the model processed per second. For fair comparison, we limit the
