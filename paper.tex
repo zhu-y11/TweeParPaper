@@ -21,7 +21,7 @@
 \usepackage{arydshln}
 \newcommand\BibTeX{B{\sc ib}\TeX}
 \DeclareMathOperator*{\argmin}{argmin}
-
+\def\aclpaperid{214}
 %%%%%%%
 \usepackage{graphicx}
 \newcommand{\heart}{\ensuremath\heartsuit}
@@ -256,8 +256,7 @@ which adopt the universal POS tagset of \newcite{PETROV12.274}.
 %We follow the UD V2 morphology guideline and use the Universal POS tags~ to tag the tweet tokens. For twitter specific linguistic phenomena, we have set different strategies and try to align with the UD conventions and UD\textunderscore English as close as possible.\footnote{\url{https://github.com/UniversalDependencies/UD\_English}}
 In some cases,  non-corresponding tag conflicts arose between the UD English 
 treebank conventions \cite[UD\_English;][]{Marneffe2014UniversalSD}\footnote{\url{https://github.com/UniversalDependencies/UD_English}}
-and the conventions of \newcite{gimpel-EtAl:2011:ACL-HLT2011} and
-\newcite{owoputi-EtAl:2013:NAACL-HLT}.  %\yicomment{The conflicts
+and the conventions of \newcite{gimpel-EtAl:2011:ACL-HLT2011}.  %\yicomment{The conflicts
                                 %should refer to a {\bf
                                 %noncorresponding tag} from that of
                                 %gimpel to UDEnglish, cuz they dont
@@ -607,10 +606,7 @@ us avoid confusion during annotation.
 \paragraph{Retweet construction.} Figure \ref{fig:non-syn-toks} shows
 an example of the retweet construction (\emph{RT @coldplay :}).  This
 might be treated as a verb phrase, with \emph{RT} as a verb and the
-at-mention as an argument \yicomment{@coldplay seems not to be an
-  object, could be some modifier like vocative, or some prepositional
-  case (the tweets on/about coldplay)}\yjcomment{i am okey with
-  current version} \nascomment{changed ``object'' to ``argument'' - better?}.
+at-mention as an argument.
 % \yicomment{or might be treated as 2 non-syntactic tokens and a punctuation, which should all attach to the predicate of the following retweeted tweet.}
 %\yjcomment{i wouldn't like the readers to think in this direction.}.
   This solution would lead to an uninformative root
@@ -630,7 +626,7 @@ and attaching \emph{RT} to the predicate of the following sentence.
 
 
 \paragraph{Constructions handled by UD.}  A number of constructions
-that are especially common in tweets are well handled by UD
+that are especially common in tweets are handled by UD
 conventions: ellipsis, irregular word orders, and paratactic phrases
 and sentences 
 not explicitly delineated by punctuation.
@@ -652,7 +648,7 @@ We
 treat these at-mentions as vocative expressions, labeling them with
 POS tag
 \emph{proper noun} (\texttt{PROPN}) and attaching them to the
-main predicate of the sentence it is within with the label \emph{vocative} as in UD guidelines (see Figure \ref{fig:informal-toks} for an example).\yjcomment{as Yi suggested, change ``following predicate'' to ``main ... within''}
+main predicate of the sentence it is within with the label \emph{vocative} as in UD guidelines (see Figure \ref{fig:informal-toks} for an example).
 
 % \paragraph{At-mention.} At-mention in the beginning of a tweet is the format of indicating the `reply' action.
 % In this paper, we treat the at-mentions as vocative expressions for their connections with the traditional vocative words, rather than treat them as non-syntactic metadata, which increase the complexity for analyzing a tweet.
@@ -718,7 +714,7 @@ additional 210 tweets sampled from the POS-tagged dataset of
 from the Twitter stream from February 2016 to July 2016.\footnote{Data downloaded from \url{https://archive.org/}.}
 The latter data source consists of 147.4M English tweets after being
 filtered by the {\it lang} attribute in the tweet JSON and {\it
-  langid.py} toolkit.\footnote{\url{https://github.com/saffsd/langid.py}} 
+  langid.py}.\footnote{\url{https://github.com/saffsd/langid.py}} 
 
 %The tweet source of Tweebank V2 consists of three parts. 
 %The first is the original Tweebank created by~\cite{kong-EtAl:2014:EMNLP2014}, denoted as Tweebank V1.  There are 639 unique tweets in the training data of Tweebank V1, and 201 unique tweets in the data set. All of the unique tweets in Tweebank V1 are included in Tweebank V2.
@@ -964,7 +960,7 @@ Space is treated as an input but deterministically  assigned a special tag \$.
 \citet{wang-EtAl:2017:Long6} show that the parser trained 
 on the combination of UD\_English and English dialect (Singlish) treebank
 outperform the one only on the dialect treebank.  Preliminary results
-showed the same in our case \nascomment{added to address an open issue}, so 
+showed the same in our case, so 
 we follow their work and trained our tokenizer on the training portion of
 \textsc{Tweebank v2} combined with the UD\_English training set
 and tested on the \textsc{Tweebank v2} test set.% \yicomment{should mention that combination of corpora improves the results, otherwise we should answer why we didn't try training ONLY on Tweebank v2}\yjcomment{add discussion}
@@ -999,9 +995,7 @@ Twitter, we compared several existing systems: the Stanford CoreNLP tagger,
 \citet{ma-hovy:2016:P16-1}'s neural network tagger 
 which achieves the state-of-the-art performance on PTB.
 \citet{gui-EtAl:2017:EMNLP20172} presented a state-of-the-art neural tagger for Twitter,
-but their implementation works only with the PTB tagset
-\nascomment{check here -- seems surprising to me, hopefully that's
-  enough for reviewers}, so we exclude
+but their implementation works only with the PTB tagset, so we exclude
 it. % Thus, we didn't include their tagger in our comparison.\yjcomment{i put some words on \cite{gui-EtAl:2017:EMNLP20172} in case the reviewer challenge our neural/non-neural comparsion.}
  %and also two bi-LSTM systems similar
 %to \citet{DBLP:journals/corr/HuangXY15} and \citet{lample-EtAl:2016:N16-1}, one using
@@ -1131,7 +1125,7 @@ but includes character-based word representation and uses the biaffine classifie
 to predict if an attachment exists between two words.
 Both of the compared systems require superlinear runtime due to graph-based parsing. 
 They are re-trained on the same data as our
-system. \yjcomment{i briefly describ the compared systems.}
+system.
 Our baseline lags behind by nearly two LAS
 points but runs faster than both of them.
 
@@ -1279,7 +1273,7 @@ performance drops by more than four points.
 We study the problem of parsing tweets into universal dependencies.
 We adapt the UD guidelines to cover 
 special constructions in tweets and create
-the {\sc Tweebank v2}, which has 3,550 tweets  and 55,607 tokens. We characterize the disagreements
+the {\sc Tweebank v2}, which has 55,607 tokens. We characterize the disagreements
 among our annotators and argue that inherent ambiguity in this genre
 makes
 consistent annotation a challenge.  Using this new treebank,
