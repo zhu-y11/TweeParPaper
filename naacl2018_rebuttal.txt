@@ -1,0 +1,47 @@
+We thank all the reviewers for your comments.
+
+To the first reviewer:
+
+- "There appear to be two conventions in UD for handling cases like 'gonna' … I would like to see some argumentation for why the authors adapt the first convention."
+
+If we don't consider the normalization, the second convention can be recovered from the first one using the 'SpaceAfter' feature in the last column of our annotation. And it's arguable that normalization on social media data is essential according to Esenstain (2013). Thus, we preserve the original tweet content as much as possible while respecting the UD guideline. What's more, adopting the first convention makes it easier for us to train our parser from the combination of our annotation and the UD_English treebank since they are of the same convention.
+
+- "I would like to see some discussion of why normalization/lemmatization is ignored and why the authors think it does not hurt POS tagging and parsing performance."
+
+As mentioned before, we basically follow the spirit of Essenstain (2013) in treating normalization on social media content. Since he pointed out normalization for social media data is vaguely defined and often impossible without changing the meaning, we don’t include normalization in our annotation. We believe it's an open question and needs more careful study. We also believe that a clean form of the social media content benefits downstream POS and parsing, but reaching this level of cleanness is non-trivial for social media content. So we didn't consider them in our paper.
+
+To the second reviewer:
+
+- "yet do not offer annotation of the more fine­-grained schema from Gimpel et al. (2011)"
+
+We use the second POS column to retain the Gimpel's POS annotation on the overlapped part.
+
+- "I wish authors submitted a sample of 10 tweets as supplementary material"
+
+We will release our data and the reader of this paper can refer to our release for sanity check and future development.
+
+- "authors did not specifically state efforts of tweet anonymization (non­celebrity handles, urls) but the examples exhibit them."
+
+We will make the anonymization effort more clear in future revision.
+
+- "(7) Table 5 and related discussion: is this the greedy or CRF setup?"
+
+It's the CRF setup. We will make it more clear in future revision.
+
+- "how exactly are the F1/accuracy scores computed? Per token? Token boundary?"
+
+It's computed on token.
+
+- "While training the POS tagger on GloVe embeddings, was there a problem with OOV words?"
+
+The compared neural POS taggers from Ma and Hovy (2016) uses a character-CNN as an additional word representation, which can mitigate the OOV problems.
+
+To the third reviewer:
+
+- "In relation to "training with exploration", it would have been relevant to cite the original papers on dynamic oracles (Goldberg and Nivre, 2012, 2013) as well as the paper by Kiperwasser and Goldberg (2016)"
+
+We would cite the dynamic oracle work in our future revision.
+
+- "It is worth pointing out that UD does not use the tag set of Petrov et al. (2012) but a revised and extended version of it (with 17 tags instead of 12)."
+
+We meant the 17 tags set and we will revise our wording in future revision.
