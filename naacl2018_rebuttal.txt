@@ -45,3 +45,23 @@ We would cite the dynamic oracle work in our future revision.
 - "It is worth pointing out that UD does not use the tag set of Petrov et al. (2012) but a revised and extended version of it (with 17 tags instead of 12)."
 
 We meant the 17 tags set and we will revise our wording in future revision.
+
+- "The claim that "UD tokenisation treats each syntactic word as a token" is confused"
+
+[To be completed by Yi]
+
+- "Using the relation 'discourse' for 'non-syntactic tokens' is highly dubious. it seems better to use the generic relation 'dep'."
+
+The choice of relation on the non-syntactic tokens is arguable since UD doesn't have specified guidelines for this. Our choice of 'discourse' was inspired by the observation that emoticon is annotated as 'discourse' in UD_English. However, non-syntactic tokens can be easily recovered from our annotation and changing it to other relation in the future development is not difficult.
+
+- "how is sentence segmentation performed? Is every tweet regarded as exactly one sentence?"
+
+We treat every tweet as exactly one sentence in both our annotation and parser but allow more than one root.
+
+- "Are you using a static oracle in all experiments except the one that explicitly mentions exploration? Is it fair to use a dynamic oracle only for the parser with distillation? "
+
+Yes. We use static oracle in our experiment. It's a good suggestion and we would add dynamic oracle baseline in our future revision. Our distillation without exploration can be treated as a fair comparison with the static oracle baseline and our distillation with exploration further improve the performance.
+
+- "There seems to be an apostrophe missing in 'its is tokenised as it and s when is is a copula'."
+
+'its' is an example of the informal nature of tweets that author omit the apostrophe.
