@@ -1,5 +1,6 @@
 We thank all the reviewers for your comments.
 
+
 To the first reviewer:
 
 - "There appear to be two conventions in UD for handling cases like 'gonna' ... The latter seems more powerful and introduce linguistically motivated/normalized tokens. I would like to see some argumentation for why the authors adapt the first convention."
@@ -14,11 +15,12 @@ Without the normalization process, the second convention can be converted from t
 
 As mentioned before, we basically follow the spirit of Eisenstein (2013) in treating normalization on social media content. Since he pointed out normalization for social media data is vaguely defined and often impossible without changing the meaning, we don't include normalization in our annotation. We believe it's an open question and needs more careful study. We also believe that a clean form of the social media content benefits downstream POS and parsing, but reaching this level of cleanness is non-trivial for social media content for both the annotation and model. So we didn't consider them in our paper.
 
+
 To the second reviewer:
 
 - "yet do not offer annotation of the more fine­-grained schema from Gimpel et al. (2011)"
 
-We would use the second POS column to retain the Gimpel's POS annotation on the overlapped part.
+We will use the second POS column to retain the Gimpel's POS annotation on the overlapped part.
 
 - "I wish authors submitted a sample of 10 tweets as supplementary material"
 
@@ -42,17 +44,18 @@ It's computed on token.
 
 - "interannotator agreement: is this figure computed over all annotators? More details are needed."
 
-We have multiple annotators, these are two major (representative) and plausible annotations.
+We have multiple annotators, these are two major, representative and plausible annotations.
 
 - "While training the POS tagger on GloVe embeddings, was there a problem with OOV words?"
 
 The compared neural POS taggers from Ma and Hovy (2016) uses a character-CNN as an additional word representation, which can mitigate the OOV problems.
 
+
 To the third reviewer:
 
 - "In relation to "training with exploration", it would have been relevant to cite the original papers on dynamic oracles (Goldberg and Nivre, 2012, 2013) as well as the paper by Kiperwasser and Goldberg (2016)"
 
-We would cite the dynamic oracle work in our future revision.
+We will cite the dynamic oracle work in our future revision.
 
 - "It is worth pointing out that UD does not use the tag set of Petrov et al. (2012) but a revised and extended version of it (with 17 tags instead of 12)."
 
@@ -61,15 +64,15 @@ We meant the 17 tags set and we will revise our wording in future revision.
 - "The claim that "UD tokenisation treats each syntactic word as a token" is confused"
 
 We do need to revise the statements as we are wrong about the subject of the sentence (UD) and not rigorous enough.
-This is actually our tokenization principle, that we treat each syntactic word as a token. We try to tokenize multiword tokens, except acronyms, into syntactic words (gonna) and treat them as new tokens. It is the same as UD conventions. However, we use goeswith relation to resolve multi-token words instead of combining them back as one option suggested by UD.
+It is actually our tokenization principle, that we treat each syntactic word as a token. We try to tokenize multiword tokens, except acronyms, into syntactic words (gonna to gon na) and treat them as new tokens. It is the same as UD conventions. However, we use "goeswith" relation to resolve multi-token words instead of combining them back as one option suggested by UD.
 
 - "Tagging a title with an internal syntactic structure (like "Fix you") as a proper noun is a clear violation of UD guidelines."
 
-During our annotation, some of our annotators was referring to the UD_English for cases that they are not sure and the UD_English presents some cases that violate the guidelines for title (see http://bionlp-www.utu.fi/dep_search/query?search=Sacred&db=UD_English-v2&case_sensitive=True&hits_per_page=50). This kind of disagreements was resolved in the final version. We will clarify this in the draft in our future revision.
+During our annotation, some of our annotators was referring to the UD_English for cases of titles they are not sure about, some of which are exceptions, where nouns and proper nouns with adjectives are all annotated as PROPN for POS tag, (see http://bionlp-www.utu.fi/dep_search/query?search=Sacred&db=UD_English-v2&case_sensitive=True&hits_per_page=50). This kind of disagreements was resolved in the final version. We will clarify this in the draft in our future revision.
 
 - "Using the relation 'discourse' for 'non-syntactic tokens' is highly dubious. it seems better to use the generic relation 'dep'."
 
-The choice of relation on the non-syntactic tokens is arguable since UD doesn't have specified guidelines for this. Our choice of 'discourse' was inspired by the observation that emoticon is annotated as 'discourse' in UD_English. However, non-syntactic tokens can be easily recovered from our annotation and changing it to other relation in the future development is not difficult. Our attempt to categorization of the relations to the non-syntactic tokens are just the first attempts and we believe it could be further refined with more and more researcher involved in.
+The choice of relation on the non-syntactic tokens is arguable since UD doesn't have specified guidelines for this. Our choice of 'discourse' was inspired by the observation that emoticons and interjections are annotated as 'discourse' in UD_English. However, non-syntactic tokens can be easily recovered from our annotation and changing their relations to others in the future development is not difficult. Our decision to categorize non-syntactic tokens into the 'discourse' label is just the first attempt and we believe it could be further refined with more and more researchers involved in.
 
 - "how is sentence segmentation performed? Is every tweet regarded as exactly one sentence?"
 
