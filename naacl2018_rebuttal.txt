@@ -2,21 +2,23 @@ We thank all the reviewers for your comments.
 
 To the first reviewer:
 
-- "There appear to be two conventions in UD for handling cases like 'gonna' … I would like to see some argumentation for why the authors adapt the first convention."
+- "There appear to be two conventions in UD for handling cases like 'gonna' ... The latter seems more powerful and introduce linguistically motivated/normalized tokens. I would like to see some argumentation for why the authors adapt the first convention."
 
-If we don't consider the normalization,/*YI did not know what you mean by 'if we don't consider normalization'*/ the second convention can be recovered from the first one using the 'SpaceAfter' feature in the last column of our annotation./*YI maybe show a line as example?*/ And it's arguable that normalization on social media data is essential according to Esenstain (2013) /*YI (could be problematic if do normalization)*/. Thus, we preserve the original tweet content as much as possible while respecting the UD guideline. What's more, adopting the first convention makes it easier for us to train our parser from the combination of our annotation and the UD_English treebank since they are of the same convention.
-/*YI another motivation is UD_English consists of web domain text, we think it is reasonable/compatible to follow UD's convention dealing with the web domain texts.*/
-
+Without the normalization process, the second convention can be converted from the first one using the 'SpaceAfter' feature in the last column of our annotation (see the following CoNLL-X formatted snippet for example). And it's arguable that normalization on social media data is essential according to Eisenstein (2013). Thus, we preserve the original tweet content as much as possible while respecting the UD guideline. What's more, adopting the first convention makes it easier for us to train our parser from the combination of our annotation and the UD_English treebank (We use UD_English thanks to its relatively large scale and web domain) since they are of the same convention.
+...
+5 gon _ VERB _ _ 3 parataxis _ SpaceAfter=No
+6 na _ PART _ _ 7 mark _
+...
 
 - "I would like to see some discussion of why normalization/lemmatization is ignored and why the authors think it does not hurt POS tagging and parsing performance."
 
-As mentioned before, we basically follow the spirit of Essenstain (2013) in treating normalization on social media content. Since he pointed out normalization for social media data is vaguely defined and often impossible without changing the meaning, we don’t include normalization in our annotation. We believe it's an open question and needs more careful study./*YI maybe also follow UD_English normalization convention? need to check*/ We also believe that a clean form of the social media content benefits downstream POS and parsing, but reaching this level of cleanness is non-trivial for social media content./*YI for both annotation and models*/ So we didn't consider them in our paper.
+As mentioned before, we basically follow the spirit of Eisenstein (2013) in treating normalization on social media content. Since he pointed out normalization for social media data is vaguely defined and often impossible without changing the meaning, we don't include normalization in our annotation. We believe it's an open question and needs more careful study. We also believe that a clean form of the social media content benefits downstream POS and parsing, but reaching this level of cleanness is non-trivial for social media content for both the annotation and model. So we didn't consider them in our paper.
 
 To the second reviewer:
 
 - "yet do not offer annotation of the more fine­-grained schema from Gimpel et al. (2011)"
 
-We use the second POS column to retain the Gimpel's POS annotation on the overlapped part. /*YI Did we? or say we will include POS tags in the second col of POS. More compatability issue. Gimpel's schema is great, but difficult to generalize across domain/language within UD framework. For example, we also use UD_English as training data, which would be very difficult to incorporate with if we adopt Gimpel's POS*/
+We would use the second POS column to retain the Gimpel's POS annotation on the overlapped part.
 
 - "I wish authors submitted a sample of 10 tweets as supplementary material"
 
@@ -24,11 +26,11 @@ We will release our data and the reader of this paper can refer to our release f
 
 - "Telling from 3 examples, 2 of which are artificial and one whose POS tagging isn't shown, is not enough for a sanity check of annotation and scheme worth."
 
-/*YI we will add the POS to the example in the paper.*/
+We will add the POS to the example in the paper.
 
 - "authors did not specifically state efforts of tweet anonymization (non­celebrity handles, urls) but the examples exhibit them."
 
-We will make the anonymization effort clearer in future revision./*YI Ask Noah*/
+We will make the anonymization effort clearer in future revision.
 
 - "(7) Table 5 and related discussion: is this the greedy or CRF setup?"
 
@@ -40,7 +42,7 @@ It's computed on token.
 
 - "interannotator agreement: is this figure computed over all annotators? More details are needed."
 
-We have multiple annotators, these are two major(representative) and plausible annotations.
+We have multiple annotators, these are two major (representative) and plausible annotations.
 
 - "While training the POS tagger on GloVe embeddings, was there a problem with OOV words?"
 
@@ -58,45 +60,20 @@ We meant the 17 tags set and we will revise our wording in future revision.
 
 - "The claim that "UD tokenisation treats each syntactic word as a token" is confused"
 
-We do need to revise the statements as we are wrong about the subject of the sentence (UD) and not rigorous enough. 
-This is actually our tokenization principle, that we treat each syntactic word as a token. We try to tokenize multiword tokens, except acronyms, into syntactic words (gonna) and treat them as new tokens. It is the same as UD conventions. However, we use goeswith relation to resolve multi-token words instead of combining them back as one option suggested by UD. 
+We do need to revise the statements as we are wrong about the subject of the sentence (UD) and not rigorous enough.
+This is actually our tokenization principle, that we treat each syntactic word as a token. We try to tokenize multiword tokens, except acronyms, into syntactic words (gonna) and treat them as new tokens. It is the same as UD conventions. However, we use goeswith relation to resolve multi-token words instead of combining them back as one option suggested by UD.
 
 - "Tagging a title with an internal syntactic structure (like "Fix you") as a proper noun is a clear violation of UD guidelines."
 
-(From UD_English train example)
-20	author	author	NOUN	NN	Number=Sing	8	conj	8:conj	_
-21	of	of	ADP	IN	_	24	case	24:case	_
-22	"	"	PUNCT	``	_	24	punct	24:punct	SpaceAfter=No
-23	Sacred	Sacred	PROPN	NNP	Number=Sing	24	compound	24:compound	_
-24	Space	Space	PROPN	NNP	Number=Sing	20	nmod	20:nmod	_
-25	and	and	CCONJ	CC	_	27	cc	27:cc	_
-26	Holy	Holy	PROPN	NNP	Number=Sing	27	compound	27:compound	_
-27	War	War	PROPN	NNP	Number=Sing	24	conj	24:conj	SpaceAfter=No
+During our annotation, some of our annotators was referring to the UD_English for cases that they are not sure and the UD_English presents some cases that violate the guidelines for title (see http://bionlp-www.utu.fi/dep_search/query?search=Sacred&db=UD_English-v2&case_sensitive=True&hits_per_page=50). This kind of disagreements was resolved in the final version. We will clarify this in the draft in our future revision.
 
-18	the	the	DET	DT	Definite=Def|PronType=Art	19	det	19:det	_
-19	book	book	NOUN	NN	Number=Sing	16	obl	16:obl	_
-20	Disposable	Disposable	PROPN	NNP	Number=Sing	21	compound	21:compound	_
-21	Patriot	Patriot	PROPN	NNP	Number=Sing	19	appos	19:appos	SpaceAfter=No
-
-2	the	the	DET	DT	Definite=Def|PronType=Art	3	det	3:det	_
-3	Beatles	Beatles	PROPN	NNPS	Number=Plur	5	nmod:poss	5:nmod:poss	SpaceAfter=No
-4	'	'	PART	POS	_	3	case	3:case	_
-5	song	song	NOUN	NN	Number=Sing	11	obl	11:obl	_
-6	"	"	PUNCT	``	_	7	punct	7:punct	SpaceAfter=No
-7	Get	get	VERB	VB	VerbForm=Inf	5	appos	5:appos	_
-8	Back	back	ADV	RB	_	7	advmod	7:advmod	SpaceAfter=No
-9	"	"	PUNCT	''	_	7	punct	7:punct	_
-
-From most UD_English examples about titles, we are misled by the proper noun with adjective combinations where UD annotates the adjective as PROPN. However, after double checking POS PROPN, we realized that it violated the UD annotation. We will correct it in both our paper and the data repo.
- 
 - "Using the relation 'discourse' for 'non-syntactic tokens' is highly dubious. it seems better to use the generic relation 'dep'."
 
-The choice of relation on the non-syntactic tokens is arguable since UD doesn't have specified guidelines for this./*For example, we did write to UD_English asking them the explanation for URLs as list relation, but still did not get answer.*/ Our choice of 'discourse' was inspired by the observation that emoticon is annotated as 'discourse' in UD_English./*YI And tokens like username and hashtags, as non-syntactic tokens, do look like emoticons providing extra information to tweets.*/ However, non-syntactic tokens can be easily recovered from our annotation and changing it to other relation in the future development is not difficult./*Our attempt to categorization of the relations to the non-syntactic tokens are just the first attemps and we believe it could be further refined with more and more researcher involved in.*/ 
+The choice of relation on the non-syntactic tokens is arguable since UD doesn't have specified guidelines for this. Our choice of 'discourse' was inspired by the observation that emoticon is annotated as 'discourse' in UD_English. However, non-syntactic tokens can be easily recovered from our annotation and changing it to other relation in the future development is not difficult. Our attempt to categorization of the relations to the non-syntactic tokens are just the first attempts and we believe it could be further refined with more and more researcher involved in.
 
 - "how is sentence segmentation performed? Is every tweet regarded as exactly one sentence?"
 
-We treat every tweet as exactly one sentence in both our annotation and parser but allow more than one root.
-/*YI Isn't is one tweet have many sentences with their own roots, and all roots connects to a single dummy root??*/
+We segment sentences in one tweet with punctuation and retweet symbol (RT). We will clarify this in the future revision.
 
 - "Are you using a static oracle in all experiments except the one that explicitly mentions exploration? Is it fair to use a dynamic oracle only for the parser with distillation? "
 
@@ -104,4 +81,4 @@ Yes. We use static oracle in our experiment. It's a good suggestion and we would
 
 - "There seems to be an apostrophe missing in 'its is tokenised as it and s when is is a copula'."
 
-'its' is an example of the informal nature of tweets that author omit the apostrophe.
+'its' is an example of the informal nature of tweets that the author omits the apostrophe.
