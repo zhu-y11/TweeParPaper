@@ -1,20 +1,21 @@
 We thank all the reviewers for your comments.
 
-
 To the first reviewer:
 
 - "There appear to be two conventions in UD for handling cases like 'gonna' ... The latter seems more powerful and introduce linguistically motivated/normalized tokens. I would like to see some argumentation for why the authors adapt the first convention."
 
-Without the normalization process, the second convention can be converted from the first one using the 'SpaceAfter' feature in the last column of our annotation (see the following CoNLL-X formatted snippet for example). And it's arguable that normalization on social media data is essential according to Eisenstein (2013). Thus, we preserve the original tweet content as much as possible while respecting the UD guideline. What's more, adopting the first convention makes it easier for us to train our parser from the combination of our annotation and the UD_English treebank (We use UD_English thanks to its relatively large scale and web domain) since they are of the same convention.
+Without the normalization process, the second convention can be converted from the first one using the 'SpaceAfter' feature in the last column of our annotation (see the following CoNLL-X formatted snippet for example).
+
 ...
 5 gon _ VERB _ _ 3 parataxis _ SpaceAfter=No
 6 na _ PART _ _ 7 mark _
 ...
 
+And it's arguable that normalization of social media data is essential according to Eisenstein (2013). Thus, we preserve the original tweet content as much as possible while respecting the UD guidelines. What's more, adopting the first convention makes it easier for us to train our parser from the combination of our annotation and the UD_English treebank, since they follow the same conventions. (We use UD_English thanks to its relatively large scale and web domain.)
+
 - "I would like to see some discussion of why normalization/lemmatization is ignored and why the authors think it does not hurt POS tagging and parsing performance."
 
-As mentioned before, we basically follow the spirit of Eisenstein (2013) in treating normalization on social media content. Since he pointed out normalization for social media data is vaguely defined and often impossible without changing the meaning, we don't include normalization in our annotation. We believe it's an open question and needs more careful study. We also believe that a clean form of the social media content benefits downstream POS and parsing, but reaching this level of cleanness is non-trivial for social media content for both the annotation and model. So we didn't consider them in our paper.
-
+As mentioned before, we basically follow the spirit of Eisenstein (2013) in treating normalization of social media content. Since he pointed out that normalization for social media data is vaguely defined and often impossible without changing the meaning, we don't include normalization in our annotation. Of course, we believe it's an open question and needs more careful study. We concede that a clean, canoncial form for social media content would benefit downstream POS and parsing, but those transformations are non-trivial for both the annotation and model.  In this paper, we prioritized compatibility with UD, but we expect that future work will explore integration of normalization into such pipelines.
 
 To the second reviewer:
 
@@ -24,19 +25,19 @@ We will use the second POS column to retain the Gimpel's POS annotation on the o
 
 - "I wish authors submitted a sample of 10 tweets as supplementary material"
 
-We will release our data and the reader of this paper can refer to our release for sanity check and future development.
+We will release our data and use the extra space to provide more examples of the annotations.
 
 - "Telling from 3 examples, 2 of which are artificial and one whose POS tagging isn't shown, is not enough for a sanity check of annotation and scheme worth."
 
-We will add the POS to the example in the paper.
+We will add the POS to the examples in the paper.
 
 - "authors did not specifically state efforts of tweet anonymization (non­celebrity handles, urls) but the examples exhibit them."
 
-We will make the anonymization effort clearer in future revision.
+We will make the anonymization effort clear in the next version.
 
 - "(7) Table 5 and related discussion: is this the greedy or CRF setup?"
 
-It's the CRF setup. We will make it clearer in future revision.
+It's the CRF setup. We will make it clear in the next version.
 
 - "how exactly are the F1/accuracy scores computed? Per token? Token boundary?"
 
@@ -44,44 +45,42 @@ It's computed on token.
 
 - "interannotator agreement: is this figure computed over all annotators? More details are needed."
 
-We have multiple annotators, these are two major, representative and plausible annotations.
+We have multiple annotators, these are two representative and plausible annotations.
 
 - "While training the POS tagger on GloVe embeddings, was there a problem with OOV words?"
 
-The compared neural POS taggers from Ma and Hovy (2016) uses a character-CNN as an additional word representation, which can mitigate the OOV problems.
-
+The compared neural POS tagger from Ma and Hovy (2016) uses a character-CNN as an additional word representation, which can mitigate the OOV problems.
 
 To the third reviewer:
 
 - "In relation to "training with exploration", it would have been relevant to cite the original papers on dynamic oracles (Goldberg and Nivre, 2012, 2013) as well as the paper by Kiperwasser and Goldberg (2016)"
 
-We will cite the dynamic oracle work in our future revision.
+We will cite the dynamic oracle work in the next version.
 
 - "It is worth pointing out that UD does not use the tag set of Petrov et al. (2012) but a revised and extended version of it (with 17 tags instead of 12)."
 
-We meant the 17 tags set and we will revise our wording in future revision.
+We meant the 17-tag tagset and we will revise our wording in the next version.
 
 - "The claim that "UD tokenisation treats each syntactic word as a token" is confused"
 
-We do need to revise the statements as we are wrong about the subject of the sentence (UD) and not rigorous enough.
-It is actually our tokenization principle, that we treat each syntactic word as a token. We try to tokenize multiword tokens, except acronyms, into syntactic words (gonna to gon na) and treat them as new tokens. It is the same as UD conventions. However, we use "goeswith" relation to resolve multi-token words instead of combining them back as one option suggested by UD.
+You are correct; this statement needs to be revised.  What we should have said is that *our* approach to tokenization treats each syntactic word as a token.  We try to tokenize multiword tokens, except acronyms, into syntactic words (gonna to gon na) and treat them as new tokens. It is the same as UD conventions. However, we use the "goeswith" relation to resolve multi-token words instead of combining them back [!!!this is ambiguous -- what is the one option suggested by UD?  using goeswith or combining them back?] as one option suggested by UD.
 
 - "Tagging a title with an internal syntactic structure (like "Fix you") as a proper noun is a clear violation of UD guidelines."
 
-During our annotation, some of our annotators was referring to the UD_English for cases of titles they are not sure about, some of which are exceptions, where nouns and proper nouns with adjectives are all annotated as PROPN for POS tag, (see http://bionlp-www.utu.fi/dep_search/query?search=Sacred&db=UD_English-v2&case_sensitive=True&hits_per_page=50). This kind of disagreements was resolved in the final version. We will clarify this in the draft in our future revision.
+During our annotation, some of our annotators referred to the UD_English for cases of titles they are not sure about, some of which are exceptions, where nouns and proper nouns with adjectives are all annotated as PROPN for POS tag, (see http://bionlp-www.utu.fi/dep_search/query?search=Sacred&db=UD_English-v2&case_sensitive=True&hits_per_page=50). This kind of disagreement was resolved in the final version. We will clarify this in the next version.
 
 - "Using the relation 'discourse' for 'non-syntactic tokens' is highly dubious. it seems better to use the generic relation 'dep'."
 
-The choice of relation on the non-syntactic tokens is arguable since UD doesn't have specified guidelines for this. Our choice of 'discourse' was inspired by the observation that emoticons and interjections are annotated as 'discourse' in UD_English. However, non-syntactic tokens can be easily recovered from our annotation and changing their relations to others in the future development is not difficult. Our decision to categorize non-syntactic tokens into the 'discourse' label is just the first attempt and we believe it could be further refined with more and more researchers involved in.
+The choice of relation on the non-syntactic tokens is arguable since UD doesn't have specific guidelines for this. Our choice of 'discourse' was inspired by the observation that emoticons and interjections are annotated as 'discourse' in UD_English. However, non-syntactic tokens can be easily recovered from our annotation and changing their relations to others in the future development is not difficult. Our decision to categorize non-syntactic tokens into the 'discourse' label might be revisited as more researchers become involved in the interface between UD and social media text.
 
 - "how is sentence segmentation performed? Is every tweet regarded as exactly one sentence?"
 
-We segment sentences in one tweet with punctuation and retweet symbol (RT). We will clarify this in the future revision.
+We segment sentences in one tweet with punctuation [!!!this is too vague] and the retweet symbol (RT). We will clarify this in the future revision.
 
 - "Are you using a static oracle in all experiments except the one that explicitly mentions exploration? Is it fair to use a dynamic oracle only for the parser with distillation? "
 
-Yes. We use static oracle in our experiment. It's a good suggestion and we would add dynamic oracle baseline in our future revision. Our distillation without exploration can be treated as a fair comparison with the static oracle baseline and our distillation with exploration further improve the performance.
+Yes. We use static oracle in our experiment. It's a good suggestion and we will add dynamic oracle baseline in the next version. Our distillation without exploration can be treated as a fair comparison to the static oracle baseline and our distillation with exploration further improves the performance.
 
 - "There seems to be an apostrophe missing in 'its is tokenised as it and s when is is a copula'."
 
-'its' is an example of the informal nature of tweets that the author omits the apostrophe.
+In carefully edited text, there should be an apostrophe as 'its' is a contraction of 'it' and 'is'.  However, here, 'its' is an example of the informal nature of tweets -- the author omitted the apostrophe.
