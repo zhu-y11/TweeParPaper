@@ -63,7 +63,7 @@ We meant the 17-tag tagset and we will revise our wording in the next version.
 
 - "The claim that "UD tokenisation treats each syntactic word as a token" is confused"
 
-You are correct; this statement needs to be revised.  What we should have said is that *our* approach to tokenization treats each syntactic word as a token.  We try to tokenize multiword tokens, except acronyms, into syntactic words (gonna to gon na) and treat them as new tokens. It is the same as UD conventions. However, we use the "goeswith" relation to resolve multi-token words instead of combining them back [!!!this is ambiguous -- what is the one option suggested by UD?  using goeswith or combining them back?] as one option suggested by UD.
+You are correct; this statement needs to be revised. What we should have said is that UD tokenisation treats each syntactic word as a unit of annotation. We try to tokenize multiword tokens, except acronyms, into syntactic words (gonna to gon na) and treat them as new tokens. It is the same as UD conventions. However, we only use the "goeswith" relation to resolve multi-token words, where UD adopts both strategies of combining them back and using "goeswith" relation.
 
 - "Tagging a title with an internal syntactic structure (like "Fix you") as a proper noun is a clear violation of UD guidelines."
 
