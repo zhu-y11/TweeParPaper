@@ -71,11 +71,11 @@ During our annotation, some of our annotators referred to the UD_English for cas
 
 - "Using the relation 'discourse' for 'non-syntactic tokens' is highly dubious. it seems better to use the generic relation 'dep'."
 
-The choice of relation on the non-syntactic tokens is arguable since UD doesn't have specific guidelines for this. Our choice of 'discourse' was inspired by the observation that emoticons and interjections are annotated as 'discourse' in UD_English. However, non-syntactic tokens can be easily recovered from our annotation and changing their relations to others in the future development is not difficult. Our decision to categorize non-syntactic tokens into the 'discourse' label might be revisited as more researchers become involved in the interface between UD and social media text.
+The choice of relation on the non-syntactic tokens is arguable since UD doesn't have specific guidelines for this. Our choice of 'discourse' was inspired by the observation that emoticons and interjections are annotated as 'discourse' in UD_English (see http://bionlp-www.utu.fi/dep_search/query?search=%22%3A%29%22&db=UD_English-v2&case_sensitive=True&hits_per_page=50). However, non-syntactic tokens can be easily recovered from our annotation and changing their relations to others in the future development is not difficult. Our decision to categorize non-syntactic tokens into the 'discourse' label might be revisited as more researchers become involved in the interface between UD and social media text.
 
 - "how is sentence segmentation performed? Is every tweet regarded as exactly one sentence?"
 
-We segment sentences in one tweet with punctuation [!!!this is too vague] and the retweet symbol (RT). We will clarify this in the future revision.
+We segment sentences in one tweet with period, exclamation mark, ellipsis mark, and the retweet symbol (RT). We will clarify this in the next revision.
 
 - "Are you using a static oracle in all experiments except the one that explicitly mentions exploration? Is it fair to use a dynamic oracle only for the parser with distillation? "
 
