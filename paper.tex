@@ -29,6 +29,7 @@
 \newcommand{\yjcomment}[1]{\textcolor{orange}{[$_\mathrm{L}^\mathrm{Y}$#1]}}
 \newcommand{\nascomment}[1]{\textcolor{blue}{[#1 ---\textsc{nas}]}}
 \newcommand{\yicomment}[1]{\textcolor{gray}{[#1 ---\textsc{yi}]}}
+\newcommand{\nss}[1]{\textcolor{magenta}{[$_\mathrm{S}^\mathrm{NS}$#1]}}
 %\newcommand{\yjcomment}[1]{}
 %\newcommand{\nascomment}[1]{}
 %\newcommand{\yicomment}[1]{}
@@ -103,9 +104,10 @@ consistent annotation across different languages. To allow such
 consistency, UD was designed to be adaptable to different genres \cite{wang-EtAl:2017:Long6} 
 and languages \cite{guo-EtAl:2015:ACL-IJCNLP2,TACL892}. We propose that analyzing
 the syntax of tweets can benefit from such adaptability. In this paper,
-we introduce a new tweet treebank of 55,607 tokens that follows the UD
+we introduce a new English tweet treebank of 55,607 tokens that follows the UD
 guidelines, but also contends with social media-specific challenges that were not
-covered by UD guidelines. Our annotation includes 
+covered by UD guidelines.\footnote{We developed our treebank independently of a similar effort for Italian tweets \cite{sanguinetti-17}. 
+See \nss{section ref} for a comparison.} Our annotation includes 
 tokenization, part-of-speech (POS) tags, and (labeled) Universal Dependencies.
 We characterize the disagreements among our annotators and find that
 consistent annotation is still challenging to deliver even with
@@ -650,6 +652,9 @@ POS tag
 \emph{proper noun} (\texttt{PROPN}) and attaching them to the
 main predicate of the sentence it is within with the label \emph{vocative} as in UD guidelines (see Figure \ref{fig:informal-toks} for an example).
 
+\paragraph{Comparison to PoSTWITA-UD.} \nss{discuss similarities and differences of conventions to \cite{sanguinetti-17}. 
+We expect that the official UD guidelines will eventually adopt standards for these issues so the treebanks can be harmonized.}
+
 % \paragraph{At-mention.} At-mention in the beginning of a tweet is the format of indicating the `reply' action.
 % In this paper, we treat the at-mentions as vocative expressions for their connections with the traditional vocative words, rather than treat them as non-syntactic metadata, which increase the complexity for analyzing a tweet.
 % \yjcomment{since the original discussion mainly focus on tokens, I move them to the former section.}
@@ -751,8 +756,8 @@ the coverage of our guidelines and solve inconsistencies between
 different annotators during this exercise. In the second stage, a tokenizer, a POS tagger, and a
 parser were trained on the annotated data from the first stage (1,050 tweets in total),
 and used to automatically analyze the sampled 2,500 tweets.  Authors 
-of this paper manually corrected the parsed data and finally achieved 3,550 labeled tweets.
-Newly created annotations are splitted into train, development, and test set and appended
+of this paper manually corrected the parsed data and finally achieved 3,550 labeled tweets.\nss{What tools did annotators use?}
+Newly created annotations are split into train, development, and test set and appended
 to the original split of {\sc Twebank v1}. Statistics of our annotations and data split are shown
 in Table \ref{tbl:data-stat}.
 
@@ -831,7 +836,7 @@ single and tagged as proper noun.
 %\nascomment{I don't think we have room to go deeper}
 An example of a disagreement on
 dependencies is shown in Figure \ref{fig:disagree}.  Depending on
-whether this is an example of an empty auxiliary verb, or a clause-modified
+whether this is an example of a zero copula construction, or a clause-modified
 noun, either annotation is plausible.
 
 %\subsubsection{Statistics}
@@ -909,7 +914,7 @@ noun, either annotation is plausible.
 
 
 
-\section{Pipeline}
+\section{Parsing Pipeline}
 \label{sec:parsing}
 
 We present a pipeline system to parse tweets into Universal
@@ -922,7 +927,7 @@ informal tweets, which include hashtags, at-mentions, and emoticons
 \cite{ICWSM101540}.  Context is often required for tokenization
 decisions; for example,
 the asterisk in {\it 4*3} is a separate token signifying
-multiplication, but for the asterisk in {\it sh*t}
+multiplication, but the asterisk in {\it sh*t}
 works as a mask to evoke censorship and should not be segmented.
 
 \begin{figure}[t]
@@ -936,7 +941,7 @@ character-level bidirectional LSTM (bi-LSTM) sequence-labeling model
 for tokenization.
 Our model takes the raw sentence and tags each character in this 
 sentence as whether it is the beginning of a word (1 as the beginning and 0 otherwise).
-Figure \ref{fig:tok-model} shows our tokenization model.
+Figure \ref{fig:tok-model} shows the architecture of our tokenization model.
 Space is treated as an input but deterministically  assigned a special tag \$.
 
 \paragraph{Experimental results.}
@@ -949,34 +954,34 @@ Space is treated as an input but deterministically  assigned a special tag \$.
 		\hline
 		  Stanford CoreNLP & 96.6 \\
 		 Twokenizer & 94.4 \\		 
-% 		UD pipe v1.2 & 94.7 \\
+% 		UDPipe v1.2 & 94.7 \\
 		\hdashline
-		UD pipe v1.2 & 97.3 \\
+		UDPipe v1.2 & 97.3 \\
 	 	our bi-LSTM tokenizer & 98.3 \\
 		\hline
 	\end{tabular}
 	\caption{Tokenizer comparison on the \textsc{Tweebank v2} test set.}\label{tbl:tok-result}
 \end{table}
-\citet{wang-EtAl:2017:Long6} show that the parser trained 
-on the combination of UD\_English and English dialect (Singlish) treebank
-outperform the one only on the dialect treebank.  Preliminary results
+\citet{wang-EtAl:2017:Long6} show that the parser\nss{tokenizer?} trained 
+on the combination of the UD\_English and Singapore English dialect (Singlish) treebanks
+outperforms the one trained only on the dialect treebank.  Preliminary results
 showed the same in our case, so 
 we follow their work and trained our tokenizer on the training portion of
 \textsc{Tweebank v2} combined with the UD\_English training set
-and tested on the \textsc{Tweebank v2} test set.% \yicomment{should mention that combination of corpora improves the results, otherwise we should answer why we didn't try training ONLY on Tweebank v2}\yjcomment{add discussion}
+and tested on the \textsc{Tweebank v2} test set. % \yicomment{should mention that combination of corpora improves the results, otherwise we should answer why we didn't try training ONLY on Tweebank v2}\yjcomment{add discussion}
 We report $F_1$ scores, combining precision and recall for token identification. Table \ref{tbl:tok-result} shows the
 tokenization results, compared to  other available tokenizers. 
  Stanford CoreNLP \cite{manning-EtAl:2014:P14-5} and Twokenizer
-\cite{ICWSM101540} systems are rule-based systems and were not adapted
+\cite{ICWSM101540} are rule-based systems and were not adapted
 to the UD tokenization scheme.
-The UD pipe v1.2
+The UDPipe v1.2
 \cite{straka-strakova:2017:K17-3} model was re-trained on the same
-data as our system. Compared with the UD pipe, we use LSTM
-instead of GRU in our model and we also use a larger size of hidden units (64 against 20),
+data as our system. Compared with UDPipe, we use LSTM
+instead of GRU in our model and we also use a larger size of hidden units (64 vs.~20),
 which has stronger representation power. 
 Our bi-LSTM tokenizer achieves the best accuracy among all these
 tokenizers.  These results indicate the value of statistical modeling
-in tokenization for informal texts.
+in tokenization for informal texts.\nss{this paragraph needs copyediting}
 
 \subsection{Part-of-Speech Tagger}
 
@@ -1016,11 +1021,11 @@ and parsers.\footnote{\url{http://nlp.stanford.edu/data/glove.twitter.27B.zip}}
 		\hline
 %		Stanford Postagger & 65.6 \\
 		Stanford CoreNLP & 90.4 \\
-%		UD pipe v1.2 & 78.7 \\
+%		UDPipe v1.2 & 78.7 \\
 		\citealp{owoputi-EtAl:2013:NAACL-HLT} (greedy) & 94.2 \\
 		\citealp{owoputi-EtAl:2013:NAACL-HLT} (CRF) & 95.1 \\
 		\hdashline
-%		UD pipe v1.2 & 83.8 \\
+%		UDPipe v1.2 & 83.8 \\
 		\citealp{ma-hovy:2016:P16-1} & 91.8 \\
 %		our word bi-LSTM & 89.2 \\
 %		our character + word bi-LSTMs & 91.5 \\
@@ -1239,7 +1244,7 @@ only one point behind the ensemble (last line of Table~\ref{tbl:parse-result}).
 \paragraph{Pipeline evaluation.} Finally, we report  our full
 pipeline's performance in  Table \ref{tbl:pipline}. We also compare
 our model with a pipeline of the state-of-the-art systems (labeled  ``SOTA''):
-Stanford CoreNLP tokenizer\footnote{We choose Stanford CoreNLP tokenizer in the spirit of comparing rule-based and statistical model-based method.}, %\yicomment{why not compare with UD pipe?}\yjcomment{i was thinking stanford tokenizer is more suitable, but i will get the udpipe result},
+Stanford CoreNLP tokenizer\footnote{We choose Stanford CoreNLP tokenizer in the spirit of comparing rule-based and statistical model-based method.}, %\yicomment{why not compare with UDPipe?}\yjcomment{i was thinking stanford tokenizer is more suitable, but i will get the udpipe result},
 \citet{owoputi-EtAl:2013:NAACL-HLT}'s tagger, and \citet{dozat-qi-manning:2017:K17-3}'s parser.
 Our system differs from the SOTA pipeline in the tokenization and parser components.
 From Table \ref{tbl:pipline}, our pipeline outperforms the SOTA when
