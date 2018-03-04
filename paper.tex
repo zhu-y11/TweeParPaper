@@ -53,7 +53,7 @@
 \maketitle
 \begin{abstract}
 We study the problem of analyzing tweets with
-universal dependencies \citep[UD;][]{NIVRE16.348}. We extend the UD guidelines to cover
+Universal Dependencies \citep[UD;][]{NIVRE16.348}. We extend the UD guidelines to cover
 special constructions in tweets that affect tokenization,
 part-of-speech tagging, and labeled dependencies. Using the extended guidelines, we create
 a new tweet treebank ({\sc Tweebank v2}) that is four times larger than the (unlabeled) {\sc Tweebank
@@ -62,7 +62,7 @@ We characterize the disagreements between our annotators
 and show that it is challenging to deliver
 consistent annotation due to ambiguity in
 understanding and explaining tweets. Nonetheless, using the new treebank,
-we build a pipeline system to parse raw tweets into UD. To overcome the
+we build a pipeline system to parse raw tweets into UD. To overcome 
 annotation noise without sacrificing computational efficiency, we propose a new
 method to distill an ensemble of 20 transition-based parsers into a single one. Our
 parser achieves an improvement of 2.6 in LAS over the un-ensembled baseline 
@@ -77,7 +77,7 @@ for training and evaluation is hard.
 Pioneering work by \citet{AAAIW113912} 
 annotated 7,630 tokens' worth of tweets according to the
 phrase-structure conventions of the Penn Treebank
-\citep[PTB;][]{Marcus93buildinga}, enabling conversion to Stanford dependencies.
+\citep[PTB;][]{Marcus93buildinga}, enabling conversion to Stanford Dependencies.
 \citet{kong-EtAl:2014:EMNLP2014} further studied the challenges in
 annotating tweets and presented a tweet treebank ({\sc Tweebank}),
 consisting of 12,149 tokens and largely following conventions
@@ -98,7 +98,7 @@ many annotation decisions unspecified.
 %universal dependencies and built up the whole pipeline to parse the
 %tweets from the raw text form.
 
-Universal dependencies \citep[UD]{NIVRE16.348} were introduced to enable
+Universal Dependencies \citep[UD]{NIVRE16.348} were introduced to enable
 consistent annotation across different languages. To allow such
 consistency, UD was designed to be adaptable to different genres \cite{wang-EtAl:2017:Long6} 
 and languages \cite{guo-EtAl:2015:ACL-IJCNLP2,TACL892}. We propose that analyzing
@@ -106,7 +106,7 @@ the syntax of tweets can benefit from such adaptability. In this paper,
 we introduce a new tweet treebank of 55,607 tokens that follows the UD
 guidelines, but also contends with social media-specific challenges that were not
 covered by UD guidelines. Our annotation includes 
-tokenization, part-of-speech (POS) tags, and (labeled) universal dependencies.
+tokenization, part-of-speech (POS) tags, and (labeled) Universal Dependencies.
 We characterize the disagreements among our annotators and find that
 consistent annotation is still challenging to deliver even with
 the extended guidelines.
@@ -126,7 +126,7 @@ the extended guidelines.
 %\end{itemize}
 
 Based on these annotations, we nonetheless designed a pipeline to parse 
-raw tweets into universal dependencies. Our pipeline includes: a
+raw tweets into Universal Dependencies. Our pipeline includes: a
 bidirectional LSTM (bi-LSTM) tokenizer, a word cluster-enhanced POS
 tagger \citep[following][]{owoputi-EtAl:2013:NAACL-HLT}, and a stack LSTM parser
 with character-based word representations
@@ -147,11 +147,11 @@ The contributions of this paper include:
 \begin{itemize}
 \item We study the challenges of annotating tweets in UD (\S\ref{sec:anno})
 and create a new tweet treebank ({\sc Tweebank v2}), which includes 
-tokenization, part-of-speech tagging, and labeled universal dependencies.
+tokenization, part-of-speech tagging, and labeled Universal Dependencies.
 We also characterize the difficulties of creating such annotation.
 
 \item We introduce and evaluate a pipeline system to parse the raw tweet text into
-universal dependencies (\S\ref{sec:parsing}).  Experimental results show
+Universal Dependencies (\S\ref{sec:parsing}).  Experimental results show
 that it performs better than a pipeline of the state-of-the-art alternatives.
 
 \item We propose a new distillation
@@ -912,8 +912,8 @@ noun, either annotation is plausible.
 \section{Pipeline}
 \label{sec:parsing}
 
-We present a pipeline system to parse tweets into universal
-dependencies.  We evaluate each component individually, and the system
+We present a pipeline system to parse tweets into Universal
+Dependencies.  We evaluate each component individually, and the system
 as a whole.
 
 \subsection{Tokenizer} \label{sec:tok}
@@ -1270,7 +1270,7 @@ performance drops by more than four points.
 %At last, it’s arguable that some of the hashtags, URLs can work as a nominal in tweets. Whether treating them as the same part-of-speech or different ones according to their context is an open question. A preliminary survey on the standard UD English data shows that URL, email address are all tagged as the foreign language (X), so we also tag them as X and leave the disambiguation of their syntactic function to the annotation of parse tree.
 
 \section{Conclusion}
-We study the problem of parsing tweets into universal dependencies.
+We study the problem of parsing tweets into Universal Dependencies.
 We adapt the UD guidelines to cover 
 special constructions in tweets and create
 the {\sc Tweebank v2}, which has 55,607 tokens. We characterize the disagreements
