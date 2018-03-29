@@ -31,16 +31,12 @@
 \newcommand{\nascomment}[1]{\textcolor{blue}{[#1 ---\textsc{nas}]}}
 \newcommand{\yicomment}[1]{\textcolor{gray}{[#1 ---\textsc{yi}]}}
 \newcommand{\nss}[1]{\textcolor{magenta}{[$_\mathrm{S}^\mathrm{NS}$#1]}}
-%\newcommand{\yjcomment}[1]{}
-%\newcommand{\nascomment}[1]{}
-%\newcommand{\yicomment}[1]{}
-
 
 \title{Parsing Tweets into Universal Dependencies}
 
 \author{Yijia Liu \\
   Harbin Institute of Technology \\
-  {\tt oneplus.lau@gmail.com} \\\And
+  {\tt yjliu@ir.hit.edu.cn} \\\And
   Yi Zhu \\
   University of Cambridge \\
   {\tt yz568@cam.ac.uk} \\\AND
@@ -111,7 +107,7 @@ the syntax of tweets can benefit from such adaptability. In this paper,
 we introduce a new English tweet treebank of 55,607 tokens that follows the UD
 guidelines, but also contends with social media-specific challenges that were not
 covered by UD guidelines.\footnote{We developed our treebank independently of a similar effort for Italian tweets \cite{sanguinetti-17}. 
-See \nss{section ref} for a comparison.} Our annotation includes 
+See \S\ref{sec:postwita} for a comparison.} Our annotation includes 
 tokenization, part-of-speech (POS) tags, and (labeled) Universal Dependencies.
 We characterize the disagreements among our annotators and find that
 consistent annotation is still challenging to deliver even with
@@ -256,7 +252,7 @@ Such tokens only account for 0.07\% and we use the UD
 
 Before turning to UD annotations, we (re)annotated the data with 
 POS tags, for consistency with other UD efforts,
-which adopt the universal POS tagset of \newcite{PETROV12.274}.
+which adopt the universal POS tagset.\footnote{A revised and extended version of \citet{PETROV12.274} with 17 tags.}
 % The POS annotation of a word in tweets is generally based on its syntactic distribution, which indicates that the POS of word changes on different context.
 % Sticking to the syntactic distribution makes it possible that a `$\heart$' symbol is tagged as a verb as shown in Figure \ref{fig:non-syn-toks}. \yjcomment{Need a better explanation.}
 %We follow the UD V2 morphology guideline and use the Universal POS tags~ to tag the tweet tokens. For twitter specific linguistic phenomena, we have set different strategies and try to align with the UD conventions and UD\textunderscore English as close as possible.\footnote{\url{https://github.com/UniversalDependencies/UD\_English}}
@@ -656,8 +652,34 @@ POS tag
 \emph{proper noun} (\texttt{PROPN}) and attaching them to the
 main predicate of the sentence it is within with the label \emph{vocative} as in UD guidelines (see Figure \ref{fig:informal-toks} for an example).
 
-\paragraph{Comparison to PoSTWITA-UD.} \nss{discuss similarities and differences of conventions to \cite{sanguinetti-17}. 
+\subsection{Comparison to PoSTWITA-UD}\label{sec:postwita}
+\citet{sanguinetti-17} presented the \textit{PosTWITA-UD} which is
+the first Twitter treebank in Universal Dependencies.
+In their convention, tokenization tends to preserve the original
+tweet content but two special cases, \textit{articulated prepositions}
+and \textit{clitic clusters}, are tokenized.
+Beyond tokenization, an extra layer of lemmas is annotated
+to recover ``what is understandable by a human''.
+It's arguable that normalization (the lemmatization in \citet{sanguinetti-17})
+on social media data is essential according to \citet{eisenstein:2013:NAACL-HLT}.
+In this paper, we don't include normalization and leave it an open question for further study.
+
+In the syntax annotation, tweet specific
+constructions are considered by both \citet{sanguinetti-17} and our paper.
+We agree on the syntax head in these constructions but differ on
+the choice of relations for depicting these constructions.
+We use \textit{discourse} for topical hashtag and \citet{sanguinetti-17} used \textit{parataxis}. 
+Similar difference happens in referential URLs where we use \textit{list} by following UD\_English and they use \textit{dep}.
+The choice of relation on the non-syntactic tokens is questionable
+since UD doesn't have specified guideline for this. 
+Our choice of \textit{discourse} is inspired by the observation that emoticon is annotated as \textit{discourse}. Non-syntactic tokens can be easily recovered
+from our annotation and changing it to other relation in the future development is not difficult.
+
+%Ho \textit{non-syntactic tokens} (like sentiment emoticon, topical hashtag).
+
+\nss{discuss similarities and differences of conventions to \cite{sanguinetti-17}. 
 We expect that the official UD guidelines will eventually adopt standards for these issues so the treebanks can be harmonized.}
+\yjcomment{i've finished this part.}
 
 % \paragraph{At-mention.} At-mention in the beginning of a tweet is the format of indicating the `reply' action.
 % In this paper, we treat the at-mentions as vocative expressions for their connections with the traditional vocative words, rather than treat them as non-syntactic metadata, which increase the complexity for analyzing a tweet.
@@ -723,7 +745,11 @@ additional 210 tweets sampled from the POS-tagged dataset of
 from the Twitter stream from February 2016 to July 2016.\footnote{Data downloaded from \url{https://archive.org/}.}
 The latter data source consists of 147.4M English tweets after being
 filtered by the {\it lang} attribute in the tweet JSON and {\it
-  langid.py}.\footnote{\url{https://github.com/saffsd/langid.py}} 
+  langid.py}.\footnote{\url{https://github.com/saffsd/langid.py}}
+In the same way as \citet{kong-EtAl:2014:EMNLP2014},
+reference unit is always the tweet in its entirety
+-- which may thus consist of multiple sentences -- not the sentence alone.
+Before annotation, we use simple regular expression to anonymize username and URL.
 
 %The tweet source of Tweebank V2 consists of three parts. 
 %The first is the original Tweebank created by~\cite{kong-EtAl:2014:EMNLP2014}, denoted as Tweebank V1.  There are 639 unique tweets in the training data of Tweebank V1, and 201 unique tweets in the data set. All of the unique tweets in Tweebank V1 are included in Tweebank V2.
@@ -735,19 +761,40 @@ filtered by the {\it lang} attribute in the tweet JSON and {\it
 \subsubsection{Annotation Process}
 \begin{table}
 	\centering
-	\begin{tabular}{rrrr}
+	\begin{tabular}{rrrrr}
 		\hline
-		& train & dev & test \\
+		 & \multicolumn{2}{c}{\textsc{Tweebank v1}} & \multicolumn{2}{c}{\textsc{Tweebank v2}} \\
+		split & tweets & tokens & tweets & tokens \\
 		\hline
-		tweets 		&	1,639 		&	709		&	1,201\\
-		& +1,000 & +709 & +1,000\\
-		tokens 		&	24,753		&	11,742	&	19,112\\
+		train & 639 & 9,310 & 1,639 & 24,753 \\
+		dev & - & - & 709 & 11,742 \\
+		test & 201 & 2,839 & 1,201 & 19,112 \\
+		\hline
+		total & 840 & 12,149 & 3,549 & 55,617 \\
+%		\textsc{v1} & tweets & 639 & 0 & 201 & 840 \\
+%		& tokens  & 9,310 & 0 & 2,839 & 12149 \\
+%		\hdashline
+%		\textsc{v2} & tweets & 1,639 & 709 & 1,201 & 3,549 \\
+%		 & tokens &	24,753	&	11,742	&	19,112 & 55,617\\
 		\hline
 	\end{tabular}
-\caption{Statistics of {\sc Tweebank v2}.
-The second row shows the number of new tweets compared to
-{\sc Tweebank v1}.\nss{not obvious how to interpret this: train tokens looks like 1,609+1,000 = 2,609, but maybe it's 609+1,000=1,609? 
-I think it would be easier just to show v1 and v2 as separate rows. Also, a column for totals across the splits.}\label{tbl:data-stat}
+
+%	\begin{tabular}{rrrrrr}
+%		\hline
+%		\multicolumn{2}{l}{version} & train & dev & test & total \\
+%		\hline
+%		\textsc{v1} & tweets & 639 & 0 & 201 & 840 \\
+%		& tokens  & 9,310 & 0 & 2,839 & 12149 \\
+%		\hdashline
+%		\textsc{v2} & tweets & 1,639 & 709 & 1,201 & 3,549 \\
+%		 & tokens &	24,753	&	11,742	&	19,112 & 55,617\\
+%		\hline
+%	\end{tabular}
+\caption{Statistics of {\sc Tweebank v2} and the comparison with
+{\sc Tweebank v1} in quantity.\nss{not obvious how to interpret this: train tokens looks like 1,609+1,000 = 2,609, but maybe it's 609+1,000=1,609? 
+I think it would be easier just to show v1 and v2 as separate rows. Also, a column for totals across the splits.}
+\yjcomment{i've fix this.}
+\label{tbl:data-stat}
 }
 \end{table}
 Our annotation process was conducted in two stages.
@@ -761,7 +808,7 @@ the coverage of our guidelines and solve inconsistencies between
 different annotators during this exercise. In the second stage, a tokenizer, a POS tagger, and a
 parser were trained on the annotated data from the first stage (1,050 tweets in total),
 and used to automatically analyze the sampled 2,500 tweets.  Authors 
-of this paper manually corrected the parsed data and finally achieved 3,550 labeled tweets.\nss{What tools did annotators use?}
+of this paper manually corrected the parsed data and finally achieved 3,550 labeled tweets\nss{What tooks did annotators use?}\yjcomment{fixed}.\footnote{We use arborator \cite{gerdes:2013:W13-37} in our annotation.}
 Newly created annotations are split into train, development, and test set and appended
 to the original split of {\sc Twebank v1}. Statistics of our annotations and data split are shown
 in Table \ref{tbl:data-stat}.
@@ -967,7 +1014,7 @@ Space is treated as an input but deterministically  assigned a special tag \$.
 	\end{tabular}
 	\caption{Tokenizer comparison on the \textsc{Tweebank v2} test set.}\label{tbl:tok-result}
 \end{table}
-\citet{wang-EtAl:2017:Long6} show that the parser\nss{tokenizer?} trained 
+\citet{wang-EtAl:2017:Long6} show that the parser\nss{tokenizer?}\yjcomment{it's a parsing work.} trained 
 on the combination of the UD\_English and Singapore English dialect (Singlish) treebanks
 outperforms the one trained only on the dialect treebank.  Preliminary results
 showed the same in our case, so 
@@ -1197,7 +1244,7 @@ eliminate the oracle from the estimation procedure (for the distilled
 model).  This presents an opportunity to learn with \emph{exploration}, by
 randomly sampling transitions from the ensemble, found useful
 in recent methods for training greedy models that use dynamic oracles
-\citep{ballesteros-EtAl:2016:EMNLP2016}.  
+\citet{goldberg-nivre:2012:PAPERS,TACL145,TACL885,ballesteros-EtAl:2016:EMNLP2016}.  
 We find that this
 approach outperforms the  conventional distillation model, coming in
 only one point behind the ensemble (last line of Table~\ref{tbl:parse-result}).
@@ -1292,6 +1339,17 @@ propose a new method to distill an ensemble of 20 greedy parsers into a single o
 to overcome annotation noise without sacrificing efficiency.
 Our parser achieves an improvement of 2.6  in LAS over a strong baseline
 and outperforms other state-of-the-art parsers in both accuracy and speed.
+
+\section*{Acknowledge}
+We thank Elizabeth Clark, Lucy Lin, Nelson Liu, Kelvin Luu, Phoebe Mulcaire, 
+Hao Peng, Maarten Sap, Chenhao Tan, Sam Thomson,
+and the other colleagues in Georgetown University for the annotation efforts in the first round.
+We also thank the anonymous  reviewers for their helpful comments and suggestions.
+\yjcomment{fonding agency here and anyone else i miss.}
+This work was supported by the National Key Basic Research
+Program of China via grant 2014CB340503 and the
+National Natural Science Foundation of China (NSFC) via
+grant 61632011.
 
 \bibliography{shortdb}
 \bibliographystyle{acl_natbib}
