@@ -5,6 +5,8 @@
 \usepackage{subcaption}
 \aclfinalcopy
 \newcommand{\yjcomment}[1]{\textcolor{orange}{[$_\mathrm{L}^\mathrm{Y}$#1]}}
+\newcommand{\yicomment}[1]{\textcolor{green}{[$_\mathrm{Y}^\mathrm{I}$#1]}}
+
 
 \title{Annotation Guideline for \textsc{Tweebank v2}}
 \author{Yijia Liu \\
@@ -33,14 +35,14 @@ In this guideline, we list most common constructions
 and annotation difficulties we encountered when creating \textsc{Tweebank v2}.
 Our work includes:
 \begin{itemize}
-	\item specify what guideline to be applied when constructions that are
+	\item specify what guideline to be applied to constructions that are
 	uncommon in UD guideline.
 	\item specify what guideline to be applied when there are ambiguities in
 	applying the guidelines.
 \end{itemize}
 
-In this guideline, not only we touch the syntax part of the annotation,
-but also the whole pipeline from sentence segmentation to POS tagging. 
+In this guideline, not only do we touch the syntax part of the annotation,
+but also the whole pipeline from sentence segmentation\yicomment{word segmentation?} to POS tagging. 
 \section{Non-syntactic Tokens}
 
 In this section, we give the definition of the non-syntactic tokens
@@ -64,16 +66,16 @@ we mentioned in the paper.
 	\caption{An example for the conventional retweet construction.}\label{fig:rt}
 \end{figure}
 
-We consider the special construction in tweet: 
+We consider the special construction in Twitter: 
 \[
 \underline{\textit{RT @user :}}
 \]
 as the \textit{retweet construction}.
 Figure \ref{fig:rt} illustrates the most standard retweet construction.
-\yjcomment{copy our discussion from the paper here.}
+\yjcomment{copy our discussion from the paper here.}\yicomment{It is the standard combination of constructions in Twitter that don't have much real information.}
 
 Besides the discussion in the syntactic aspect, 
-retweet construction marks the begining of a sentence and used to
+retweet construction usually marks the beginning of a sentence and used to
 determine the boundary of a sentence in tweets (see Section \ref{sec:sent-seg} for
 more details).
 However, there are still cases where retweet construction is unconventional, 
@@ -81,7 +83,7 @@ as shown in the following examples:
 \[
 \underline{\textit{RT @user1 : RT @user2 it s hilarious}}
 \]
-We consider the second as a retweet construction even without the comma.
+We consider \textit{RT @user2} also as a retweet construction even without the comma.\yicomment{we can say that the colon can be omit in the very beginning, so that we don't have to mention it again?}
 
 \subsection{Referential URL}
 
@@ -106,8 +108,8 @@ We consider a URL as the referential URL when it meets the following conditions:
 
 \begin{itemize}
 	\item The URL is used as a supplementary resource for the tweet.
-	\item When removed, the syntax of the rest part of the tweet doesn't change.
-	\item The URL is not an appositional modifier of a noun phrase (NP). 
+	\item When removed, the syntax of the rest part of the tweet doesn't change.\yicomment{It is not core argument in syntax, and it is more an oblique modifier.}
+	\item The URL is not an appositional modifier of a noun phrase (NP). \yicomment{fig3(photo) and 4(video) are the same to me}
 	Figure \ref{fig:non-ref-url}
 	shows an example for a URL that was used as an appositional modifier.
 \end{itemize}
@@ -165,7 +167,7 @@ We consider the following cases as non-referential URLs:
 		\end{deptext}
 		\deproot{1}{root}
 		\depedge{1}{2}{punct}
-		\depedge{1}{3}{list}
+		\depedge{1}{3}{list\yicomment{not appos??}}
 		\depedge{3}{5}{\textbf{nmod}}
 		\depedge{5}{4}{case}
 	\end{dependency}
@@ -176,9 +178,9 @@ The following cases are the only exceptions:
 \begin{itemize}
 	\item \underline{\textit{watch : \textbf{URL} via YouTube}}
 	We consider \textit{via YouTube} as the nominal modifier of the URL
-	(see Figure \ref{fig:ref-w-mod} for an example).
+	(see Figure \ref{fig:ref-w-mod} for an example)\yicomment{URL still seems an obj of watch like previous example?}.
 	\item \underline{\textit{click for details: \textbf{URL1} \textbf{URL2}}}
-	We consider the second \textit{URL} as an conjunction of the first one.
+	We consider the second \textit{URL} as an conjunction of the first one.\yicomment{1. both urls are non-referential; 2. non of them have modifiers}
 \end{itemize}
 
 \subsection{Topical Hashtag, Sentiment Emoticon, and Truncated Words}
@@ -203,7 +205,7 @@ The following cases are the only exceptions:
 
 \textit{Topical hashtag}, \textit{sentiment emoticon}, and \textit{truncated words}
 are defined in the same way as referential URL.
-But we use \textit{discourse} to analyze its syntactic head.
+But we use \textit{discourse} to analyze its syntactic head.\yicomment{the reason is that UD use list for URL without clear explanation, we stick to UD convention for URL.}
 Figure \ref{fig:hashtag} shows an example for topical hashtag.
 
 \section{Multiple Sentences in One Tweet}\label{sec:sent-seg}
@@ -217,9 +219,9 @@ Here we propose several cases:
 	i.e. period, exclamation, question mark are the mark of the end of the sentence,
 	whereas comma, colon, ellipse mark do not split the tweet;
 	\item If there is a retweet construction in the middle of the tweet,
-	the RT mark is considered to segment the sentence and is the beginning of a new sentence;
+	the RT mark is considered to segment the sentences and is the beginning of a secon sentence;
 	\item If we can distinguish clearly sentences from tweets, 
-	but they are not split by the punctuations or RT. 
+	but they are not split by the punctuations or RT. \yicomment{It is somewhat empirical and subjective, but we tried to reach the agreement among annotators}
 	we then treat them as a single sentence with \textit{parataxis};
 \end{enumerate}
 
@@ -277,8 +279,8 @@ Here we propose several cases:
 
 For the sentence in Figure \ref{fig:multi-seg},  there are 3 sentences.
 RT splits the sentences and is the beginning of a new sentence.
-While, for the sentence in Figure \ref{fig:single-seg},
-there are only 1 sentence, although many sentences can be distinguished easily. 
+While for the sentence in Figure \ref{fig:single-seg},
+there is actually only one sentence, although three sentences can be distinguished easily. 
 
 \begin{figure}[t]
 	\centering
@@ -296,7 +298,7 @@ there are only 1 sentence, although many sentences can be distinguished easily.
 	\caption{An example for referential URL on parataxis sentences.}\label{fig:ref-url-on-para-sent}
 \end{figure}
 
-\subsection{Referential URL in Parataxis Sentences}
+\subsection{Referential URL in Parataxis Sentences}\yicomment{is it for when to use list and when to use parataxis? maybe not necessary to add it?}
 For those cases, we analyze the syntactic head of the referential URL
 as the root word among the parataxis sentences.
 See Figure \ref{fig:ref-url-on-para-sent} for an example.
@@ -310,9 +312,9 @@ The guideline only suggests how to
 %see newsgroup-groups.google.com\_emails\_ec0a1064de05e74b\_ENG\_20040929\_023800-0047
 Compared with those in formal text, Twitter presents 
 a wider range of entities.
-We categories them as following.
+We categories them as following. \yicomment{again it is our taxonomy as UD doesn't make it clear, and not sure if we need to add it into this guideline. (It's always good if the guideline is just online, but not in the paper appendix). Maybe good idea to show Nathan}
 
-\paragraph{Person name.} 
+\paragraph{Person name.} \yicomment{here maybe it's group name, org name, and some title names that are PURELY MWE with NO internal structures}
 \begin{figure}[t]
 	\begin{subfigure}[t]{0.3\columnwidth}
 		\centering
@@ -365,7 +367,8 @@ Here, we show some special cases in person names.
 	\item Person name with punctuation, like \underline{\textit{Al - Zaman}} (Figure \ref{fig:per-name:punct});
 \end{itemize}
 
-\paragraph{Group name.}
+\paragraph{Group name.}\yicomment{here maybe it's group/org/brand/loc names that are MWE with internal structures}
+\yicomment{We discuss them according to their syntax, whether 1. it's an simple non phrase without modifiers (only adj or noun); 2. noun phrase with modifier; 3. verb phrase}
 Mentions about groups (music group, sport group, and etc.) are common in tweets.
 The names of music group can present complex syntactic structures,
 e.g. \underline{\textit{One Direction}}, \underline{\textit{Zac Brown Band}},
@@ -464,11 +467,11 @@ We use \texttt{PROPN} as the POS tag.
 	\item Santander UK
 \end{itemize}
 
-\paragraph{Event name.}
+\paragraph{Event name.}\yicomment{then another category is event/title/product names that are treated just as normal phrase}
 \begin{itemize}
 	\item Bush Tax Cuts
 	\item Down to Lunch
-	\item Stanley Cup
+	\item Stanley Cup\yicomment{this falls in the previous category}
 \end{itemize}
 
 \paragraph{Title name.}
@@ -523,7 +526,7 @@ We analyze the title name as a normal phrase.
 Tweets are full of commercials, music references (see Figure \ref{fig:singer-title}).
 It's worth studying these constructions.
 ``Informal and web text often contains passages which are meant to be
-interpreted as lists but are parsed as single sentences.'' \yjcomment{copied from UD}
+interpreted as lists but are parsed as single sentences.'' \yjcomment{copied from UD}\yicomment{such a pain for this section}
 
 \begin{table}[t]
 	\centering
