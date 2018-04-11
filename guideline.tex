@@ -1,0 +1,799 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[hyperref]{naaclhlt2018}
+\usepackage{times}
+\usepackage{tikz-dependency}
+\usepackage{subcaption}
+\aclfinalcopy
+\newcommand{\yjcomment}[1]{\textcolor{orange}{[$_\mathrm{L}^\mathrm{Y}$#1]}}
+
+\title{Annotation Guideline for \textsc{Tweebank v2}}
+\author{Yijia Liu \\
+	Harbin Institute of Technology \\
+	{\tt yjliu@ir.hit.edu.cn} \\\And
+	Yi Zhu \\
+	University of Cambridge \\
+	{\tt yz568@cam.ac.uk} \\\AND
+}
+
+\date{}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+Annotating tweets is hard. 
+Delivering consistent annotation is even harder.
+The original annotation guideline in the universal dependencies (UD) project
+gives good definition on the relations, but didn't cover some common
+constructions in tweets.
+What's more, ambiguities exist. 
+Some constructions can either be explained by different guidelines in UD.
+
+In this guideline, we list most common constructions
+and annotation difficulties we encountered when creating \textsc{Tweebank v2}.
+Our work includes:
+\begin{itemize}
+	\item specify what guideline to be applied when constructions that are
+	uncommon in UD guideline.
+	\item specify what guideline to be applied when there are ambiguities in
+	applying the guidelines.
+\end{itemize}
+
+In this guideline, not only we touch the syntax part of the annotation,
+but also the whole pipeline from sentence segmentation to POS tagging. 
+\section{Non-syntactic Tokens}
+
+In this section, we give the definition of the non-syntactic tokens
+we mentioned in the paper.
+
+\subsection{Retweet Construction}
+
+\begin{figure}[t]
+	\centering
+	\small
+	\begin{dependency}[edge slant=2, text only label, label style=above]
+		\begin{deptext}
+			RT \& @user \& : \& wow \\
+			\texttt{X} \& \texttt{X} \& \texttt{PUNCT} \& \texttt{INTJ} \\
+		\end{deptext}
+		\deproot{4}{root}
+		\depedge{4}{1}{discourse}
+		\depedge{1}{2}{discourse}
+		\depedge{1}{3}{punct}
+	\end{dependency}
+	\caption{An example for the conventional retweet construction.}\label{fig:rt}
+\end{figure}
+
+We consider the special construction in tweet: 
+\[
+\underline{\textit{RT @user :}}
+\]
+as the \textit{retweet construction}.
+Figure \ref{fig:rt} illustrates the most standard retweet construction.
+\yjcomment{copy our discussion from the paper here.}
+
+Besides the discussion in the syntactic aspect, 
+retweet construction marks the begining of a sentence and used to
+determine the boundary of a sentence in tweets (see Section \ref{sec:sent-seg} for
+more details).
+However, there are still cases where retweet construction is unconventional, 
+as shown in the following examples:
+\[
+\underline{\textit{RT @user1 : RT @user2 it s hilarious}}
+\]
+We consider the second as a retweet construction even without the comma.
+
+\subsection{Referential URL}
+
+\begin{figure}[t]
+	\centering
+	\small
+	\begin{dependency}[edge slant=2, text only label, label style=above]
+		\begin{deptext}
+			it \& s \& hilarious \& URL \\
+			PRON \& AUX \& ADJ \& X\\
+		\end{deptext}
+		\deproot{3}{root}
+		\depedge{3}{1}{nsubj}
+		\depedge{3}{2}{cop}
+		\depedge{3}{4}{\textbf{list}}
+	\end{dependency}
+	\caption{An example for referential URL.}\label{fig:ref-url}
+\end{figure}
+
+Figure \ref{fig:ref-url} shows an example for the \textit{referential URL}.
+We consider a URL as the referential URL when it meets the following conditions:
+
+\begin{itemize}
+	\item The URL is used as a supplementary resource for the tweet.
+	\item When removed, the syntax of the rest part of the tweet doesn't change.
+	\item The URL is not an appositional modifier of a noun phrase (NP). 
+	Figure \ref{fig:non-ref-url}
+	shows an example for a URL that was used as an appositional modifier.
+\end{itemize}
+
+For a referential URL, we analyze its syntactic head in the same way as
+what UD does for \textit{punct}(uation) but use the \textit{list}
+relation.
+
+\paragraph{Cases of Non-referential URLs.}
+\begin{figure}[t]
+\centering
+\small
+\begin{subfigure}[t]{0.45\columnwidth}
+	\centering
+	\begin{dependency}[edge slant=2, text only label, label style=above]
+	\begin{deptext}
+		Photo \& : \& URL \\
+		\texttt{NOUN} \& \texttt{PUNCT} \& \texttt{X} \\
+	\end{deptext}
+	\deproot{1}{root}
+	\depedge{1}{2}{punct}
+	\depedge{1}{3}{\textbf{appos}}
+	\end{dependency}
+\end{subfigure}
+\begin{subfigure}[t]{0.45\columnwidth}
+	\centering
+	\begin{dependency}[edge slant=2, text only label, label style=above]
+	\begin{deptext}
+		click \& URL \\
+		\texttt{VERB} \& \texttt{X} \\
+	\end{deptext}
+	\deproot{1}{root}
+	\depedge{1}{2}{\textbf{obj}}
+\end{dependency}
+\end{subfigure}
+\caption{Examples for non-referential URL.}\label{fig:non-ref-url}
+\end{figure}
+
+We consider the following cases as non-referential URLs:
+\begin{itemize}
+	\item \underline{\textit{watch : \textbf{URL}}} 
+	In this case, we consider the URL as an object of \textit{watch}.
+	\item \underline{\textit{click for details: \textbf{URL}}}
+	In this case, we consider the URL as an appositional modifier of \textit{details}.
+\end{itemize}
+
+\paragraph{Cases of Referential URLs with Modifiers.}
+\begin{figure}[t]
+	\centering
+	\small
+	\begin{dependency}[edge slant=2, text only label, label style=above]
+		\begin{deptext}
+			video \& : \& URL \& via \& @user \\
+			\texttt{NOUN} \& \texttt{PUNCT} \& \texttt{X} \& \texttt{ADP} \& \texttt{PROPN} \\
+		\end{deptext}
+		\deproot{1}{root}
+		\depedge{1}{2}{punct}
+		\depedge{1}{3}{list}
+		\depedge{3}{5}{\textbf{nmod}}
+		\depedge{5}{4}{case}
+	\end{dependency}
+	\caption{An example for URL that has modifier.}\label{fig:ref-w-mod}
+\end{figure}
+In most cases, referential URLs don't have modifiers.
+The following cases are the only exceptions:
+\begin{itemize}
+	\item \underline{\textit{watch : \textbf{URL} via YouTube}}
+	We consider \textit{via YouTube} as the nominal modifier of the URL
+	(see Figure \ref{fig:ref-w-mod} for an example).
+	\item \underline{\textit{click for details: \textbf{URL1} \textbf{URL2}}}
+	We consider the second \textit{URL} as an conjunction of the first one.
+\end{itemize}
+
+\subsection{Topical Hashtag, Sentiment Emoticon, and Truncated Words}
+
+\begin{figure}[t]
+	\centering
+	\small
+	\begin{dependency}[edge slant=2, text only label, label style=above]
+		\begin{deptext}
+			I \& come \& conclusion \& that \& ... \& \#topsecret \\
+			\texttt{PRON} \& \texttt{VERB} \& \texttt{NOUN} \& \texttt{SCONJ} \& \texttt{PUNCT} \& \texttt{X}\\
+		\end{deptext}
+		\deproot{2}{root}
+		\depedge{2}{1}{nsubj}
+		\depedge{2}{3}{obj}
+		\depedge{3}{4}{ccomp}
+		\depedge[edge unit distance=2ex]{2}{5}{punct}
+		\depedge[edge unit distance=2ex]{2}{6}{\textbf{discourse}}
+	\end{dependency}
+	\caption{An example for topical hashtag.}\label{fig:hashtag}
+\end{figure}
+
+\textit{Topical hashtag}, \textit{sentiment emoticon}, and \textit{truncated words}
+are defined in the same way as referential URL.
+But we use \textit{discourse} to analyze its syntactic head.
+Figure \ref{fig:hashtag} shows an example for topical hashtag.
+
+\section{Multiple Sentences in One Tweet}\label{sec:sent-seg}
+When encountering a raw tweet, 
+the first thing we would do is to segment the tweet to sentences.
+However, due to the highly varied styles of tweet, 
+it might not be obvious to distinguish which segment is a sentence.
+Here we propose several cases:
+\begin{enumerate}
+	\item Standard punctuations function the same in the normal text,
+	i.e. period, exclamation, question mark are the mark of the end of the sentence,
+	whereas comma, colon, ellipse mark do not split the tweet;
+	\item If there is a retweet construction in the middle of the tweet,
+	the RT mark is considered to segment the sentence and is the beginning of a new sentence;
+	\item If we can distinguish clearly sentences from tweets, 
+	but they are not split by the punctuations or RT. 
+	we then treat them as a single sentence with \textit{parataxis};
+\end{enumerate}
+
+\begin{figure}[t]
+	\centering
+	\small
+	\begin{dependency}[edge slant=2, text only label, label style=above]
+		\begin{deptext}
+			Yall \& sholl \& is \& quiet \& !! \& SPEAK \& UP \& lol \& RT \& user \& : \& wow \\
+%			\texttt{PRON} \& \texttt{VERB} \& \texttt{NOUN} \& \texttt{SCONJ} \& \texttt{PUNCT} \& \texttt{X}\\
+		\end{deptext}
+		\deproot{4}{\textbf{root}}
+		\depedge{4}{1}{nsubj}
+		\depedge{4}{2}{aux}
+		\depedge{4}{3}{cop}
+		\depedge{4}{5}{punct}
+		\deproot{6}{\textbf{root}}
+		\depedge{6}{7}{compound:prt}
+		\depedge{6}{8}{discourse}
+		\deproot{12}{\textbf{root}}
+		\depedge{12}{9}{discourse}
+		\depedge{9}{10}{discourse}
+		\depedge{9}{11}{punct}
+	\end{dependency}
+	\caption{An example for a tweet with multiple sentences. 
+		Retweet  construction is also treated as a sentence delimiter.}\label{fig:multi-seg}
+\end{figure}
+
+\begin{figure}[t]
+	\centering
+	\small
+	\begin{dependency}[edge slant=2, text only label, label style=above]
+		\begin{deptext}
+			i \& ca \& n't \& login \& no \& i \& do \& n't \& know \& y \& nvr \& c \& nus \& offer \\
+			%			\texttt{PRON} \& \texttt{VERB} \& \texttt{NOUN} \& \texttt{SCONJ} \& \texttt{PUNCT} \& \texttt{X}\\
+		\end{deptext}
+		\deproot{4}{\textbf{root}}
+		\depedge{4}{1}{nsubj}
+		\depedge{4}{2}{aux}
+		\depedge{4}{3}{part}
+		\depedge{4}{9}{parataxis}
+		\depedge{9}{5}{discourse}
+		\depedge{9}{6}{nsubj}
+		\depedge{9}{7}{aux}
+		\depedge{9}{8}{part}
+		\depedge{9}{10}{ccomp}
+		\depedge[edge unit distance=2.5ex]{4}{12}{parataxis}
+		\depedge{12}{14}{obj}
+		\depedge{12}{11}{advmod}
+		\depedge{14}{13}{compond}
+	\end{dependency}
+	\caption{An example for a tweet with multiple sentences. 
+		Retweet  construction is also treated as a sentence delimiter.}\label{fig:single-seg}
+\end{figure}
+
+For the sentence in Figure \ref{fig:multi-seg},  there are 3 sentences.
+RT splits the sentences and is the beginning of a new sentence.
+While, for the sentence in Figure \ref{fig:single-seg},
+there are only 1 sentence, although many sentences can be distinguished easily. 
+
+\begin{figure}[t]
+	\centering
+	\small
+	\begin{dependency}[edge slant=2, text only label, label style=above]
+		\begin{deptext}
+			i \& ca \& n't \& login \& no \& i \& do \& n't \& know \& y \& nvr \& c \& nus \& offer  \& :-/ \\
+			%			\texttt{PRON} \& \texttt{VERB} \& \texttt{NOUN} \& \texttt{SCONJ} \& \texttt{PUNCT} \& \texttt{X}\\
+		\end{deptext}
+		\deproot{4}{root}
+		\depedge[edge unit distance=1ex]{4}{9}{parataxis}
+		\depedge[edge unit distance=1ex]{4}{12}{parataxis}
+		\depedge[edge unit distance=1ex]{4}{15}{\textbf{discourse}}
+	\end{dependency}
+	\caption{An example for referential URL on parataxis sentences.}\label{fig:ref-url-on-para-sent}
+\end{figure}
+
+\subsection{Referential URL in Parataxis Sentences}
+For those cases, we analyze the syntactic head of the referential URL
+as the root word among the parataxis sentences.
+See Figure \ref{fig:ref-url-on-para-sent} for an example.
+This rule also applies to topical hashtags, sentiment emoticons, and truncated words.
+
+Finally, we need to note that we didn't include sentence segmentation
+as a step in the whole parsing pipeline.
+The guideline only suggests how to 
+
+\section{Named Entities}
+%see newsgroup-groups.google.com\_emails\_ec0a1064de05e74b\_ENG\_20040929\_023800-0047
+Compared with those in formal text, Twitter presents 
+a wider range of entities.
+We categories them as following.
+
+\paragraph{Person name.} 
+\begin{figure}[t]
+	\begin{subfigure}[t]{0.3\columnwidth}
+		\centering
+		\small
+		\begin{dependency}[edge slant=2, text only label, label style=above]
+			\begin{deptext}
+				Kevin \& Durant \\
+				\texttt{PROPN} \& \texttt{PROPN} \\
+			\end{deptext}
+			\deproot{1}{}
+			\depedge{1}{2}{flat}
+		\end{dependency}
+	\caption{}\label{fig:per-name:vanilla}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.3\columnwidth}
+		\centering
+		\small
+		\begin{dependency}[edge slant=2, text only label, label style=above]
+			\begin{deptext}
+				President \& Obama \\
+				\texttt{PROPN} \& \texttt{PROPN} \\
+			\end{deptext}
+			\deproot{1}{}
+			\depedge{1}{2}{flat}
+		\end{dependency}
+	\caption{}\label{fig:per-name:title}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.3\columnwidth}
+		\centering
+		\small
+		\begin{dependency}[edge slant=2, text only label, label style=above]
+			\begin{deptext}
+				Al \& - \& Zaman \\
+				\texttt{PROPN} \& \texttt{punct} \& \texttt{PROPN} \\
+			\end{deptext}
+			\deproot{1}{}
+			\depedge{1}{2}{punct}
+			\depedge{1}{3}{flat}
+		\end{dependency}
+		\caption{}\label{fig:per-name:punct}
+	\end{subfigure}
+\end{figure}
+Person name is easy to identify.
+For tokens in a person name, their POS tags are \texttt{PROPN} and
+we treat the left-most token as the syntactic head
+and link the rest of the tokens in the person name to this token (see Figure \ref{fig:per-name:vanilla}).
+Here, we show some special cases in person names.
+\begin{itemize}
+	\item Person name with title, like \underline{\textit{President Obama}} (Figure \ref{fig:per-name:title});
+	\item Person name with punctuation, like \underline{\textit{Al - Zaman}} (Figure \ref{fig:per-name:punct});
+\end{itemize}
+
+\paragraph{Group name.}
+Mentions about groups (music group, sport group, and etc.) are common in tweets.
+The names of music group can present complex syntactic structures,
+e.g. \underline{\textit{One Direction}}, \underline{\textit{Zac Brown Band}},
+and \underline{\textit{Rico Riders}}.
+In this guideline, we propose to analyze the in the same way as
+person name, using \textit{flat} to the left-most token.
+
+There are several group names presented in \textsc{Tweebank v2}. Here is a comprehensive list:
+\textit{One Direction, Super Junior, 
+	Higher Authority,
+	Eagles of Death Mental, 
+	*5 Second of Summer*,
+	Carolina Panthers, Rico Riders, Manchester United, Real Madrid,
+	49ers, Patriots, Heat, Celtics
+}.
+
+\paragraph{Brand name.}
+We treat brand name in the same way with group name.
+Here is a comprehensive list of brand name in \textsc{Tweebank v2}:
+\textit{Amazon, Apple, Louis Vuitton, Facebook, Twitter}.
+
+\paragraph{Location name.}
+\begin{figure}[t]
+	\begin{subfigure}[t]{0.3\columnwidth}
+		\centering
+		\small
+		\begin{dependency}[edge slant=2, text only label, label style=above]
+			\begin{deptext}
+				Santa \& Cruz \\
+				\texttt{PROPN} \& \texttt{PROPN} \\
+			\end{deptext}
+			\deproot{2}{}
+			\depedge{2}{1}{compound}
+		\end{dependency}
+		\caption{}\label{fig:loc-name:vanilla}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.3\columnwidth}
+		\centering
+		\small
+		\begin{dependency}[edge slant=2, text only label, label style=above]
+			\begin{deptext}
+				101 \& Drive \\
+				\texttt{NUM} \& \texttt{PROPN} \\
+			\end{deptext}
+			\deproot{2}{}
+			\depedge{2}{1}{nummod}
+		\end{dependency}
+		\caption{}\label{fig:loc-name:comp}
+	\end{subfigure}
+	\begin{subfigure}[t]{0.3\columnwidth}
+		\centering
+		\small
+		\begin{dependency}[edge slant=2, text only label, label style=above]
+			\begin{deptext}
+				Cleveland \& , \& OH \\
+				\texttt{PROPN} \& \texttt{punct} \& \texttt{PROPN} \\
+			\end{deptext}
+			\deproot{1}{}
+			\depedge{1}{2}{punct}
+			\depedge{1}{3}{appos}
+		\end{dependency}
+		\caption{}\label{fig:loc-name:punct}
+	\end{subfigure}
+\end{figure}
+There are three major types of location name:
+\begin{itemize}
+	\item Vanilla location: like \textit{New York}, \textit{New York City}, and \textit{Santa Cruz}. 
+	We use \textit{compound} to analyze their relations (Figure \ref{fig:loc-name:vanilla});
+	\item Details location: like \textit{101 Drive} and \textit{Downtown Atlanta}.
+	We use their original relation (Figure \ref{fig:loc-name:comp});
+	\item Location name with punctuation: \textit{Cleveland , OH}, (Figure \ref{fig:loc-name:punct});
+\end{itemize}
+
+\paragraph{Product name.}
+We analyze product name as a normal nominal phrase.
+Thus, tokens like \textit{shoulder bag} are analyzed as \texttt{NOUN} rather than \texttt{PROPN}.
+\begin{itemize}
+	\item Apple Music, Didi Chuxing. Zapata Beer
+	\item Asus Gaming PC
+	\item Louis Vuitton Monogram Marelle Shoulder Bag
+	\item Puzzle Sharks
+\end{itemize}
+
+Product name usually comes with suffix (version number).
+If one token or span of tokens is considered as the suffix, 
+it won't be analyzed as syntactic head, but a modifier of the noun phrase prefix.
+If the suffix is a number (like \underline{\textit{Kindle \textbf{3}}}), we analyze the POS as \texttt{NUM} and \textit{nummod}.
+If the suffix is a noun phrase (like \underline{\textit{Samsung Galaxy \textbf{S6}}}), we analyze the POS as \texttt{PROPN} and \textit{nmod:npmod}.
+We need to note that a combination of letter and number as version number is treated as nominal.
+
+\paragraph{Organization name.} 
+We analyze organization name as a normal noun phrase.
+We use \texttt{PROPN} as the POS tag.
+\begin{itemize}
+	\item Clinton Global Initiative University
+	\item Santander UK
+\end{itemize}
+
+\paragraph{Event name.}
+\begin{itemize}
+	\item Bush Tax Cuts
+	\item Down to Lunch
+	\item Stanley Cup
+\end{itemize}
+
+\paragraph{Title name.}
+We analyze the title name as a normal phrase.
+\begin{itemize}
+	\item Gone with the wind
+	\item lone survivor
+\end{itemize}
+
+%We collected as list of group names presented in \textsc{Tweebank v2}.
+%\begin{itemize}
+%	\item \textit{product name}: Apple Music
+%	\item \textit{event name}: normal
+%	\item \textit{title name}: normal
+%	\item \textit{brand name}: 
+%	\item \textit{product name}: normal
+%	\item \textit{suffix, version}: mixture of \textit{4s}. npmod, conjuction.
+%	\item \textit{americans}:
+%\end{itemize}
+%
+%\begin{table}[t]
+%	\centering
+%	\begin{tabular}{lr}
+%		\hline
+%		category & POS \\
+%		\hline
+%		The Eyenimal Cat Video Camera & \\
+%		Monogram Marelle Shoulder Bag & \\
+%		Apple Music & \\
+%		The Power Ball & \\
+%		Parag Milk Foods & \\
+%		Darby Video App & \\
+%		Moon Child glow kit & \\
+%		Boise State & \\
+%		Dickey Amendment & \\
+%		lone survivor & \\
+%		Clinton Global Initiative University & \\
+%		Zapata Beer & \\
+%		LADY PYRAMID & \\
+%		Bush Tax Cuts & \\
+% Asus Gaming PC
+%		Friday Night Lights & \\
+%		\hline
+%	\end{tabular}
+%\end{table}
+
+
+\section{Special Constructions}
+
+\subsection{List vs Parataxis vs Appos}
+
+Tweets are full of commercials, music references (see Figure \ref{fig:singer-title}).
+It's worth studying these constructions.
+``Informal and web text often contains passages which are meant to be
+interpreted as lists but are parsed as single sentences.'' \yjcomment{copied from UD}
+
+\begin{table}[t]
+	\centering
+	\begin{tabular}{lrr}
+		\hline
+		pattern & relation & example \\
+		\hline
+		singer - title & list & Figure \ref{fig:singer-title} \\
+		title - singer & parataxis & Figure \ref{fig:title-singer} \\
+		quote - author & parataxis & \\
+		author - quote & parataxis & \\
+		agency : title & parataxis & \\
+		\hline
+	\end{tabular}
+\caption{text}\label{tbl:list-construct}
+\end{table}
+
+In this guideline, we category these special cases in Table \ref{tbl:list-construct}.
+
+\begin{figure}[t]
+	\centering
+	\small
+	\begin{dependency}[edge slant=2, text only label, label style=above]
+		\begin{deptext}
+			Lady  \& Gaga \& - \& Bad \& Romance \\
+			\texttt{PRORN} \& \texttt{PROPN} \& \texttt{PUNCT} \& \texttt{ADJ} \& \texttt{NOUN} \\
+		\end{deptext}
+		\deproot{1}{root}
+		\depedge{1}{2}{flat}
+		\depedge{1}{3}{punct}
+		\depedge{5}{4}{amod}
+		\depedge[edge unit distance=2.5ex]{1}{5}{\textbf{list}}
+	\end{dependency}
+	\caption{A music reference tweet.}\label{fig:singer-title}
+\end{figure}
+
+\begin{figure}[t]
+	\centering
+	\small
+	\begin{dependency}[edge slant=2, text only label, label style=above]
+		\begin{deptext}
+			i \& 'd \& do \& anything \& - \& simple \& plan \\
+			\texttt{PRON} \& \texttt{AUX} \& \texttt{VERB} \& \texttt{PRON} \& \texttt{PUNCT} \& \texttt{ADJ} \& \texttt{NOUN} \\
+		\end{deptext}
+		\deproot{3}{root}
+		\depedge{3}{1}{nsubj}
+		\depedge{3}{2}{aux}
+		\depedge{3}{4}{obj}
+		\depedge{3}{5}{punct}
+		\depedge[edge unit distance=2.5ex]{3}{7}{parataxis}
+		\depedge{7}{6}{amod}
+	\end{dependency}
+	\caption{An example for leading @username.}\label{fig:title-singer}
+\end{figure}
+
+%see weblog-blogspot.com\_rigorousintuition\_20060511134300\_ENG\_20060511\_134300-0004
+%Refer newsgroup-groups.google.com\_emails\_ec0a1064de05e74b\_ENG\_20040929\_023800-0047
+\paragraph{When to Use Appos?}
+\begin{figure}[t]
+	\centering
+	\small
+	\begin{dependency}[edge slant=2, text only label, label style=above]
+		\begin{deptext}
+			I \& liked \& a \& @YouTube \& video \& : \& URL \\
+			\texttt{PRON} \& \texttt{VERB} \& \texttt{DET} \& \texttt{PROPN} \& \texttt{NOUN} \& \texttt{PUNCT} \& \texttt{X} \\
+		\end{deptext}
+		\deproot{2}{root}
+		\depedge{2}{1}{nsubj}
+		\depedge{2}{5}{ojb}
+		\depedge{5}{3}{det}
+		\depedge{5}{4}{nmod}
+		\depedge{5}{6}{punct}
+		\depedge{5}{7}{\textbf{appos}}
+	\end{dependency}
+	\caption{An example for leading @username.}\label{fig:case-02}
+\end{figure}
+
+In most the cases, we won't analyze the token with \textit{appos}.
+See Figure \ref{fig:case-02}.
+
+\subsection{Noun phrase or Copula Ellipse}
+\begin{figure}[t]
+	\centering
+	\small
+	\begin{dependency}[edge slant=2, text only label, label style=above]
+		\begin{deptext}
+			@username \& covered \& in \& magic \& ! \\
+			PROPN \& VERB \& ADP \& NOUN \& PUNCT \\
+		\end{deptext}
+		\deproot{2}{root}
+		\depedge{2}{1}{nsubj}
+		\depedge{2}{4}{obl}
+		\depedge{4}{3}{mark}
+		\depedge{2}{5}{punct}
+	\end{dependency}
+	\caption{An example for leading @username.}\label{fig:case-05-1}
+\end{figure}
+
+\begin{itemize}
+	\item feb\_jul\_16.1469260380
+	\item feb\_jul\_16.1460628240
+	\item feb\_jul\_16.1469497200
+	\item feb\_jul\_16.1463541180
+	\item feb\_jul\_16.1456268400
+	\item feb\_jul\_16.1462312200
+	\item feb\_jul\_16.1458837000
+	\item feb\_jul\_16.1458423240
+\end{itemize}
+
+\subsection{Code Switching}
+
+\subsection{Leading @user: vocative or nsubj}
+\begin{figure}[t]
+	\centering
+	\small
+	\begin{dependency}[edge slant=2, text only label, label style=above]
+		\begin{deptext}
+			@user1  \& @user2 \& Problem \& is \& how \& we \\
+			\texttt{PRORN} \& \texttt{PROPN} \& \texttt{NOUN} \& \texttt{VERB} \& \texttt{ADV} \& \texttt{PRON} \\
+		\end{deptext}
+		\deproot{4}{root}
+		\depedge{4}{1}{\textbf{vocative}}
+		\depedge{4}{2}{\textbf{vocative}}
+		\depedge{4}{3}{nsubj}
+	\end{dependency}
+	\caption{An example for leading @user.}\label{fig:vocative}
+\end{figure}
+
+\begin{figure}[t]
+	\centering
+	\small
+	\begin{dependency}[edge slant=2, text only label, label style=above]
+		\begin{deptext}
+			@user  \& hiding \& from \& this \& tornado \& . \& How \& are \& you \& ? \\
+			\texttt{PROPN} \& \texttt{VERB} \& \texttt{ADP} \& \texttt{DET} \& \texttt{NOUN} \& \& \texttt{ADV} \& \texttt{AUX} \& \texttt{PRON} \\
+		\end{deptext}
+		\deproot{2}{root}
+		\depedge{2}{1}{\textbf{vocative}}
+		\depedge{2}{5}{obl}
+		\depedge{5}{3}{case}
+		\depedge{5}{4}{det}
+	\end{dependency}
+	\caption{An example for ambiguous leading @user which can either be analyzed as \textbf{nsubj} or \textbf{vocative}.}\label{fig:abnormal-vocative}
+\end{figure}
+
+The way of recognizing if a @user token is \textit{vocative}.
+See Figure \ref{fig:case-01}.
+
+
+\section{Worth Noting}
+\subsection{Have sth. to}
+\begin{figure}[t]
+	\centering
+	\small
+	\begin{dependency}[edge slant=2, text only label, label style=above]
+		\begin{deptext}
+			have \& time \& to \& review \& it \\
+			VERB \& NOUN \& PART \& VERB \& PRON \\
+		\end{deptext}
+		\deproot{1}{root}
+		\depedge{1}{2}{obj}
+		\depedge{2}{4}{acl}
+		\depedge{4}{3}{mark}
+		\depedge{4}{5}{obj}
+	\end{dependency}
+	\caption{An example for leading @username.}\label{fig:case-04}
+\end{figure}
+See email-enronsent35\_01-0096.
+
+
+\subsection{for real, fr.}
+\begin{figure}[t]
+	\centering
+	\small
+	\begin{dependency}[edge slant=2, text only label, label style=above]
+		\begin{deptext}
+			@username \& covered \& in \& magic \& ! \\
+			PROPN \& VERB \& ADP \& NOUN \& PUNCT \\
+		\end{deptext}
+		\deproot{2}{root}
+		\depedge{2}{1}{nsubj}
+		\depedge{2}{4}{obl}
+		\depedge{4}{3}{mark}
+		\depedge{2}{5}{punct}
+	\end{dependency}
+	\caption{An example for leading @username.}\label{fig:case-06}
+\end{figure}
+See answers-20111108092643AAXe4lD\_ans-0039
+
+\subsection{U.K.-loving}
+\begin{figure}[t]
+	\centering
+	\small
+	\begin{dependency}[edge slant=2, text only label, label style=above]
+		\begin{deptext}
+			U.K. \& - \& loving \& stocks \\
+			PROPN \& PUNCT \& VERB \& NOUN \\
+		\end{deptext}
+		\deproot{4}{root}
+		\depedge{4}{3}{?}
+	\end{dependency}
+	\caption{An example for leading @username.}\label{fig:case-08}
+\end{figure}
+
+\subsection{POS for lmao}
+is \textsc{INTJ}
+
+\subsection{POS for live}
+\begin{itemize}
+	\item feb\_jul\_16.1464410640
+\end{itemize}
+
+\subsection{Only one clause}
+\begin{itemize}
+	\item feb\_jul\_16.1468795800
+\end{itemize}
+Use the root in the clause.
+
+\subsection{Additional adp}
+\begin{itemize}
+	\item feb\_jul\_16.1454771880
+\end{itemize}
+
+\subsection{, you know ,}
+\begin{itemize}
+	\item feb\_jul\_16.1463121540
+\end{itemize}
+
+\subsection{Title modifier}
+Several references:
+\begin{itemize}
+	\item weblog-blogspot.com\_dakbangla\_20050311135387\_ENG\_20050311\_135387-0161
+	\item email-enronsent16\_01-0055
+\end{itemize}
+\begin{itemize}
+	\item feb\_jul\_16.1460481960
+	\item feb\_jul\_16.1459860060
+	\item feb\_jul\_16.1467549120
+	\item feb\_jul\_16.1467056520
+\end{itemize}
+
+What about `One direction'?
+
+
+\subsection{Special Token}
+\begin{itemize}
+	\item tbh: to be honest
+	\item dm: direct message: can be noun or verb.
+	\item tl: timeline: like dm, can be noun or verb.
+\end{itemize}
+
+\subsection{Date}
+\begin{itemize}
+	\item July 9th where 9th is a NOUN.
+	\item April 2, 2016
+\end{itemize}
+
+\subsection{Title}
+\begin{itemize}
+	\item Arsenal chief XX
+\end{itemize}
+
+\subsection{title}
+6 - game losing streak
+
+pos should concern.
+\begin{itemize}
+	\item dm?
+\end{itemize}
+
+\subsection{Vocative or subject}
+
+\end{document}
