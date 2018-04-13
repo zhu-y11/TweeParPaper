@@ -164,8 +164,8 @@ method for training a greedy parser, leading to better performance
 than existing methods and without efficiency sacrifices.
 \end{itemize}
 
-We release our dataset and our system as open-source software at
-\url{http://anonymized}. 
+Our dataset and system is publicly available at \url{https://github.com/Oneplus/Tweebank}
+and \url{https://github.com/Oneplus/twpipe}.
 
 
 \section{Annotation}\label{sec:anno}
@@ -658,29 +658,34 @@ main predicate of the sentence it is within with the label \emph{vocative} as in
 \subsection{Comparison to PoSTWITA-UD}\label{sec:postwita}
 The first Twitter treebank annotated with Universal Dependencies 
 was the \mbox{\textit{PosTWITA-UD}} corpus for Italian \citep{sanguinetti-17}, 
-which consists of \nss{??} tweets (\nss{??} sentences, \nss{??} tokens).
+which consists of 6,738 tweets (119,726 tokens).
 In their convention, tokenization tends to preserve the original
 tweet content but two special cases, \textit{articulated prepositions}
-and \textit{clitic clusters}, are tokenized.\nss{explain what these two phenomena are. are these the only words that are split?}
-Beyond tokenization, an extra layer of lemmas is annotated
-to recover ``what is understandable by a human''.
-It's arguable that normalization (the lemmatization in \citet{sanguinetti-17})
-on social media data is essential according to \citet{eisenstein:2013:NAACL-HLT}.\nss{``It's arguable that normalization...is essential'' suggests that we think it IS essential. Did you mean ``whether'' instead of ``that''?}
-In this paper, we don't include normalization and leave it an open question for further study.\nss{Maybe just say: 
-Their lemmas include spelling normalization, whereas our lemmas only normalize casing and inflectional morphology (if that is correct). 
-You could also mention that the current UD guidelines on lemmas (which I wrote) give a lot of flexibility to treebank 
-developers: \url{http://universaldependencies.org/u/overview/morphology.html\#lemmas}}
+(e.g. \textit{nella} as \textit{in la})
+and \textit{clitic clusters} (e.g. \textit{guardandosi} as \textit{guardando si}), are tokenized.
+\nss{explain what these two phenomena are. are these the only words that are split?}\yjcomment{done}
+%Beyond tokenization, an extra layer of lemmas is annotated
+%to recover ``what is understandable by a human''.
+%It's arguable whether normalization (the lemmatization in \citet{sanguinetti-17})
+%on social media data is essential according to \citet{eisenstein:2013:NAACL-HLT}.
+%In this paper, we don't include normalization and leave it an open question for further study.
+%\nss{Maybe just say: 
+Their lemmas include spelling normalization, whereas our lemmas only normalize casing and inflectional morphology.
+The current UD guidelines on lemmas give a lot of flexibility on treebank development.\footnote{\url{http://universaldependencies.org/u/overview/morphology.html\#lemmas}}
+%You could also mention that the current UD guidelines on lemmas (which I wrote) give a lot of flexibility to treebank 
+%developers: \url{http://universaldependencies.org/u/overview/morphology.html\#lemmas}}
 
 %In the syntax annotation, tweet specific
 %constructions are considered by both \citet{sanguinetti-17} and our paper.
 With respect to tweet-specific constructions,
-our and \citeposs{sanguinetti-17} interpretation of headedness is the same, 
+\citeposs{sanguinetti-17} and our  interpretation of headedness is the same, 
 but we differ in the relation label.
 For topical hashtags, we use \textit{discourse} while \citet{sanguinetti-17} used \textit{parataxis}. 
 In referential URLs, we use \textit{list} (following the precedent of UD\_English-EWT) while \citet{sanguinetti-17} used \textit{dep}.
 The choice of relation on the non-syntactic tokens is questionable
 since UD doesn't specify a convention for this. 
-Our choice of \textit{discourse} is inspired by the observation that emoticon is annotated as \textit{discourse}.\nss{what did PosTWITA-UD use for non-syntactic tokens?} 
+Our choice of \textit{discourse} is inspired by the observation that emoticon is annotated as \textit{discourse}.
+\citet{sanguinetti-17} used the same relation for the emoticon but analyze topical hashtag as \textit{parataxis}.\nss{what did PosTWITA-UD use for non-syntactic tokens?}\yjcomment{done}
 % Non-syntactic tokens can be easily recovered
 % from our annotation and changing it to other relation in the future development is not difficult.
 We expect that the official UD guidelines will eventually adopt standards for these constructions so the treebanks can be harmonized.
@@ -1012,22 +1017,26 @@ Space is treated as an input but deterministically  assigned a special tag \$.
 		\hline
 		\it System & $F_1$ \\
 		\hline
-		  Stanford CoreNLP & 96.6 \\
-		 Twokenizer & 94.4 \\		 
+		  Stanford CoreNLP & 97.3 \\
+		 Twokenizer & 94.6 \\
 % 		UDPipe v1.2 & 94.7 \\
 		\hdashline
-		UDPipe v1.2 & 97.3 \\
+		UDPipe v1.2 & 97.4 \\
 	 	our bi-LSTM tokenizer & 98.3 \\
 		\hline
 	\end{tabular}
 	\caption{Tokenizer comparison on the \textsc{Tweebank v2} test set.}\label{tbl:tok-result}
 \end{table}
-\citet{wang-EtAl:2017:Long6} show that the parser\nss{tokenizer?}\yjcomment{it's a parsing work.}\nss{I guess I don't follow how parsing results 
-on combined training data affect our decision about how to tokenize.} trained 
-on the combination of the UD\_English and Singapore English dialect (Singlish) treebanks
-outperforms the one trained only on the dialect treebank.  Preliminary results
-showed the same in our case, so 
-we follow their work and trained our tokenizer on the training portion of
+%\citet{wang-EtAl:2017:Long6} show that the parser\nss{tokenizer?}\yjcomment{it's a parsing work.}\nss{I guess I don't follow how parsing results 
+%on combined training data affect our decision about how to tokenize.} trained 
+%on the combination of the UD\_English and Singapore English dialect (Singlish) treebanks
+%outperforms the one trained only on the dialect treebank.  
+Our preliminary results
+showed that our model trained on
+the combination of UD\_English and Tweebank v2
+outperforms the one trained only on the UD\_English or Tweebank v2,
+which also was confirmed by previous works on dialect treebank parsing \cite{wang-EtAl:2017:Long6}.
+So we trained our tokenizer on the training portion of
 \textsc{Tweebank v2} combined with the UD\_English training set
 and tested on the \textsc{Tweebank v2} test set. % \yicomment{should mention that combination of corpora improves the results, otherwise we should answer why we didn't try training ONLY on Tweebank v2}\yjcomment{add discussion}
 We report $F_1$ scores, combining precision and recall for token identification. Table \ref{tbl:tok-result} shows the
@@ -1042,7 +1051,7 @@ instead of GRU in our model and we also use a larger size of hidden units (64 vs
 which has stronger representation power. 
 Our bi-LSTM tokenizer achieves the best accuracy among all these
 tokenizers.  These results indicate the value of statistical modeling
-in tokenization for informal texts.\nss{this paragraph needs copyediting}
+in tokenization for informal texts.%\nss{this paragraph needs copyediting}
 
 \subsection{Part-of-Speech Tagger}
 
@@ -1081,13 +1090,13 @@ and parsers.\footnote{\url{http://nlp.stanford.edu/data/glove.twitter.27B.zip}}
 		\it System & Precision \\
 		\hline
 %		Stanford Postagger & 65.6 \\
-		Stanford CoreNLP & 90.4 \\
+		Stanford CoreNLP & 90.6 \\
 %		UDPipe v1.2 & 78.7 \\
-		\citealp{owoputi-EtAl:2013:NAACL-HLT} (greedy) & 94.2 \\
-		\citealp{owoputi-EtAl:2013:NAACL-HLT} (CRF) & 95.1 \\
+		\citealp{owoputi-EtAl:2013:NAACL-HLT} (greedy) & 93.7 \\
+		\citealp{owoputi-EtAl:2013:NAACL-HLT} (CRF) & 94.6 \\
 		\hdashline
 %		UDPipe v1.2 & 83.8 \\
-		\citealp{ma-hovy:2016:P16-1} & 91.8 \\
+		\citealp{ma-hovy:2016:P16-1} & 92.5 \\
 %		our word bi-LSTM & 89.2 \\
 %		our character + word bi-LSTMs & 91.5 \\
 		\hline
@@ -1102,8 +1111,8 @@ and parsers.\footnote{\url{http://nlp.stanford.edu/data/glove.twitter.27B.zip}}
 		\hline
 		\it Tokenization System & $F_1$ \\
 		\hline
-		Stanford CoreNLP & 92.1 \\
-		our bi-LSTM tokenizer (\S\ref{sec:tok}) & 93.7 \\
+		Stanford CoreNLP & 92.3 \\
+		our bi-LSTM tokenizer (\S\ref{sec:tok}) & 93.3 \\
 		\hline
 	\end{tabular}
 	\caption{\citet{owoputi-EtAl:2013:NAACL-HLT} POS tagging performance with automatic tokenization on
@@ -1175,7 +1184,7 @@ each of our models and the compared ones.
 	\caption{Dependency parser comparison on \textsc{Tweebank v2} test set,
            with automatic POS tags. The ``Kt/s'' column shows
            the parsing speed evaluated by thousands of tokens
-           the model processed per second.
+           the model processed per second.\yjcomment{num will change}
             \label{tbl:parse-result}}
 \end{table}
 
@@ -1245,7 +1254,7 @@ to better performance.
 \begin{figure}[t]
 	\centering
 	\includegraphics[width=\columnwidth,trim={0.3cm 0 0 0},clip]{graphics/alpha}
-	\caption{The effect of $\alpha$ on distillation. \label{fig:effect-alpha}}
+	\caption{The effect of $\alpha$ on distillation. \yjcomment{num will change}\label{fig:effect-alpha}}
 \end{figure}
 
 \paragraph{Learning from exploration.} When we set $\alpha =1$, we
@@ -1298,7 +1307,7 @@ only one point behind the ensemble (last line of Table~\ref{tbl:parse-result}).
 		UD parsing & \it LAS $F_1$ & 74.1 & 70.3 \\
 		\hline
 	\end{tabular}
-	\caption{Evaluating our pipeline against a state-of-the-art pipeline. \label{tbl:pipline} %\yicomment{see tab5 for our tokenizer the pos tagging number is 93.6, here is 93.7, should be consistent}
+	\caption{Evaluating our pipeline against a state-of-the-art pipeline. \yjcomment{num will change}\label{tbl:pipline} %\yicomment{see tab5 for our tokenizer the pos tagging number is 93.6, here is 93.7, should be consistent}
 	}
 \end{table}
 
@@ -1354,6 +1363,7 @@ We thank Elizabeth Clark, Lucy Lin, Nelson Liu, Kelvin Luu, Phoebe Mulcaire,
 Hao Peng, Maarten Sap, Chenhao Tan, and Sam Thomson at the University of Washington, 
 and Austin Blodgett, Lucia Donatelli, Joe Garman, Emma Manning, Angela Yang, and Yushi Zhang 
 at Georgetown University for their annotation efforts in the first round.
+We are grateful for the support from Lingpeng Kong at the initial stage of this project.
 We also thank the anonymous reviewers for their helpful comments and suggestions.
 \yjcomment{funding agency here and anyone else i miss.}
 This work was supported by the National Key Basic Research
