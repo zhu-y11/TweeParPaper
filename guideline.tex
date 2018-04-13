@@ -206,6 +206,8 @@ are defined in the same way as referential URL.
 But we use \textit{discourse} to analyze its syntactic head.
 Figure \ref{fig:hashtag} shows an example for topical hashtag.
 
+Truncated URL.
+
 \section{Multiple Sentences in One Tweet}\label{sec:sent-seg}
 When encountering a raw tweet, 
 the first thing we would do is to segment the tweet to sentences.
@@ -370,8 +372,8 @@ Mentions about groups (music group, sport group, and etc.) are common in tweets.
 The names of music group can present complex syntactic structures,
 e.g. \underline{\textit{One Direction}}, \underline{\textit{Zac Brown Band}},
 and \underline{\textit{Rico Riders}}.
-In this guideline, we propose to analyze the in the same way as
-person name, using \textit{flat} to the left-most token.
+In this guideline, we propose to analyze the syntax using \textit{compound}.
+However, if there is \texttt{ADP} in the group name like \textit{Eagles of Death Mental}, we analyze them as a normal noun phrase.
 
 There are several group names presented in \textsc{Tweebank v2}. Here is a comprehensive list:
 \textit{One Direction, Super Junior, 
@@ -379,7 +381,14 @@ There are several group names presented in \textsc{Tweebank v2}. Here is a compr
 	Eagles of Death Mental, 
 	*5 Second of Summer*,
 	Carolina Panthers, Rico Riders, Manchester United, Real Madrid,
-	49ers, Patriots, Heat, Celtics
+	49ers, Patriots, Heat, Celtics,
+	Mariners,
+	Nature Republic,
+	The weekend,
+	Kiss Daniel,
+	Yung 4,
+	Doncaster Phoenix,
+	West Hartlepool
 }.
 
 \paragraph{Brand name.}
@@ -447,6 +456,13 @@ Thus, tokens like \textit{shoulder bag} are analyzed as \texttt{NOUN} rather tha
 	\item Asus Gaming PC
 	\item Louis Vuitton Monogram Marelle Shoulder Bag
 	\item Puzzle Sharks
+	\item After School Snack
+	\item CARVIN BX250 250 W Micro Bass Guitar Amp Amplifier Head / Compressor
+	\item Lake Wind Advisory
+	\item CARVIN BX250
+	\item Australian Gelato
+	\item Pokemon GO
+	\item Windows live
 \end{itemize}
 
 Product name usually comes with suffix (version number).
@@ -459,9 +475,16 @@ We need to note that a combination of letter and number as version number is tre
 \paragraph{Organization name.} 
 We analyze organization name as a normal noun phrase.
 We use \texttt{PROPN} as the POS tag.
+We analyze most of the organization names as compound.
+But for cases like \textit{Santander UK}.
 \begin{itemize}
 	\item Clinton Global Initiative University
 	\item Santander UK
+	\item Parag Milk Foods
+	\item Alabama Banking Department
+	\item Lady Tattoo Studio
+	\item Hartlepool Mail
+	\item Big East
 \end{itemize}
 
 \paragraph{Event name.}
@@ -469,6 +492,9 @@ We use \texttt{PROPN} as the POS tag.
 	\item Bush Tax Cuts
 	\item Down to Lunch
 	\item Stanley Cup
+	\item The CJUSD District College and Career Fair
+	\item \#AV/IT Leadership Summit
+	\item FA Cup
 \end{itemize}
 
 \paragraph{Title name.}
