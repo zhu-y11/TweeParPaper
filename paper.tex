@@ -663,7 +663,7 @@ In their convention, tokenization tends to preserve the original
 tweet content but two special cases, \textit{articulated prepositions}
 (e.g. \textit{nella} as \textit{in la})
 and \textit{clitic clusters} (e.g. \textit{guardandosi} as \textit{guardando si}), are tokenized.
-\nss{explain what these two phenomena are. are these the only words that are split?}\yjcomment{done}
+%\nss{explain what these two phenomena are. are these the only words that are split?}\yjcomment{done}
 %Beyond tokenization, an extra layer of lemmas is annotated
 %to recover ``what is understandable by a human''.
 %It's arguable whether normalization (the lemmatization in \citet{sanguinetti-17})
@@ -685,7 +685,7 @@ In referential URLs, we use \textit{list} (following the precedent of UD\_Englis
 The choice of relation on the non-syntactic tokens is questionable
 since UD doesn't specify a convention for this. 
 Our choice of \textit{discourse} is inspired by the observation that emoticon is annotated as \textit{discourse}.
-\citet{sanguinetti-17} used the same relation for the emoticon but analyze topical hashtag as \textit{parataxis}.\nss{what did PosTWITA-UD use for non-syntactic tokens?}\yjcomment{done}
+\citet{sanguinetti-17} used the same relation for the emoticon but analyze topical hashtag as \textit{parataxis}.%\nss{what did PosTWITA-UD use for non-syntactic tokens?}\yjcomment{done}
 % Non-syntactic tokens can be easily recovered
 % from our annotation and changing it to other relation in the future development is not difficult.
 We expect that the official UD guidelines will eventually adopt standards for these constructions so the treebanks can be harmonized.
@@ -1159,7 +1159,7 @@ pointed out that neural network training is
 nondeterministic and depends on the seed for the random
 number generator.
 Our preliminary experiments confirm this finding, with a gap of 1 LAS on development data
-between the best (75.8)
+between the best (76.2)
  and worst (74.8) runs. To control for this
 effect, we report the average of five differently-seeded runs, for
 each of our models and the compared ones.
@@ -1170,12 +1170,12 @@ each of our models and the compared ones.
 		\hline
 		\it System & UAS & LAS & Kt/s \\
 		\hline
-		\citet{kong-EtAl:2014:EMNLP2014} &81.6 & 77.2 & 0.3 \\
-		\citet{dozat-qi-manning:2017:K17-3} & 81.9 &  77.7 & 1.7 \\
+		\citet{kong-EtAl:2014:EMNLP2014} & 81.4 & 76.9 & 0.3 \\
+		\citet{dozat-qi-manning:2017:K17-3} & 82.3 & 78.3 & 1.7 \\
 %		\newcite{dyer-EtAl:2015:ACL-IJCNLP} & 77.9 & 73.0 \\
-		\newcite{ballesteros-EtAl:2016:EMNLP2016} & 80.4 & 75.8 & 2.3 \\
+		\newcite{ballesteros-EtAl:2016:EMNLP2016} & 80.2 & 75.7 & 2.3 \\
 		\hdashline
-		Ensemble (20) & 83.5 & 79.4 & 0.2 \\
+		Ensemble (20) & 83.4 & 79.4 & 0.2 \\
 		Distillation ($\alpha =1.0$) & 82.2 & 78.0 & 2.3 \\
 		Distillation ($\alpha =0.9$) & 82.4 & 78.1 & 2.3 \\		
 		Distillation w/ exploration & 82.5 & 78.4 & 2.3 \\
@@ -1254,7 +1254,7 @@ to better performance.
 \begin{figure}[t]
 	\centering
 	\includegraphics[width=\columnwidth,trim={0.3cm 0 0 0},clip]{graphics/alpha}
-	\caption{The effect of $\alpha$ on distillation. \yjcomment{num will change}\label{fig:effect-alpha}}
+	\caption{The effect of $\alpha$ on distillation.\label{fig:effect-alpha}}
 \end{figure}
 
 \paragraph{Learning from exploration.} When we set $\alpha =1$, we
@@ -1365,7 +1365,7 @@ and Austin Blodgett, Lucia Donatelli, Joe Garman, Emma Manning, Angela Yang, and
 at Georgetown University for their annotation efforts in the first round.
 We are grateful for the support from Lingpeng Kong at the initial stage of this project.
 We also thank the anonymous reviewers for their helpful comments and suggestions.
-\yjcomment{funding agency here and anyone else i miss.}
+%\yjcomment{funding agency here and anyone else i miss.}
 This work was supported by the National Key Basic Research
 Program of China via grant 2014CB340503 and the
 National Natural Science Foundation of China (NSFC) via
