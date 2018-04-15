@@ -329,7 +329,7 @@ Gimpel et al.~used a single part of speech for such expressions.
 Another important difference follows from the difference in
 tokenization.  As discussed in \S\ref{sec:tok-anno}, UD calls for more
 aggressive tokenization than that of \citet{ICWSM101540} which opted
-out of splitting contractions and possessives. As a consequence of adopting \citet{ICWSM101540}'s tokenization, 
+out of splitting contractions and possessives. As a consequence of adopting \citeposs{ICWSM101540} tokenization, 
 Gimpel et al.~introduced new parts of speech for these cases
 instead.\footnote{These tags only account for 2.7\% of tokens,
   leading to concerns about data sparseness in tagging and all
@@ -1074,11 +1074,11 @@ in tokenization for informal texts.%\nss{this paragraph needs copyediting}
 Part-of-speech tagging for tweets has been extensively studied \cite{ritter-EtAl:2011:EMNLP,gimpel-EtAl:2011:ACL-HLT2011,derczynski-EtAl:2013:RANLP-2013,owoputi-EtAl:2013:NAACL-HLT,gui-EtAl:2017:EMNLP20172}. We therefore consider existing POS taggers for tweets instead of developing our own.
 On the annotation scheme designed in \S\ref{sec:pos-anno}, based on UD and adapted for
 Twitter, we compared several existing systems: the Stanford CoreNLP tagger, 
-\citet{owoputi-EtAl:2013:NAACL-HLT}'s word cluster enhanced tagger
+\citeposs{owoputi-EtAl:2013:NAACL-HLT} word cluster enhanced tagger
 (both greedy and CRF variants), and 
-\citet{ma-hovy:2016:P16-1}'s neural network tagger 
+\citeposs{ma-hovy:2016:P16-1} neural network tagger 
 which achieves the state-of-the-art performance on PTB.
-\citet{gui-EtAl:2017:EMNLP20172} presented a state-of-the-art neural tagger for Twitter,
+\Citet{gui-EtAl:2017:EMNLP20172} presented a state-of-the-art neural tagger for Twitter,
 but their implementation works only with the PTB tagset, so we exclude
 it. % Thus, we didn't include their tagger in our comparison.\yjcomment{i put some words on \cite{gui-EtAl:2017:EMNLP20172} in case the reviewer challenge our neural/non-neural comparsion.}
  %and also two bi-LSTM systems similar
@@ -1132,7 +1132,7 @@ We tested the POS taggers on the \textsc{Tweebank v2} test set.  Results
 with gold-standard tokenization are shown in
 Table \ref{tbl:pos-result}. The careful feature engineering and making use of
 \citet{Brown:1992:CNG:176313.176316} clusters in the 
-POS tagger of \citet{owoputi-EtAl:2013:NAACL-HLT} outperforms \citet{ma-hovy:2016:P16-1}'s neural network
+POS tagger of \citet{owoputi-EtAl:2013:NAACL-HLT} outperforms \citeposs{ma-hovy:2016:P16-1} neural network
 model. 
 %tagger
 %also makes use of clusters derived
@@ -1202,7 +1202,7 @@ the stack LSTM with {\sc TweeboParser} (the system
 of \citealp{kong-EtAl:2014:EMNLP2014}) and the state-of-the-art parser
 in the CoNLL 2017 evaluations, due to
  \citet{dozat-qi-manning:2017:K17-3}.
- \citet{kong-EtAl:2014:EMNLP2014}'s parser is a graph-based
+ \Citeposs{kong-EtAl:2014:EMNLP2014} parser is a graph-based
 parser with lexical features and word cluster and it uses dual decomposition
 for decoding. The parser in \citet{dozat-qi-manning:2017:K17-3} is also a graph-based parser
 but includes character-based word representation and uses the biaffine classifier
@@ -1325,7 +1325,7 @@ pipeline's performance in  Table \ref{tbl:pipline}. We also compare
 our model with a pipeline of the state-of-the-art systems (labeled  ``SOTA''):
 Stanford CoreNLP tokenizer,\footnote{We choose the Stanford CoreNLP tokenizer in the spirit of comparing 
 rule-based and statistical methods.} %\yicomment{why not compare with UDPipe?}\yjcomment{i was thinking stanford tokenizer is more suitable, but i will get the udpipe result},
-\citet{owoputi-EtAl:2013:NAACL-HLT}'s tagger, and \citet{dozat-qi-manning:2017:K17-3}'s parser.
+\citeposs{owoputi-EtAl:2013:NAACL-HLT} tagger, and \citeposs{dozat-qi-manning:2017:K17-3} parser.
 Our system differs from the SOTA pipeline in the tokenization and parser components.
 From Table \ref{tbl:pipline}, our pipeline outperforms the SOTA when
 evaluated in pipeline manner.
