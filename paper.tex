@@ -661,9 +661,9 @@ was the \mbox{\textit{PosTWITA-UD}} corpus for Italian \citep{sanguinetti-17},
 which consists of 6,738 tweets (119,726 tokens).
 In their convention, tokenization tends to preserve the original
 tweet content but two special cases, \textit{articulated prepositions}
-(e.g. \textit{nella} as \textit{in la})
-and \textit{clitic clusters} (e.g. \textit{guardandosi} as \textit{guardando si}), are tokenized.
-\nss{explain what these two phenomena are. are these the only words that are split?}\yjcomment{done}
+(e.g.~\textit{nella} as \textit{in la})
+and \textit{clitic clusters} (e.g.~\textit{guardandosi} as \textit{guardando si}), are tokenized.
+%\nss{explain what these two phenomena are. are these the only words that are split?}\yjcomment{done}
 %Beyond tokenization, an extra layer of lemmas is annotated
 %to recover ``what is understandable by a human''.
 %It's arguable whether normalization (the lemmatization in \citet{sanguinetti-17})
@@ -682,10 +682,11 @@ With respect to tweet-specific constructions,
 but we differ in the relation label.
 For topical hashtags, we use \textit{discourse} while \citet{sanguinetti-17} used \textit{parataxis}. 
 In referential URLs, we use \textit{list} (following the precedent of UD\_English-EWT) while \citet{sanguinetti-17} used \textit{dep}.
-The choice of relation on the non-syntactic tokens is questionable
-since UD doesn't specify a convention for this. 
-Our choice of \textit{discourse} is inspired by the observation that emoticon is annotated as \textit{discourse}.
-\citet{sanguinetti-17} used the same relation for the emoticon but analyze topical hashtag as \textit{parataxis}.\nss{what did PosTWITA-UD use for non-syntactic tokens?}\yjcomment{done}
+%The choice of relation on the non-syntactic tokens is questionable
+%since UD doesn't specify a convention for this. 
+Our choice of \textit{discourse}\nss{for what? maybe the previous sentences should be swapped} is inspired by the observation that emoticons are annotated as \textit{discourse}.\nss{by whom?}
+\citet{sanguinetti-17} used the same relation for the emoticon but analyze topical hashtag as \textit{parataxis}.
+\nss{topical hashtags already mentioned above}
 % Non-syntactic tokens can be easily recovered
 % from our annotation and changing it to other relation in the future development is not difficult.
 We expect that the official UD guidelines will eventually adopt standards for these constructions so the treebanks can be harmonized.
@@ -1314,7 +1315,8 @@ only one point behind the ensemble (last line of Table~\ref{tbl:parse-result}).
 \paragraph{Pipeline evaluation.} Finally, we report  our full
 pipeline's performance in  Table \ref{tbl:pipline}. We also compare
 our model with a pipeline of the state-of-the-art systems (labeled  ``SOTA''):
-Stanford CoreNLP tokenizer\footnote{We choose Stanford CoreNLP tokenizer in the spirit of comparing rule-based and statistical model-based method.}, %\yicomment{why not compare with UDPipe?}\yjcomment{i was thinking stanford tokenizer is more suitable, but i will get the udpipe result},
+Stanford CoreNLP tokenizer,\footnote{We choose the Stanford CoreNLP tokenizer in the spirit of comparing 
+rule-based and statistical methods.} %\yicomment{why not compare with UDPipe?}\yjcomment{i was thinking stanford tokenizer is more suitable, but i will get the udpipe result},
 \citet{owoputi-EtAl:2013:NAACL-HLT}'s tagger, and \citet{dozat-qi-manning:2017:K17-3}'s parser.
 Our system differs from the SOTA pipeline in the tokenization and parser components.
 From Table \ref{tbl:pipline}, our pipeline outperforms the SOTA when
@@ -1358,7 +1360,7 @@ to overcome annotation noise without sacrificing efficiency.
 Our parser achieves an improvement of 2.6  in LAS over a strong baseline
 and outperforms other state-of-the-art parsers in both accuracy and speed.
 
-\section*{Acknowledge}
+\section*{Acknowledgments}
 We thank Elizabeth Clark, Lucy Lin, Nelson Liu, Kelvin Luu, Phoebe Mulcaire, 
 Hao Peng, Maarten Sap, Chenhao Tan, and Sam Thomson at the University of Washington, 
 and Austin Blodgett, Lucia Donatelli, Joe Garman, Emma Manning, Angela Yang, and Yushi Zhang 
@@ -1370,6 +1372,10 @@ This work was supported by the National Key Basic Research
 Program of China via grant 2014CB340503 and the
 National Natural Science Foundation of China (NSFC) via
 grant 61632011.
+
+\nss{bibliography: most but not all conference papers have URLs; some but not all have page numbers. 
+``TACL'' is sometimes spelled out.
+Make sure ``LSTM'', ``LSTMs'', etc. are capitalized properly in titles.}
 
 \bibliography{shortdb}
 \bibliographystyle{acl_natbib}
