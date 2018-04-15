@@ -182,8 +182,8 @@ Then we introduce the differences in our tokenization
 \citet{gimpel-EtAl:2011:ACL-HLT2011}, respectively, on which {\sc Tweebank v1} was built. 
 We describe our effort of adapting the
 UD conventions to cover tweet-specific constructions (\S\ref{sec:ud-tweet}). 
-Finally, we present our process of creating a new tweet treebank, {\sc
-  Tweebank v2}, and characterize
+Finally, we present our process of creating a new tweet treebank, 
+{\sc Tweebank v2}, and characterize
 the difficulties in reaching consistent annotations (\S\ref{sec:anno-process}).
 
 \subsection{Background: \textsc{Tweebank}}\label{sec:tweebank}
@@ -836,7 +836,7 @@ parser were trained on the annotated data from the first stage (1,050 tweets in 
 and used to automatically analyze the sampled 2,500 tweets.  Authors 
 of this paper manually corrected the parsed data and finally achieved 3,550 labeled tweets.\footnote{Manual annotation was done with Arborator \cite{gerdes:2013:W13-37}, a web platform for drawing dependency trees.}
 Newly created annotations are split into train, development, and test sets and appended
-to the original splits of {\sc Twebank v1}. Statistics of our annotations and data splits are shown
+to the original splits of {\sc Tweebank v1}. Statistics of our annotations and data splits are shown
 in Table~\ref{tbl:data-stat}.
 
 %Finally, an extra
@@ -1047,9 +1047,9 @@ Space is treated as an input but deterministically  assigned a special tag \$.
 %outperforms the one trained only on the dialect treebank.  
 Our preliminary results
 showed that our model trained on
-the combination of UD\_English-EWT and Tweebank v2
-outperforms the one trained only on the UD\_English-EWT or Tweebank v2,
-which also was confirmed by previous works on dialect treebank parsing \cite{wang-EtAl:2017:Long6}.
+the combination of UD\_English-EWT and \textsc{Tweebank v2}
+outperformed the one trained only on the UD\_English-EWT or \textsc{Tweebank v2},
+consistent with previous work on dialect treebank parsing \cite{wang-EtAl:2017:Long6}.
 So we trained our tokenizer on the training portion of
 \textsc{Tweebank v2} combined with the UD\_English-EWT training set
 and tested on the \textsc{Tweebank v2} test set. % \yicomment{should mention that combination of corpora improves the results, otherwise we should answer why we didn't try training ONLY on Tweebank v2}\yjcomment{add discussion}
@@ -1060,11 +1060,11 @@ tokenization results, compared to  other available tokenizers.
 to the UD tokenization scheme.
 The UDPipe v1.2
 \cite{straka-strakova:2017:K17-3} model was re-trained on the same
-data as our system. Compared with UDPipe, we use LSTM
-instead of GRU in our model and we also use a larger size of hidden units (64 vs.~20),
-which has stronger representation power. 
+data as our system. Compared with UDPipe, we use an LSTM
+instead of a GRU in our model and we also use a larger size for hidden units (64 vs.~20),
+which has stronger representational power. 
 Our bi-LSTM tokenizer achieves the best accuracy among all these
-tokenizers.  These results indicate the value of statistical modeling
+tokenizers.  These results speak to the value of statistical modeling
 in tokenization for informal texts.%\nss{this paragraph needs copyediting}
 
 \subsection{Part-of-Speech Tagger}
@@ -1101,7 +1101,7 @@ and parsers.\footnote{\url{http://nlp.stanford.edu/data/glove.twitter.27B.zip}}
 	\centering
 	\begin{tabular}{rc}
 		\hline
-		\it System & Precision \\
+		\it System & Precision\nss{Accuracy?} \\
 		\hline
 %		Stanford Postagger & 65.6 \\
 		Stanford CoreNLP & 90.6 \\
@@ -1135,9 +1135,9 @@ and parsers.\footnote{\url{http://nlp.stanford.edu/data/glove.twitter.27B.zip}}
 
 We tested the POS taggers on the \textsc{Tweebank v2} test set.  Results
 with gold-standard tokenization are shown in
-Table \ref{tbl:pos-result}. The careful feature engineering and making use of
-\citet{Brown:1992:CNG:176313.176316} clusters in the 
-POS tagger of \citet{owoputi-EtAl:2013:NAACL-HLT} outperforms \citeposs{ma-hovy:2016:P16-1} neural network
+Table \ref{tbl:pos-result}. Careful feature engineering and 
+\citet{Brown:1992:CNG:176313.176316} clusters  
+help \citeposs{owoputi-EtAl:2013:NAACL-HLT} feature-based POS taggers to outperform \citeposs{ma-hovy:2016:P16-1} neural network
 model. 
 %tagger
 %also makes use of clusters derived
@@ -1160,7 +1160,7 @@ character representations to construct word vectors, which should help mitigate 
 spelling variation. We encourage the reader to refer their paper for
 more details about the model.
 
-In our preliminary experiments, we train our parser on the combination of UD\_English-EWT
+In our preliminary\nss{initial?} experiments, we train our parser on the combination of UD\_English-EWT
 and \textsc{Tweebank v2} training sets. Gold-standard tokenization and automatic POS
 tags are used. Automatic POS tags are assigned with 5-fold
 jackknifing. Hyperparameters %, including the value of $\alpha$ in Equation \ref{eq:distill},
@@ -1210,7 +1210,7 @@ in the CoNLL 2017 evaluations, due to
  \Citeposs{kong-EtAl:2014:EMNLP2014} parser is a graph-based
 parser with lexical features and word cluster and it uses dual decomposition
 for decoding. The parser in \citet{dozat-qi-manning:2017:K17-3} is also a graph-based parser
-but includes character-based word representation and uses the biaffine classifier
+but includes character-based word representation and uses a biaffine classifier
 to predict if an attachment exists between two words.
 Both of the compared systems require superlinear runtime due to graph-based parsing. 
 They are re-trained on the same data as our
@@ -1276,10 +1276,10 @@ eliminate the oracle from the estimation procedure (for the distilled
 model).  This presents an opportunity to learn with \emph{exploration}, by
 randomly sampling transitions from the ensemble, found useful
 in recent methods for training greedy models that use dynamic oracles
-\citet{goldberg-nivre:2012:PAPERS,TACL145,TACL885,ballesteros-EtAl:2016:EMNLP2016}.  
+\citep{goldberg-nivre:2012:PAPERS,TACL145,TACL885,ballesteros-EtAl:2016:EMNLP2016}.  
 We find that this
 approach outperforms the  conventional distillation model, coming in
-only one point behind the ensemble (last line of Table~\ref{tbl:parse-result}).
+only one\nss{UAS? LAS is 1.5 points} point behind the ensemble (last line of Table~\ref{tbl:parse-result}).
 
 %
 %\begin{table}[t]
@@ -1338,7 +1338,7 @@ The results also emphasize the
 importance of tokenization:  without gold tokenization
 %\nascomment{changed ``segmentation'' to ``tokenization'' here, twice},
 UD parsing
-performance drops by more than four points.
+performance drops by more than\nss{? 77.9 vs. 74.0, right?} four points.
 
 %\section{Related Work}
 %\yjcomment{related word is not finished.}
