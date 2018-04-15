@@ -20,6 +20,7 @@
 \usepackage{url}
 \usepackage{multirow}
 \usepackage{graphicx}
+\usepackage[small,bf,skip=5pt]{caption}
 \usepackage{subcaption}
 \usepackage{arydshln}
 \newcommand\BibTeX{B{\sc ib}\TeX}
@@ -415,7 +416,7 @@ step.
 \begin{table}
 \centering
 \begin{tabular}{lrr}
-\hline
+%\hline
 \multicolumn{2}{r}{syntactic (\%)} & non-syntactic (\%)\\ \hline
 emoticons & 0.25 & 0.95 \\
 RT & 0.14 & 2.49\\
@@ -424,10 +425,10 @@ URL & 0.67 & 2.38 \\
 truncated words & 0.00 & 0.49 \\
  \hline
  total & 2.08 & 7.55 \\
- \hline
+% \hline
 \end{tabular}
 \caption{Proportions of non-syntactic tokens in our annotation. %\yicomment{should add also retweet at-mentions}
-These statistics are obtained on 140 character-limited tweets. \label{tbl:non-synt-prop}}
+These statistics are obtained on 140 character--limited tweets. \label{tbl:non-synt-prop}}
 \end{table}
 
 \begin{figure*}[t]
@@ -787,7 +788,7 @@ Before annotation, we use simple regular expression to anonymize usernames and U
 \begin{table}
 	\centering
 	\begin{tabular}{rrrrr}
-		\hline
+%		\hline
 		 & \multicolumn{2}{c}{\textsc{Tweebank v1}} & \multicolumn{2}{c}{\textsc{Tweebank v2}} \\
 		split & tweets & tokens & tweets & tokens \\
 		\hline
@@ -801,7 +802,7 @@ Before annotation, we use simple regular expression to anonymize usernames and U
 %		\hdashline
 %		\textsc{v2} & tweets & 1,639 & 709 & 1,201 & 3,549 \\
 %		 & tokens &	24,753	&	11,742	&	19,112 & 55,617\\
-		\hline
+%		\hline
 	\end{tabular}
 
 %	\begin{tabular}{rrrrrr}
@@ -1028,7 +1029,7 @@ Space is treated as an input but deterministically  assigned a special tag \$.
 \begin{table}[t]
 	\centering
 	\begin{tabular}{rc}
-		\hline
+%		\hline
 		\it System & $F_1$ \\
 		\hline
 		  Stanford CoreNLP & 97.3 \\
@@ -1037,7 +1038,7 @@ Space is treated as an input but deterministically  assigned a special tag \$.
 		\hdashline
 		UDPipe v1.2 & 97.4 \\
 	 	our bi-LSTM tokenizer & 98.3 \\
-		\hline
+%		\hline
 	\end{tabular}
 	\caption{Tokenizer comparison on the \textsc{Tweebank v2} test set.}\label{tbl:tok-result}
 \end{table}
@@ -1100,8 +1101,8 @@ and parsers.\footnote{\url{http://nlp.stanford.edu/data/glove.twitter.27B.zip}}
 \begin{table}[t]
 	\centering
 	\begin{tabular}{rc}
-		\hline
-		\it System & Precision\nss{Accuracy?} \\
+%		\hline
+		\it System & Precision \\
 		\hline
 %		Stanford Postagger & 65.6 \\
 		Stanford CoreNLP & 90.6 \\
@@ -1113,21 +1114,21 @@ and parsers.\footnote{\url{http://nlp.stanford.edu/data/glove.twitter.27B.zip}}
 		\citealp{ma-hovy:2016:P16-1} & 92.5 \\
 %		our word bi-LSTM & 89.2 \\
 %		our character + word bi-LSTMs & 91.5 \\
-		\hline
+%		\hline
 	\end{tabular}
 	\caption{POS tagger comparison on gold-standard tokens in the
-          \textsc{Tweebank v2} test set. \label{tbl:pos-result}}
+          \textsc{Tweebank v2} test set.\nss{why Precision and not Accuracy?} \label{tbl:pos-result}}
 \end{table}
 
 \begin{table}[t]
 	\centering
 	\begin{tabular}{rc}
-		\hline
+%		\hline
 		\it Tokenization System & $F_1$ \\
 		\hline
 		Stanford CoreNLP & 92.3 \\
 		our bi-LSTM tokenizer (\S\ref{sec:tok}) & 93.3 \\
-		\hline
+%		\hline
 	\end{tabular}
 	\caption{\citet{owoputi-EtAl:2013:NAACL-HLT} POS tagging performance with automatic tokenization on
           the \textsc{Tweebank v2} test set. \label{tbl:pos-result-vs-tok}}
@@ -1181,7 +1182,7 @@ each of our models and the compared ones.
 \begin{table}[t]
 	\centering
 	\begin{tabular}{rccc}
-		\hline
+%		\hline
 		\it System & UAS & LAS & Kt/s \\
 		\hline
 		\citet{kong-EtAl:2014:EMNLP2014} & 81.4 & 76.9 & 0.3 \\
@@ -1193,7 +1194,7 @@ each of our models and the compared ones.
 		Distillation ($\alpha =1.0$) & 81.8 & 77.6 & 2.3 \\
 		Distillation ($\alpha =0.9$) & 82.0 & 77.8 & 2.3 \\		
 		Distillation w/ exploration & 82.1 & 77.9 & 2.3 \\
-		\hline
+%		\hline
 	\end{tabular}
 	\caption{Dependency parser comparison on \textsc{Tweebank v2} test set,
            with automatic POS tags. The ``Kt/s'' column shows
@@ -1313,13 +1314,13 @@ only one\nss{UAS? LAS is 1.5 points} point behind the ensemble (last line of Tab
 \begin{table}[t]
 	\centering
 	\begin{tabular}{rrcc}
-		\hline
+%		\hline
 		\it Pipeline stage & Score & Ours & SOTA \\
 		\hline
 		Tokenization  & \it $F_1$ & 98.3 & 97.3 \\		
 		POS tagging &  \it  $F_1$ & 93.3 & 92.2 \\
 		UD parsing & \it LAS $F_1$ & 74.0 & 71.4 \\
-		\hline
+%		\hline
 	\end{tabular}
 	\caption{Evaluating our pipeline against a state-of-the-art pipeline.\label{tbl:pipline} %\yicomment{see tab5 for our tokenizer the pos tagging number is 93.6, here is 93.7, should be consistent}
 	}
