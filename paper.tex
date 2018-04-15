@@ -30,10 +30,10 @@
 \newcommand{\citeposs}[2][]{\citeauthor{#2}'s (\citeyear[#1]{#2})}
 \newcommand{\Citeposs}[2][]{\Citeauthor{#2}'s (\citeyear[#1]{#2})}
 
-\newcommand{\yjcomment}[1]{\textcolor{orange}{[$_\mathrm{L}^\mathrm{Y}$#1]}}
-\newcommand{\nascomment}[1]{\textcolor{blue}{[#1 ---\textsc{nas}]}}
-\newcommand{\yicomment}[1]{\textcolor{gray}{[#1 ---\textsc{yi}]}}
-\newcommand{\nss}[1]{\textcolor{magenta}{[$_\mathrm{S}^\mathrm{NS}$#1]}}
+%\newcommand{\yjcomment}[1]{\textcolor{orange}{[$_\mathrm{L}^\mathrm{Y}$#1]}}
+%\newcommand{\nascomment}[1]{\textcolor{blue}{[#1 ---\textsc{nas}]}}
+%\newcommand{\yicomment}[1]{\textcolor{gray}{[#1 ---\textsc{yi}]}}
+%\newcommand{\nss}[1]{\textcolor{magenta}{[$_\mathrm{S}^\mathrm{NS}$#1]}}
 
 \title{Parsing Tweets into Universal Dependencies}
 
@@ -69,7 +69,7 @@ understanding and explaining tweets. Nonetheless, using the new treebank,
 we build a pipeline system to parse raw tweets into UD. To overcome 
 annotation noise without sacrificing computational efficiency, we propose a new
 method to distill an ensemble of 20 transition-based parsers into a single one. Our
-parser achieves an improvement of 2.6 in LAS over the un-ensembled baseline 
+parser achieves an improvement of 2.2 in LAS over the un-ensembled baseline 
 and outperforms parsers that are state-of-the-art on other treebanks in both accuracy and speed.
 \end{abstract}
 
@@ -78,7 +78,7 @@ NLP for social media messages is challenging, because domain
 adaptation is required, and also because creating annotated datasets
 (e.g., treebanks)
 for training and evaluation is hard. 
-Pioneering work by \citet{AAAIW113912} 
+Pioneering work by \citet{Foster:2011:HPT:2908630.2908634} 
 annotated 7,630 tokens' worth of tweets according to the
 phrase-structure conventions of the Penn Treebank
 \citep[PTB;][]{Marcus93buildinga}, enabling conversion to Stanford Dependencies.
@@ -144,7 +144,7 @@ distill a 20-parser ensemble into a single greedy  parser
 We show further  that learning directly from the exploration of the ensemble parser
 is more beneficial than learning from the gold standard ``oracle''
 transition sequence. Experimental results show that an improvement of more
-than 2.6 points in LAS over the
+than 2.2 points in LAS over the
 baseline parser can be achieved with our distillation method.  It outperforms
 other state-of-the-art parsers in both accuracy and speed.
 
@@ -260,7 +260,7 @@ which adopt the universal POS tagset.\footnote{A revised and extended version of
 % Sticking to the syntactic distribution makes it possible that a `$\heart$' symbol is tagged as a verb as shown in Figure \ref{fig:non-syn-toks}. \yjcomment{Need a better explanation.}
 %We follow the UD V2 morphology guideline and use the Universal POS tags~ to tag the tweet tokens. For twitter specific linguistic phenomena, we have set different strategies and try to align with the UD conventions and UD\textunderscore English as close as possible.\footnote{\url{https://github.com/UniversalDependencies/UD\_English}}
 In some cases,  non-corresponding tag conflicts arose between the UD English 
-treebank conventions \cite[UD\_English;][]{Marneffe2014UniversalSD}\footnote{\url{https://github.com/UniversalDependencies/UD_English}}
+treebank conventions \cite[UD\_English;][]{Marneffe2014UniversalSD}\footnote{\url{https://github.com/UniversalDependencies/UD_English-EWT}}
 and the conventions of \newcite{gimpel-EtAl:2011:ACL-HLT2011}.  %\yicomment{The conflicts
                                 %should refer to a {\bf
                                 %noncorresponding tag} from that of
@@ -278,7 +278,7 @@ rather than {\it conjunction} ({\tt CCONJ}).
 Tokens that do not have a syntactic function (see Figure \ref{fig:non-syn-toks}, discussed at greater
 length in the next section) were usually annotated as \emph{other}
 (\texttt{X}), except for emoticons, which are tagged as \emph{symbol}
-(\texttt{SYM}), following UD\_English.
+(\texttt{SYM}), following UD\_English-EWT.
 
 % Again, there are un-conventional linguistic constructions in tweets that syntactic distribution doesn't handle well.
 % One of the cases is the non-syntactic tokens.
@@ -530,7 +530,7 @@ conventions%\yicomment{this applies to all non-syntactic tokens including punctu
 \item If the whole sentence is made of a sequence of non-syntactic tokens, we attach all these tokens to the first one.
 %\item In parataxis case, when it is difficult to decide which sentence or phrase x should belong to, we always attach x to the previous predicate of the paratactic clause or phrase;
 \item Non-syntactic tokens are mostly labeled as {\it discourse}, but
-  URLs are always labeled as {\it list}, following the UD\_English dataset.% \yicomment{need to add punct for punctuations?}
+  URLs are always labeled as {\it list}, following the UD\_English-EWT dataset.% \yicomment{need to add punct for punctuations?}
 %\\ \yicomment{For retweet at-mention case, we attach the retweet at-mentions to the RT sign, so that the retweet action and the people whose tweet is being retweeted could be connected.\footnote{We can also follow the first convention to attach the retweet at-mention to its predicate, but we think it is better for downstream tasks.}}
 \end{itemize}
 
@@ -661,8 +661,8 @@ was the \mbox{\textit{PosTWITA-UD}} corpus for Italian \citep{sanguinetti-17},
 which consists of 6,738 tweets (119,726 tokens).
 In their convention, tokenization tends to preserve the original
 tweet content but two special cases, \textit{articulated prepositions}
-(e.g. \textit{nella} as \textit{in la})
-and \textit{clitic clusters} (e.g. \textit{guardandosi} as \textit{guardando si}), are tokenized.
+(e.g.~\textit{nella} as \textit{in la})
+and \textit{clitic clusters} (e.g.~\textit{guardandosi} as \textit{guardando si}), are tokenized.
 %\nss{explain what these two phenomena are. are these the only words that are split?}\yjcomment{done}
 %Beyond tokenization, an extra layer of lemmas is annotated
 %to recover ``what is understandable by a human''.
@@ -682,10 +682,19 @@ With respect to tweet-specific constructions,
 but we differ in the relation label.
 For topical hashtags, we use \textit{discourse} while \citet{sanguinetti-17} used \textit{parataxis}. 
 In referential URLs, we use \textit{list} (following the precedent of UD\_English-EWT) while \citet{sanguinetti-17} used \textit{dep}.
-The choice of relation on the non-syntactic tokens is questionable
-since UD doesn't specify a convention for this. 
-Our choice of \textit{discourse} is inspired by the observation that emoticon is annotated as \textit{discourse}.
-\citet{sanguinetti-17} used the same relation for the emoticon but analyze topical hashtag as \textit{parataxis}.%\nss{what did PosTWITA-UD use for non-syntactic tokens?}\yjcomment{done}
+%<<<<<<< HEAD
+%The choice of relation on the non-syntactic tokens is questionable
+%since UD doesn't specify a convention for this. 
+%Our choice of \textit{discourse} is inspired by the observation that emoticon is annotated as \textit{discourse}.
+%\citet{sanguinetti-17} used the same relation for the emoticon but analyze topical hashtag as \textit{parataxis}.%\nss{what did PosTWITA-UD use for non-syntactic tokens?}\yjcomment{done}
+%=======
+%The choice of relation on the non-syntactic tokens is questionable
+%since UD doesn't specify a convention for this. 
+Our choice of \textit{discourse} for sentiment emoticons
+is inspired by the observation that emoticons are annotated as \textit{discourse} by UD\_English-EWT
+and \citet{sanguinetti-17} used the same relation for the emoticons.
+%\nss{topical hashtags already mentioned above}
+%>>>>>>> a7f86b777a73f64b2f05101f4804421aea0412f3
 % Non-syntactic tokens can be easily recovered
 % from our annotation and changing it to other relation in the future development is not difficult.
 We expect that the official UD guidelines will eventually adopt standards for these constructions so the treebanks can be harmonized.
@@ -779,10 +788,10 @@ Before annotation, we use simple regular expression to anonymize username and UR
 		split & tweets & tokens & tweets & tokens \\
 		\hline
 		train & 639 & 9,310 & 1,639 & 24,753 \\
-		dev & --\hphantom{0} & --\hphantom{00} & 709 & 11,742 \\
+		dev & --\hphantom{0} & --\hphantom{00} & 710 & 11,742 \\
 		test & 201 & 2,839 & 1,201 & 19,112 \\
 		\hline
-		total & 840 & 12,149 & 3,549 & 55,617 \\
+		total & 840 & 12,149 & 3,550 & 55,607 \\
 %		\textsc{v1} & tweets & 639 & 0 & 201 & 840 \\
 %		& tokens  & 9,310 & 0 & 2,839 & 12149 \\
 %		\hdashline
@@ -1033,11 +1042,11 @@ Space is treated as an input but deterministically  assigned a special tag \$.
 %outperforms the one trained only on the dialect treebank.  
 Our preliminary results
 showed that our model trained on
-the combination of UD\_English and Tweebank v2
-outperforms the one trained only on the UD\_English or Tweebank v2,
+the combination of UD\_English-EWT and Tweebank v2
+outperforms the one trained only on the UD\_English-EWT or Tweebank v2,
 which also was confirmed by previous works on dialect treebank parsing \cite{wang-EtAl:2017:Long6}.
 So we trained our tokenizer on the training portion of
-\textsc{Tweebank v2} combined with the UD\_English training set
+\textsc{Tweebank v2} combined with the UD\_English-EWT training set
 and tested on the \textsc{Tweebank v2} test set. % \yicomment{should mention that combination of corpora improves the results, otherwise we should answer why we didn't try training ONLY on Tweebank v2}\yjcomment{add discussion}
 We report $F_1$ scores, combining precision and recall for token identification. Table \ref{tbl:tok-result} shows the
 tokenization results, compared to  other available tokenizers. 
@@ -1075,7 +1084,7 @@ it. % Thus, we didn't include their tagger in our comparison.\yjcomment{i put so
  %and also two bi-LSTM systems similar
 %to \citet{DBLP:journals/corr/HuangXY15} and \citet{lample-EtAl:2016:N16-1}, one using
 %word vectors and the other using word and character vectors (see Figure \ref{fig:pos-model}).
-All compared systems were re-trained on the combination of the UD\_English and 
+All compared systems were re-trained on the combination of the UD\_English-EWT and 
 \textsc{Tweebank v2} training sets. We use Twitter-specific GloVe embeddings released by
 \citet{pennington-socher-manning:2014:EMNLP2014} in all neural taggers
 and parsers.\footnote{\url{http://nlp.stanford.edu/data/glove.twitter.27B.zip}}
@@ -1146,7 +1155,7 @@ character representations to construct word vectors, which should help mitigate 
 spelling variation. We encourage the reader to refer their paper for
 more details about the model.
 
-In our preliminary experiments, we train our parser on the combination of UD\_English
+In our preliminary experiments, we train our parser on the combination of UD\_English-EWT
 and \textsc{Tweebank v2} training sets. Gold-standard tokenization and automatic POS
 tags are used. Automatic POS tags are assigned with 5-fold
 jackknifing. Hyperparameters %, including the value of $\alpha$ in Equation \ref{eq:distill},
@@ -1158,7 +1167,7 @@ All the experiments were run on a Xeon E5-2670 2.6 GHz machine.
 pointed out that neural network training is 
 nondeterministic and depends on the seed for the random
 number generator.
-Our preliminary experiments confirm this finding, with a gap of 1 LAS on development data
+Our preliminary experiments confirm this finding, with a gap of 1.4 LAS on development data
 between the best (76.2)
  and worst (74.8) runs. To control for this
 effect, we report the average of five differently-seeded runs, for
@@ -1171,20 +1180,20 @@ each of our models and the compared ones.
 		\it System & UAS & LAS & Kt/s \\
 		\hline
 		\citet{kong-EtAl:2014:EMNLP2014} & 81.4 & 76.9 & 0.3 \\
-		\citet{dozat-qi-manning:2017:K17-3} & 82.3 & 78.3 & 1.7 \\
+		\citet{dozat-qi-manning:2017:K17-3} & 81.8 & 77.7 & 1.7 \\
 %		\newcite{dyer-EtAl:2015:ACL-IJCNLP} & 77.9 & 73.0 \\
 		\newcite{ballesteros-EtAl:2016:EMNLP2016} & 80.2 & 75.7 & 2.3 \\
 		\hdashline
 		Ensemble (20) & 83.4 & 79.4 & 0.2 \\
-		Distillation ($\alpha =1.0$) & 82.2 & 78.0 & 2.3 \\
-		Distillation ($\alpha =0.9$) & 82.4 & 78.1 & 2.3 \\		
-		Distillation w/ exploration & 82.5 & 78.4 & 2.3 \\
+		Distillation ($\alpha =1.0$) & 81.8 & 77.6 & 2.3 \\
+		Distillation ($\alpha =0.9$) & 82.0 & 77.8 & 2.3 \\		
+		Distillation w/ exploration & 82.1 & 77.9 & 2.3 \\
 		\hline
 	\end{tabular}
 	\caption{Dependency parser comparison on \textsc{Tweebank v2} test set,
            with automatic POS tags. The ``Kt/s'' column shows
            the parsing speed evaluated by thousands of tokens
-           the model processed per second.\yjcomment{num will change}
+           the model processed per second.
             \label{tbl:parse-result}}
 \end{table}
 
@@ -1244,7 +1253,7 @@ their distillation loss and the conventional log loss:
 \end{align}
 
 Distilling from this 
-parser leads to a single greedy transition-based parser with 78.1
+parser leads to a single greedy transition-based parser with 77.8
 LAS---better than past systems but worse than our more expensive ensemble.
 The effect of $\alpha$ is illustrated in
 Figure~\ref{fig:effect-alpha}; generally paying closer attention to
@@ -1302,19 +1311,20 @@ only one point behind the ensemble (last line of Table~\ref{tbl:parse-result}).
 		\hline
 		\it Pipeline stage & Score & Ours & SOTA \\
 		\hline
-		Tokenization  & \it $F_1$ & 98.3 & 96.6 \\		
-		POS tagging &  \it  $F_1$ & 93.7 & 92.1 \\
-		UD parsing & \it LAS $F_1$ & 74.1 & 70.3 \\
+		Tokenization  & \it $F_1$ & 98.3 & 97.3 \\		
+		POS tagging &  \it  $F_1$ & 93.3 & 92.2 \\
+		UD parsing & \it LAS $F_1$ & 74.0 & 71.4 \\
 		\hline
 	\end{tabular}
-	\caption{Evaluating our pipeline against a state-of-the-art pipeline. \yjcomment{num will change}\label{tbl:pipline} %\yicomment{see tab5 for our tokenizer the pos tagging number is 93.6, here is 93.7, should be consistent}
+	\caption{Evaluating our pipeline against a state-of-the-art pipeline.\label{tbl:pipline} %\yicomment{see tab5 for our tokenizer the pos tagging number is 93.6, here is 93.7, should be consistent}
 	}
 \end{table}
 
 \paragraph{Pipeline evaluation.} Finally, we report  our full
 pipeline's performance in  Table \ref{tbl:pipline}. We also compare
 our model with a pipeline of the state-of-the-art systems (labeled  ``SOTA''):
-Stanford CoreNLP tokenizer\footnote{We choose Stanford CoreNLP tokenizer in the spirit of comparing rule-based and statistical model-based method.}, %\yicomment{why not compare with UDPipe?}\yjcomment{i was thinking stanford tokenizer is more suitable, but i will get the udpipe result},
+Stanford CoreNLP tokenizer,\footnote{We choose the Stanford CoreNLP tokenizer in the spirit of comparing 
+rule-based and statistical methods.} %\yicomment{why not compare with UDPipe?}\yjcomment{i was thinking stanford tokenizer is more suitable, but i will get the udpipe result},
 \citet{owoputi-EtAl:2013:NAACL-HLT}'s tagger, and \citet{dozat-qi-manning:2017:K17-3}'s parser.
 Our system differs from the SOTA pipeline in the tokenization and parser components.
 From Table \ref{tbl:pipline}, our pipeline outperforms the SOTA when
@@ -1355,10 +1365,10 @@ consistent annotation a challenge.  Using this new treebank,
 we build a pipeline system to parse tweets into UD. We also 
 propose a new method to distill an ensemble of 20 greedy parsers into a single one
 to overcome annotation noise without sacrificing efficiency.
-Our parser achieves an improvement of 2.6  in LAS over a strong baseline
+Our parser achieves an improvement of 2.2  in LAS over a strong baseline
 and outperforms other state-of-the-art parsers in both accuracy and speed.
 
-\section*{Acknowledge}
+\section*{Acknowledgments}
 We thank Elizabeth Clark, Lucy Lin, Nelson Liu, Kelvin Luu, Phoebe Mulcaire, 
 Hao Peng, Maarten Sap, Chenhao Tan, and Sam Thomson at the University of Washington, 
 and Austin Blodgett, Lucia Donatelli, Joe Garman, Emma Manning, Angela Yang, and Yushi Zhang 
@@ -1370,6 +1380,10 @@ This work was supported by the National Key Basic Research
 Program of China via grant 2014CB340503 and the
 National Natural Science Foundation of China (NSFC) via
 grant 61632011.
+
+%\nss{bibliography: most but not all conference papers have URLs; some but not all have page numbers. 
+%``TACL'' is sometimes spelled out.
+%Make sure ``LSTM'', ``LSTMs'', etc. are capitalized properly in titles.}
 
 \bibliography{shortdb}
 \bibliographystyle{acl_natbib}
