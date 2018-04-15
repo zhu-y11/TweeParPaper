@@ -36,7 +36,7 @@
 %\newcommand{\yjcomment}[1]{\textcolor{orange}{[$_\mathrm{L}^\mathrm{Y}$#1]}}
 %\newcommand{\nascomment}[1]{\textcolor{blue}{[#1 ---\textsc{nas}]}}
 %\newcommand{\yicomment}[1]{\textcolor{gray}{[#1 ---\textsc{yi}]}}
-%\newcommand{\nss}[1]{\textcolor{magenta}{[$_\mathrm{S}^\mathrm{NS}$#1]}}
+\newcommand{\nss}[1]{\textcolor{magenta}{[$_\mathrm{S}^\mathrm{NS}$#1]}}
 
 \title{Parsing Tweets into Universal Dependencies}
 
@@ -250,7 +250,7 @@ and leave acronyms like {\em idc} (``I don't care'') as a single token.
 In the different direction of splitting tokens, UD guidelines also suggest to merge
 {\it multi-token words} (e.g., {\it 20 000}) into one single token in some special
 cases. We witnessed a small number of tweets that contain multi-token words
-(e.g., {\it Y O}, and {\it R E T W E E T}) but didn't combine them for simplification.
+(e.g., {\it Y O}, and {\it R E T W E E T}) but didn't combine them for simplicity.
 Such tokens only account for 0.07\% and we use the UD
   {\it goeswith} relation to resolve these cases in the dependency annotations.
 
@@ -262,8 +262,8 @@ which adopt the universal POS tagset.\footnote{A revised and extended version of
 % The POS annotation of a word in tweets is generally based on its syntactic distribution, which indicates that the POS of word changes on different context.
 % Sticking to the syntactic distribution makes it possible that a `$\heart$' symbol is tagged as a verb as shown in Figure \ref{fig:non-syn-toks}. \yjcomment{Need a better explanation.}
 %We follow the UD V2 morphology guideline and use the Universal POS tags~ to tag the tweet tokens. For twitter specific linguistic phenomena, we have set different strategies and try to align with the UD conventions and UD\textunderscore English as close as possible.\footnote{\url{https://github.com/UniversalDependencies/UD\_English}}
-In some cases,  non-corresponding tag conflicts arose between the UD English 
-treebank conventions \cite[UD\_English;][]{Marneffe2014UniversalSD}\footnote{\url{https://github.com/UniversalDependencies/UD_English-EWT}}
+In some cases,  non-corresponding tag conflicts arose between the UD English Web Treebank 
+treebank conventions \cite[UD\_English-EWT;][]{Marneffe2014UniversalSD}\footnote{\url{https://github.com/UniversalDependencies/UD_English-EWT}}
 and the conventions of \newcite{gimpel-EtAl:2011:ACL-HLT2011}.  %\yicomment{The conflicts
                                 %should refer to a {\bf
                                 %noncorresponding tag} from that of
@@ -271,7 +271,7 @@ and the conventions of \newcite{gimpel-EtAl:2011:ACL-HLT2011}.  %\yicomment{The 
                                 %have the same tagset.} 
 In these cases, we always
 conformed to UD, enabling consistency (e.g., when we exploit the
-existing UD\_English treebank in our parser for tweets, \S\ref{sec:parsing}).  For example,  
+existing UD\_English-EWT treebank in our parser for tweets, \S\ref{sec:parsing}).  For example,  
 the nominal URL in Figure \ref{fig:informal-toks} is tagged as {\it
   other} ({\tt X}) and {\tt +} is tagged as {\it symbol} ({\tt SYM})
 rather than {\it conjunction} ({\tt CCONJ}).  
@@ -294,7 +294,7 @@ length in the next section) were usually annotated as \emph{other}
 %In structure level phenomena, we think {\tt RT @user} in retweet structure have no contribution to the tweet syntax and tag both of them as X.
 %We tag usernames in at-mentioned structure as PROPN as they present the vocative case.
 
-Tokens that abbreviate multiple words, such as \emph{idc} are resolved to the POS of the syntactic head of the
+Tokens that abbreviate multiple words (such as \emph{idc}) are resolved to the POS of the syntactic head of the
 expression, following UD conventions (in this example, the head \emph{care} is
 a verb, so \emph{idc} is tagged as a verb).
 % The informal syntactic tokens can generally be handled by their distribution.
@@ -511,9 +511,9 @@ emoticons, which are tagged as \emph{symbol} (\texttt{SYM}).  In our annotation,
 It is important to note that these types may, in some
 contexts, have syntactic functions.
 For example, besides being a discourse marker, \emph{RT} can
-abbreviate the verb {\it retweet}, and emoticons and hashtags may be
-used as content words within a sentence, and at-mentions can be normal vocative proper nouns; see Figure
-\ref{fig:informal-toks}.  Therefore, the criteria for annotating a
+abbreviate the verb {\it retweet}; emoticons and hashtags may be
+used as content words within a sentence; and at-mentions can be normal vocative proper nouns: see Figure~\ref{fig:informal-toks}.  
+Therefore, the criteria for annotating a
 token as non-syntactic must be context-dependent.
 %To our knowledge, this issue has not previously been addressed in UD
 %annotation efforts \nascomment{check!}\yjcomment{it's not safe to claim that.}.
@@ -529,8 +529,9 @@ conventions%\yicomment{this applies to all non-syntactic tokens including punctu
 
 \begin{itemize}
 %\item For the at-mentions in retweet constructions, we attach them to their retweet markers. We will discuss our choice in the following paragraph;
-\item If a non-syntactic token is within a sentence that has a clear predicate, it will be attached to this predicate. Retweet construction is a special case and we will discuss our choice in the following paragraph.
-\item If the whole sentence is made of a sequence of non-syntactic tokens, we attach all these tokens to the first one.
+\item If a non-syntactic token is within a sentence that has a clear predicate, it will be attached to this predicate. 
+The retweet construction is a special case and we will discuss its treatment in the following paragraph.
+\item If the whole sentence\nss{tweet?} is a sequence of non-syntactic tokens, we attach all these tokens to the first one.
 %\item In parataxis case, when it is difficult to decide which sentence or phrase x should belong to, we always attach x to the previous predicate of the paratactic clause or phrase;
 \item Non-syntactic tokens are mostly labeled as {\it discourse}, but
   URLs are always labeled as {\it list}, following the UD\_English-EWT dataset.% \yicomment{need to add punct for punctuations?}
@@ -566,7 +567,7 @@ conventions%\yicomment{this applies to all non-syntactic tokens including punctu
 \newcite{kong-EtAl:2014:EMNLP2014} proposed an additional
 preprocessing step, \emph{token selection}, in their annotation process.
 They required the annotators to first select the non-syntactic
-tokens and exclude them from the final dependencies annotation.
+tokens and exclude them from the final dependency annotation.
 %  \nascomment{confusing.  were they removed or
 %  just labeled as non-syntactic and then excluded from the tree?  I
 %  think they were not actually removed, and were still available,
@@ -674,7 +675,7 @@ and \textit{clitic clusters} (e.g.~\textit{guardandosi} as \textit{guardando si}
 %In this paper, we don't include normalization and leave it an open question for further study.
 %\nss{Maybe just say: 
 Their lemmas include spelling normalization, whereas our lemmas only normalize casing and inflectional morphology.
-The current UD guidelines on lemmas give a lot of flexibility on treebank development.\footnote{\url{http://universaldependencies.org/u/overview/morphology.html\#lemmas}}
+The current UD guidelines on lemmas are flexible, so variation between treebanks is expected.\footnote{\url{http://universaldependencies.org/u/overview/morphology.html\#lemmas}}
 %You could also mention that the current UD guidelines on lemmas (which I wrote) give a lot of flexibility to treebank 
 %developers: \url{http://universaldependencies.org/u/overview/morphology.html\#lemmas}}
 
@@ -695,7 +696,7 @@ In referential URLs, we use \textit{list} (following the precedent of UD\_Englis
 %since UD doesn't specify a convention for this. 
 Our choice of \textit{discourse} for sentiment emoticons
 is inspired by the observation that emoticons are annotated as \textit{discourse} by UD\_English-EWT
-and \citet{sanguinetti-17} used the same relation for the emoticons.
+and \citet{sanguinetti-17} used the same relation for the emoticons.\nss{how does the other treebank treat the RT construction and truncated words?}
 %\nss{topical hashtags already mentioned above}
 %>>>>>>> a7f86b777a73f64b2f05101f4804421aea0412f3
 % Non-syntactic tokens can be easily recovered
@@ -763,7 +764,7 @@ dependency treebank, which we call {\sc Tweebank v2}.
 
 \subsubsection{Data Collection}
 {\sc Tweebank v2} is built on the original data of {\sc Tweebank v1}
-(840 unique tweets, 639/201 for training/test set), along with an 
+(840 unique tweets, 639/201 for training/test), along with an 
 additional 210 tweets sampled from the POS-tagged dataset of
 \newcite{gimpel-EtAl:2011:ACL-HLT2011} and 2,500 tweets sampled
 from the Twitter stream from February 2016 to July 2016.\footnote{Data downloaded from \url{https://archive.org/}.}
@@ -772,8 +773,8 @@ filtered by the {\it lang} attribute in the tweet JSON and {\it
   langid.py}.\footnote{\url{https://github.com/saffsd/langid.py}}
 In the same way as \citet{kong-EtAl:2014:EMNLP2014},
 reference unit is always the tweet in its entirety
--- which may thus consist of multiple sentences -- not the sentence alone.
-Before annotation, we use simple regular expression to anonymize username and URL.
+-- which may thus consist of multiple sentences -- not the sentence alone.\nss{``Each tweet is annotated with a single tree, rather than being split into sentences.''?}
+Before annotation, we use simple regular expression to anonymize usernames and URLs.
 
 %The tweet source of Tweebank V2 consists of three parts. 
 %The first is the original Tweebank created by~\cite{kong-EtAl:2014:EMNLP2014}, denoted as Tweebank V1.  There are 639 unique tweets in the training data of Tweebank V1, and 201 unique tweets in the data set. All of the unique tweets in Tweebank V1 are included in Tweebank V2.
@@ -824,7 +825,7 @@ Before annotation, we use simple regular expression to anonymize username and UR
 \end{table}
 Our annotation process was conducted in two stages.
 In the first stage, 18 researchers worked on the {\sc Tweebank v1}
-proportion and the additional 210 tweets and created the initial annotations in one day.
+portion and the additional 210 tweets and created the initial annotations in one day.
 Before annotating, they were given a tutorial overview of the general UD
 annotation conventions and our guidelines specifically for annotating tweets.
 Both the guidelines and annotations
@@ -834,9 +835,9 @@ different annotators during this exercise. In the second stage, a tokenizer, a P
 parser were trained on the annotated data from the first stage (1,050 tweets in total),
 and used to automatically analyze the sampled 2,500 tweets.  Authors 
 of this paper manually corrected the parsed data and finally achieved 3,550 labeled tweets.\footnote{Manual annotation was done with Arborator \cite{gerdes:2013:W13-37}, a web platform for drawing dependency trees.}
-Newly created annotations are split into train, development, and test set and appended
-to the original split of {\sc Twebank v1}. Statistics of our annotations and data split are shown
-in Table \ref{tbl:data-stat}.
+Newly created annotations are split into train, development, and test sets and appended
+to the original splits of {\sc Twebank v1}. Statistics of our annotations and data splits are shown
+in Table~\ref{tbl:data-stat}.
 
 %Finally, an extra
 %layer of word-level normalization\yicomment{see 10 th col of conllu
@@ -890,9 +891,10 @@ in Table \ref{tbl:data-stat}.
 We report the inter-annotator agreement between the annotators
 in the second stage. There is very little disagreement on the
 tokenization annotation. % \nascomment{still better to quantify}.
-The agreement on POS is 96.6\%, the unlabeled
-dependency agreement is 88.8\% and the labeled dependency agreement
-is 84.3\%. Further analysis shows the major disagreements on POS
+The agreement rate is 96.6\% on POS, 
+88.8\% on unlabeled dependencies, and
+84.3\% on labeled dependencies. 
+Further analysis shows the major disagreements on POS
 involve entity names (30.6\%) %\yicomment{noun phrases or proper noun
                               %phrases, do we need example
                               %here?}\yjcomment{i wasn't counting
