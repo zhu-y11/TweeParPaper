@@ -81,7 +81,7 @@ and outperforms parsers that are state-of-the-art on other treebanks in both acc
 NLP for social media messages is challenging, because domain
 adaptation is required, and also because creating annotated datasets
 (e.g., treebanks)
-for training and evaluation is hard. 
+for training.
 Pioneering work by \citet{Foster:2011:HPT:2908630.2908634} 
 annotated 7,630 tokens' worth of tweets according to the
 phrase-structure conventions of the Penn Treebank
@@ -666,7 +666,7 @@ was the \mbox{\textit{PosTWITA-UD}} corpus for Italian \citep{sanguinetti-17},
 which consists of 6,738 tweets (119,726 tokens).
 In their convention, tokenization tends to preserve the original
 tweet content but two special cases, \textit{articulated prepositions}
-(e.g.~\textit{nella} as \textit{in la})
+(e.g., \textit{nella} as \textit{in la})
 and \textit{clitic clusters} (e.g.~\textit{guardandosi} as \textit{guardando si}), are tokenized.
 %\nss{explain what these two phenomena are. are these the only words that are split?}\yjcomment{done}
 %Beyond tokenization, an extra layer of lemmas is annotated
@@ -683,10 +683,10 @@ The current UD guidelines on lemmas are flexible, so variation between treebanks
 %In the syntax annotation, tweet specific
 %constructions are considered by both \citet{sanguinetti-17} and our paper.
 With respect to tweet-specific constructions,
-\citeposs{sanguinetti-17} and our  interpretation of headedness is the same, 
+\citeposs{sanguinetti-17} and our  interpretation of headedness are the same, 
 but we differ in the relation label.
-For topical hashtags, we use \textit{discourse} while \citet{sanguinetti-17} used \textit{parataxis}. 
-In referential URLs, we use \textit{list} (following the precedent of UD\_English-EWT) while \citet{sanguinetti-17} used \textit{dep}.
+For topical hashtags, we use \textit{discourse} while they used \textit{parataxis}. 
+In referential URLs, we use \textit{list} (following the precedent of UD\_English-EWT) while they used \textit{dep}.
 %<<<<<<< HEAD
 %The choice of relation on the non-syntactic tokens is questionable
 %since UD doesn't specify a convention for this. 
@@ -696,10 +696,10 @@ In referential URLs, we use \textit{list} (following the precedent of UD\_Englis
 %The choice of relation on the non-syntactic tokens is questionable
 %since UD doesn't specify a convention for this. 
 Our choice of \textit{discourse} for sentiment emoticons
-is inspired by the observation that emoticons are annotated as \textit{discourse} by UD\_English-EWT
-and \citet{sanguinetti-17} used the same relation for the emoticons.
+is inspired by the observation that emoticons are annotated as \textit{discourse} by UD\_English-EWT;
+\citet{sanguinetti-17} used the same relation for the emoticons.
 Retweet constructions and truncated words were not explicitly touched
-in \citet{sanguinetti-17}.
+by \citet{sanguinetti-17}.
 Judging from the released treebank\footnote{\url{https://github.com/UniversalDependencies/UD_Italian-PoSTWITA}}, the \textit{RT} marker, at-mention, and colon in the retweet construction are all attached to the predicate of the following sentence with \textit{dep}, \textit{vocative:mention} and \textit{punct}.
 %\nss{how does the other treebank treat the RT construction and truncated words?}
 %\nss{topical hashtags already mentioned above}
@@ -776,9 +776,8 @@ from the Twitter stream from February 2016 to July 2016.\footnote{Data downloade
 The latter data source consists of 147.4M English tweets after being
 filtered by the {\it lang} attribute in the tweet JSON and {\it
   langid.py}.\footnote{\url{https://github.com/saffsd/langid.py}}
-In the same way as \citet{kong-EtAl:2014:EMNLP2014},
-reference unit is always the tweet in its entirety
--- which may thus consist of multiple sentences -- not the sentence alone. %\nss{``Each tweet is annotated with a single tree, rather than being split into sentences.''?}
+As done by \citet{kong-EtAl:2014:EMNLP2014}, the
+annotation unit is always the tweet in its entirety---which may consist of multiple sentences---not the sentence alone. %\nss{``Each tweet is annotated with a single tree, rather than being split into sentences.''?}
 Before annotation, we use a simple regular expression to anonymize usernames and URLs.
 
 %The tweet source of Tweebank V2 consists of three parts. 
@@ -797,7 +796,7 @@ Before annotation, we use a simple regular expression to anonymize usernames and
 		split & tweets & tokens & tweets & tokens \\
 		\hline
 		train & 639 & 9,310 & 1,639 & 24,753 \\
-		dev & --\hphantom{0} & --\hphantom{00} & 710 & 11,742 \\
+		dev. & --\hphantom{0} & --\hphantom{00} & 710 & 11,742 \\
 		test & 201 & 2,839 & 1,201 & 19,112 \\
 		\hline
 		total & 840 & 12,149 & 3,550 & 55,607 \\
@@ -820,8 +819,8 @@ Before annotation, we use a simple regular expression to anonymize usernames and
 %		 & tokens &	24,753	&	11,742	&	19,112 & 55,617\\
 %		\hline
 %	\end{tabular}
-\caption{Statistics of {\sc Tweebank v2} and the comparison with
-{\sc Tweebank v1} in quantity.
+\caption{Statistics of {\sc Tweebank v2} and  comparison with
+{\sc Tweebank v1}.
 %\nss{not obvious how to interpret this: train tokens looks like 1,609+1,000 = 2,609, but maybe it's 609+1,000=1,609? 
 %I think it would be easier just to show v1 and v2 as separate rows. Also, a column for totals across the splits.}
 %\yjcomment{i've fix this.}
@@ -1221,8 +1220,8 @@ in the CoNLL 2017 evaluations, due to
  \Citeposs{kong-EtAl:2014:EMNLP2014} parser is a graph-based
 parser with lexical features and word cluster and it uses dual decomposition
 for decoding. The parser in \citet{dozat-qi-manning:2017:K17-3} is also a graph-based parser
-but includes character-based word representation and uses a biaffine classifier
-to predict if an attachment exists between two words.
+but includes character-based word representations and uses a biaffine classifier
+to predict whether an attachment exists between two words.
 Both of the compared systems require superlinear runtime due to graph-based parsing. 
 They are re-trained on the same data as our
 system.
@@ -1342,8 +1341,9 @@ our model with a pipeline of the state-of-the-art systems (labeled  ``SOTA''):
 Stanford CoreNLP tokenizer,\footnote{We choose the Stanford CoreNLP tokenizer in the spirit of comparing 
 rule-based and statistical methods.} %\yicomment{why not compare with UDPipe?}\yjcomment{i was thinking stanford tokenizer is more suitable, but i will get the udpipe result},
 \citeposs{owoputi-EtAl:2013:NAACL-HLT} tagger, and \citeposs{dozat-qi-manning:2017:K17-3} parser.
-Our system differs from the SOTA pipeline in the tokenization and parser components.
-From Table \ref{tbl:pipline}, our pipeline outperforms the SOTA when
+Our system differs from the state-of-the-art pipeline in the tokenization and parser components.
+From Table \ref{tbl:pipline}, our pipeline outperforms the state of
+the art when
 evaluated in pipeline manner.
 The results also emphasize the
 importance of tokenization:  without gold tokenization
