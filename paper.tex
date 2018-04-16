@@ -1030,22 +1030,7 @@ Space is treated as an input but deterministically  assigned a special tag \$.
 
 \paragraph{Experimental results.}
 
-\begin{table}[t]
-	\centering
-	\begin{tabular}{rc}
-%		\hline
-		\it System & $F_1$ \\
-		\hline
-		  Stanford CoreNLP & 97.3 \\
-		 Twokenizer & 94.6 \\
-% 		UDPipe v1.2 & 94.7 \\
-		\hdashline
-		UDPipe v1.2 & 97.4 \\
-	 	our bi-LSTM tokenizer & 98.3 \\
-%		\hline
-	\end{tabular}
-	\caption{Tokenizer comparison on the \textsc{Tweebank v2} test set.}\label{tbl:tok-result}
-\end{table}
+
 %\citet{wang-EtAl:2017:Long6} show that the parser\nss{tokenizer?}\yjcomment{it's a parsing work.}\nss{I guess I don't follow how parsing results 
 %on combined training data affect our decision about how to tokenize.} trained 
 %on the combination of the UD\_English and Singapore English dialect (Singlish) treebanks
@@ -1071,6 +1056,23 @@ which has stronger representational power.
 Our bi-LSTM tokenizer achieves the best accuracy among all these
 tokenizers.  These results speak to the value of statistical modeling
 in tokenization for informal texts.%\nss{this paragraph needs copyediting}
+
+\begin{table}[t]
+	\centering
+	\begin{tabular}{rc}
+%		\hline
+		\it System & $F_1$ \\
+		\hline
+		  Stanford CoreNLP & 97.3 \\
+		 Twokenizer & 94.6 \\
+% 		UDPipe v1.2 & 94.7 \\
+		\hdashline
+		UDPipe v1.2 & 97.4 \\
+	 	our bi-LSTM tokenizer & 98.3 \\
+%		\hline
+	\end{tabular}
+	\caption{Tokenizer comparison on the \textsc{Tweebank v2} test set.}\label{tbl:tok-result}
+\end{table}
 
 \subsection{Part-of-Speech Tagger}
 
