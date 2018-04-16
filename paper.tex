@@ -1160,7 +1160,7 @@ with our tokenizer.
 
 Social media applications typically require processing large volumes
 of data, making speed an important consideration. We therefore 
-begin with the neural greedy stack LSTM parser introduced by \newcite{ballesteros-EtAl:2016:EMNLP2016},
+begin with the neural greedy stack LSTM parser introduced by \cite{ballesteros-dyer-smith:2015:EMNLP},
 which can parse a sentence in linear time and harnesses 
 character representations to construct word vectors, which should help mitigate the challenge of
 spelling variation. We encourage the reader to refer their paper for
@@ -1193,8 +1193,9 @@ each of our models and the compared ones.
 		\citet{kong-EtAl:2014:EMNLP2014} & 81.4 & 76.9 & 0.3 \\
 		\citet{dozat-qi-manning:2017:K17-3} & 81.8 & 77.7 & 1.7 \\
 %		\newcite{dyer-EtAl:2015:ACL-IJCNLP} & 77.9 & 73.0 \\
-		\newcite{ballesteros-EtAl:2016:EMNLP2016} & 80.2 & 75.7 & 2.3 \\
 		\hdashline
+		%\citet{ballesteros-EtAl:2016:EMNLP2016} & & & \\
+		\citet{ballesteros-dyer-smith:2015:EMNLP} & 80.2 & 75.7 & 2.3 \\
 		Ensemble (20) & 83.4 & 79.4 & 0.2 \\
 		Distillation ($\alpha =1.0$) & 81.8 & 77.6 & 2.3 \\
 		Distillation ($\alpha =0.9$) & 82.0 & 77.8 & 2.3 \\		
@@ -1202,7 +1203,9 @@ each of our models and the compared ones.
 %		\hline
 	\end{tabular}
 	\caption{Dependency parser comparison on \textsc{Tweebank v2} test set,
-           with automatic POS tags. The ``Kt/s'' column shows
+           with automatic POS tags. We use \citet{ballesteros-dyer-smith:2015:EMNLP}
+           as our baseline and build the ensemble and distilling model over it.
+           The ``Kt/s'' column shows
            the parsing speed evaluated by thousands of tokens
            the model processed per second.
             \label{tbl:parse-result}}
