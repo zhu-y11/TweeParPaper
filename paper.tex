@@ -37,7 +37,7 @@
 %\newcommand{\yjcomment}[1]{\textcolor{orange}{[$_\mathrm{L}^\mathrm{Y}$#1]}}
 %\newcommand{\nascomment}[1]{\textcolor{blue}{[#1 ---\textsc{nas}]}}
 %\newcommand{\yicomment}[1]{\textcolor{gray}{[#1 ---\textsc{yi}]}}
-\newcommand{\nss}[1]{\textcolor{magenta}{[$_\mathrm{S}^\mathrm{NS}$#1]}}
+%\newcommand{\nss}[1]{\textcolor{magenta}{[$_\mathrm{S}^\mathrm{NS}$#1]}}
 
 \title{Parsing Tweets into Universal Dependencies}
 
@@ -532,7 +532,7 @@ conventions%\yicomment{this applies to all non-syntactic tokens including punctu
 %\item For the at-mentions in retweet constructions, we attach them to their retweet markers. We will discuss our choice in the following paragraph;
 \item If a non-syntactic token is within a sentence that has a clear predicate, it will be attached to this predicate. 
 The retweet construction is a special case and we will discuss its treatment in the following paragraph.
-\item If the whole sentence\nss{tweet?} is a sequence of non-syntactic tokens, we attach all these tokens to the first one.
+\item If the whole sentence is a sequence of non-syntactic tokens, we attach all these tokens to the first one.
 %\item In parataxis case, when it is difficult to decide which sentence or phrase x should belong to, we always attach x to the previous predicate of the paratactic clause or phrase;
 \item Non-syntactic tokens are mostly labeled as {\it discourse}, but
   URLs are always labeled as {\it list}, following the UD\_English-EWT dataset.% \yicomment{need to add punct for punctuations?}
@@ -697,7 +697,11 @@ In referential URLs, we use \textit{list} (following the precedent of UD\_Englis
 %since UD doesn't specify a convention for this. 
 Our choice of \textit{discourse} for sentiment emoticons
 is inspired by the observation that emoticons are annotated as \textit{discourse} by UD\_English-EWT
-and \citet{sanguinetti-17} used the same relation for the emoticons.\nss{how does the other treebank treat the RT construction and truncated words?}
+and \citet{sanguinetti-17} used the same relation for the emoticons.
+Retweet constructions and truncated words were not explicitly touched
+in \citet{sanguinetti-17}.
+Judging from the released treebank\footnote{\url{https://github.com/UniversalDependencies/UD_Italian-PoSTWITA}}, the \textit{RT} marker, at-mention, and colon in the retweet construction are all attached to the predicate of the following sentence with \textit{dep}, \textit{vocative:mention} and \textit{punct}.
+%\nss{how does the other treebank treat the RT construction and truncated words?}
 %\nss{topical hashtags already mentioned above}
 %>>>>>>> a7f86b777a73f64b2f05101f4804421aea0412f3
 % Non-syntactic tokens can be easily recovered
@@ -774,7 +778,7 @@ filtered by the {\it lang} attribute in the tweet JSON and {\it
   langid.py}.\footnote{\url{https://github.com/saffsd/langid.py}}
 In the same way as \citet{kong-EtAl:2014:EMNLP2014},
 reference unit is always the tweet in its entirety
--- which may thus consist of multiple sentences -- not the sentence alone.\nss{``Each tweet is annotated with a single tree, rather than being split into sentences.''?}
+-- which may thus consist of multiple sentences -- not the sentence alone.%\nss{``Each tweet is annotated with a single tree, rather than being split into sentences.''?}
 Before annotation, we use a simple regular expression to anonymize usernames and URLs.
 
 %The tweet source of Tweebank V2 consists of three parts. 
@@ -1057,7 +1061,7 @@ and tested on the \textsc{Tweebank v2} test set. % \yicomment{should mention tha
 We report $F_1$ scores, combining precision and recall for token identification. Table \ref{tbl:tok-result} shows the
 tokenization results, compared to  other available tokenizers. 
  Stanford CoreNLP \cite{manning-EtAl:2014:P14-5} and Twokenizer
-\cite{ICWSM101540} are rule-based systems and were not adapted
+\cite{ICWSM101540}\footnote{We use the updated version of Twokenizer from \citet{owoputi-EtAl:2013:NAACL-HLT}.} are rule-based systems and were not adapted
 to the UD tokenization scheme.
 The UDPipe v1.2
 \cite{straka-strakova:2017:K17-3} model was re-trained on the same
@@ -1102,7 +1106,7 @@ and parsers.\footnote{\url{http://nlp.stanford.edu/data/glove.twitter.27B.zip}}
 	\centering
 	\begin{tabular}{rc}
 %		\hline
-		\it System & Precision \\
+		\it System & Accuracy \\
 		\hline
 %		Stanford Postagger & 65.6 \\
 		Stanford CoreNLP & 90.6 \\
@@ -1117,7 +1121,8 @@ and parsers.\footnote{\url{http://nlp.stanford.edu/data/glove.twitter.27B.zip}}
 %		\hline
 	\end{tabular}
 	\caption{POS tagger comparison on gold-standard tokens in the
-          \textsc{Tweebank v2} test set.\nss{why Precision and not Accuracy?} \label{tbl:pos-result}}
+          \textsc{Tweebank v2} test set.%\nss{why Precision and not Accuracy?}
+          \label{tbl:pos-result}}
 \end{table}
 
 \begin{table}[t]
@@ -1161,7 +1166,7 @@ character representations to construct word vectors, which should help mitigate 
 spelling variation. We encourage the reader to refer their paper for
 more details about the model.
 
-In our preliminary\nss{initial?} experiments, we train our parser on the combination of UD\_English-EWT
+In our initial experiments, we train our parser on the combination of UD\_English-EWT
 and \textsc{Tweebank v2} training sets. Gold-standard tokenization and automatic POS
 tags are used. Automatic POS tags are assigned with 5-fold
 jackknifing. Hyperparameters %, including the value of $\alpha$ in Equation \ref{eq:distill},
@@ -1280,7 +1285,7 @@ in recent methods for training greedy models that use dynamic oracles
 \citep{goldberg-nivre:2012:PAPERS,TACL145,TACL885,ballesteros-EtAl:2016:EMNLP2016}.  
 We find that this
 approach outperforms the  conventional distillation model, coming in
-only one\nss{UAS? LAS is 1.5 points} point behind the ensemble (last line of Table~\ref{tbl:parse-result}).
+1.5 point behind the ensemble (last line of Table~\ref{tbl:parse-result}).
 
 %
 %\begin{table}[t]
@@ -1339,7 +1344,7 @@ The results also emphasize the
 importance of tokenization:  without gold tokenization
 %\nascomment{changed ``segmentation'' to ``tokenization'' here, twice},
 UD parsing
-performance drops by more than\nss{? 77.9 vs. 74.0, right?} four points.
+performance drops by about four points.
 
 %\section{Related Work}
 %\yjcomment{related word is not finished.}
