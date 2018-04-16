@@ -778,7 +778,7 @@ filtered by the {\it lang} attribute in the tweet JSON and {\it
   langid.py}.\footnote{\url{https://github.com/saffsd/langid.py}}
 In the same way as \citet{kong-EtAl:2014:EMNLP2014},
 reference unit is always the tweet in its entirety
--- which may thus consist of multiple sentences -- not the sentence alone.%\nss{``Each tweet is annotated with a single tree, rather than being split into sentences.''?}
+-- which may thus consist of multiple sentences -- not the sentence alone. %\nss{``Each tweet is annotated with a single tree, rather than being split into sentences.''?}
 Before annotation, we use a simple regular expression to anonymize usernames and URLs.
 
 %The tweet source of Tweebank V2 consists of three parts. 
@@ -1160,7 +1160,7 @@ with our tokenizer.
 
 Social media applications typically require processing large volumes
 of data, making speed an important consideration. We therefore 
-begin with the neural greedy stack LSTM parser introduced by \cite{ballesteros-dyer-smith:2015:EMNLP},
+begin with the neural greedy stack LSTM parser introduced by \citet{ballesteros-dyer-smith:2015:EMNLP},
 which can parse a sentence in linear time and harnesses 
 character representations to construct word vectors, which should help mitigate the challenge of
 spelling variation. We encourage the reader to refer their paper for
@@ -1288,7 +1288,7 @@ in recent methods for training greedy models that use dynamic oracles
 \citep{goldberg-nivre:2012:PAPERS,TACL145,TACL885,ballesteros-EtAl:2016:EMNLP2016}.  
 We find that this
 approach outperforms the  conventional distillation model, coming in
-1.5 point behind the ensemble (last line of Table~\ref{tbl:parse-result}).
+1.5 points behind the ensemble (last line of Table~\ref{tbl:parse-result}).
 
 %
 %\begin{table}[t]
